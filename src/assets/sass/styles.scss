@@ -1,0 +1,296 @@
+.bg {
+  background-image: url("/src/assets/bg.jpg");
+  height: 600px;
+  width: 100%;
+  background-position: center;
+  background-size: cover;
+  position: fixed;
+}
+.navbar {
+  margin: 0px auto;
+  padding: 0px;
+}
+.content {
+  margin-top: 100px;
+}
+
+.logo {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0;
+  transition: 0.5s;
+}
+
+.bottom-bar {
+  transition: 0.5s;
+}
+.main-view {
+  transition: 0.5s;
+}
+.side-bars {
+  transition: 0.5s;
+}
+
+.logo-text {
+  text-decoration: none;
+  color: white;
+  font-size: 20px;
+}
+
+.logo-text:hover {
+  text-decoration: none;
+  color: white;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 0;
+}
+
+.text {
+  text-align: right;
+}
+
+.head {
+  margin-bottom: 20px;
+  height: 40px;
+  background-color: #333333;
+  border-radius: 10px;
+  color: white;
+  font-size: 150%;
+}
+
+.icon {
+  position: absolute;
+  right: 14%;
+  top: 80px;
+  font-size: 20px;
+}
+.scroll {
+  overflow-y: scroll;
+  text-align: right;
+  height: 60px;
+}
+
+.plus {
+  font-size: 15px;
+  text-align: center;
+  padding: 4px;
+  height: 35px;
+}
+
+.minus {
+  font-size: 15px;
+  text-align: center;
+  padding: 4px;
+  height: 35px;
+}
+.rightfixed {
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+.sidebar {
+  height: 100vh;
+  background-color: #333333;
+  transition: 0.5s;
+}
+
+.admin-list-toggle {
+  margin-top: 70px;
+}
+.admin-system {
+  margin-top: 42vh;
+  text-decoration: none;
+}
+
+.admin-toggle-button {
+  background-color: #333333;
+  border: none;
+}
+
+.shadow-icon:hover {
+  box-shadow: 0px 7px 4px rgba($color: #000000, $alpha: 0.5);
+  transform: translateY(-5px);
+}
+.shadow-icon {
+  transition: all 0.4s;
+}
+.admin-icon {
+  font-size: 100px;
+  align-self: center;
+  text-align: center;
+  margin: 0px;
+  padding: 0;
+}
+
+.admin-text {
+  font-size: 20px;
+  align-self: center;
+  text-align: center;
+  color: white;
+  cursor: default;
+  margin-bottom: 25px;
+  padding: 0;
+}
+
+.admin-list {
+  background-color: #333333;
+  font-size: 15px;
+  align-self: center;
+  text-align: center;
+  margin: 10px 40px 5px 40px;
+  border-bottom: 1px groove white;
+  transition: all 0.4s;
+  padding: 0px;
+  cursor: pointer;
+}
+
+.admin-list:hover {
+  box-shadow: 0px 7px 4px rgba($color: #000000, $alpha: 0.5);
+  transform: translateY(-5px);
+}
+
+.admin-dropdown-list {
+  background-color: #333333;
+  width: 100%;
+}
+
+.admin-dropdown-item {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  transition: all 0.4s;
+}
+.admin-dropdown-item:hover {
+  color: rgba(255, 255, 255, 0.75);
+  background-color: #333333;
+  box-shadow: 0px 7px 4px rgba($color: #000000, $alpha: 0.5);
+  transform: translateY(-5px);
+}
+
+.top-dropdown {
+  z-index: 90;
+}
+
+.below-dropdown {
+  z-index: 80;
+}
+
+.admin-nav-bg {
+  background-color: #333333;
+}
+
+.main {
+  background: #000000;
+  min-height: 100vh;
+  height: 100%;
+}
+.min-height {
+  height: 100vh;
+}
+
+.student-info-main {
+  background-color: #222;
+  height: 100vh;
+}
+
+.card-common {
+  background-color: #3d467c;
+}
+
+.see-more {
+  cursor: pointer;
+}
+.see-more:hover {
+  color: black;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 12px;
+}
+
+// .user-icon {
+//   margin-right: 60px;
+// }
+
+// .card-height {
+//   height: 40px;
+// }
+
+footer {
+  background-color: #333333;
+}
+
+@media screen and (max-width: 768px) {
+  .content {
+    margin-top: 40px;
+  }
+  .icon {
+    right: 7%;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+  .top-navbar {
+    display: none;
+  }
+  .sm-navbar {
+    width: 100%;
+    background-color: #333333;
+    margin: 0px;
+  }
+  .bars {
+    font-size: 40px;
+  }
+}
+
+.bars:focus {
+  outline: none;
+}
+.my-modal .modal-content {
+  background-color: #222222;
+}
+.close {
+  position: absolute;
+  left: 20px;
+  font-size: 30px;
+  color: white;
+}
+.close:hover {
+  color: #dddddd;
+}
+.close:focus {
+  outline: none;
+}
+
+thead .button {
+  border: 0;
+  border-radius: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: inherit;
+  padding: 0.5em;
+  margin-bottom: 1px;
+  cursor: pointer;
+}
+thead .button.ascending::after {
+  content: "👇";
+  display: inline-block;
+  margin-left: 1em;
+}
+
+thead .button.descending::after {
+  content: "☝️";
+  display: inline-block;
+  margin-left: 1em;
+}
+// th {
+//   cursor: default;
+// }
