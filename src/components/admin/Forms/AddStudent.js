@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
-function AddStudent({ page, dataToChange }) {
+function AddStudent({ page, dataToChange, sideBarShow }) {
   const [data, setData] = useState({
     zones: [],
     pharmacies: [],
@@ -120,7 +120,14 @@ function AddStudent({ page, dataToChange }) {
   return (
     <section className="main">
       <div className="row pt-5 m-0">
-        <div className="col-xl-10 col-lg-9 col-md-8 mr-auto">
+        <div
+          className={
+            sideBarShow
+              ? "width-others-wide mr-auto main-view"
+              : "width-others-narrow mr-auto main-view"
+          }
+          id="main-view"
+        >
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
             <div className="col-sm-12 p-2">
               <form onSubmit={handleSubmit}>

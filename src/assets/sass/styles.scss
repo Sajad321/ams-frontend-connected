@@ -28,6 +28,8 @@
 }
 .main-view {
   transition: 0.5s;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .side-bars {
   transition: 0.5s;
@@ -97,13 +99,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #333333;
   transition: 0.5s;
 }
-
 .admin-list-toggle {
   margin-top: 70px;
 }
 .admin-system {
-  margin-top: 42vh;
+  // margin-top: 42vh;
   text-decoration: none;
+}
+.flex-list-items {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+  width: 100%;
+}
+
+.flex-list-text {
+  flex: 1 0 auto;
+}
+.flex-list-icons {
+  display: inline-flex;
 }
 
 .admin-toggle-button {
@@ -128,8 +143,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .admin-text {
   font-size: 20px;
-  align-self: center;
-  text-align: center;
+  // align-self: center;
+  // text-align: center;
   color: white;
   cursor: default;
   margin-bottom: 25px;
@@ -227,36 +242,24 @@ footer {
   background-color: #333333;
 }
 
-@media screen and (max-width: 768px) {
-  .content {
-    margin-top: 40px;
-  }
-  .icon {
-    right: 7%;
-  }
-  .sidebar {
-    position: static;
-    height: auto;
-  }
-  .top-navbar {
-    display: none;
-  }
-  .sm-navbar {
-    width: 100%;
-    background-color: #333333;
-    margin: 0px;
-  }
-  .bars {
-    font-size: 40px;
-  }
-}
-
-.bars:focus {
+.side-bars .bars:focus {
   outline: none;
 }
-.my-modal .modal-content {
+.modal-content {
+  opacity: 1 !important;
   background-color: #222222;
 }
+// .my-modal {
+//   opacity: 0.5;
+//   background-color: #222222;
+// }
+.modal-backdrop {
+  opacity: 0.5;
+}
+// .modal {
+//   background-color: #222;
+// }
+
 .close {
   position: absolute;
   left: 20px;
@@ -294,3 +297,162 @@ thead .button.descending::after {
 // th {
 //   cursor: default;
 // }
+
+.r-navbar {
+  top: 0;
+  // right: -30%;
+  // width: var(--nav-width);
+  height: 100vh;
+  padding: 0.5rem 1rem 0 0;
+  transition: 0.5s;
+}
+
+.nav {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.nav_logo,
+.nav_link {
+  display: grid;
+  grid-template-columns: repeat(4, 50px);
+  align-items: center;
+  // column-gap: 4rem;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+}
+
+.nav_logo {
+  margin-bottom: 2rem;
+  // margin-top: 60px;
+}
+
+.nav_logo-icon {
+  color: #ccc;
+  transition: 0.5s;
+  justify-self: center;
+}
+.nav_logo-icon:hover {
+  color: white;
+}
+
+.nav_logo-name {
+  color: white;
+  grid-column: 3/4;
+  justify-self: center;
+  // font-weight: 700;
+}
+
+.nav_link {
+  position: relative;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+  transition: 0.3s;
+}
+.nav_link_bottom {
+  display: grid;
+  grid-template-columns: repeat(4, 50px);
+  align-items: center;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  position: relative;
+  color: #ccc;
+  margin-bottom: 0.5rem;
+  transition: 0.3s;
+}
+
+.nav_link:hover,
+.nav_link_bottom:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.nav_icon {
+  font-size: 1.25rem;
+}
+.nav_name {
+  grid-column: 3/4;
+  justify-self: center;
+}
+// .show {
+//   display: none;
+// }
+
+.body-pd {
+  padding-left: calc(var(--nav-width) + 1rem);
+}
+
+.active {
+  color: white;
+}
+
+.active::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  width: 2px;
+  height: 32px;
+  background-color: var(--white-color);
+}
+.modal-add-nav {
+  font-size: 20px;
+}
+.height-100 {
+  height: 100vh;
+}
+
+.width-sidebar-narrow {
+  width: 4%;
+}
+
+.width-others-narrow {
+  width: 96%;
+}
+
+.width-sidebar-wide {
+  width: 10%;
+}
+
+.width-others-wide {
+  width: 90%;
+}
+
+@media screen and (max-width: 1280px) {
+  // .content {
+  //   margin-top: 40px;
+  // }
+  // .icon {
+  //   right: 7%;
+  // }
+  // .sidebar {
+  //   position: static;
+  //   height: auto;
+  // }
+  // .top-navbar {
+  //   display: none;
+  // }
+  // .sm-navbar {
+  //   width: 100%;
+  //   background-color: #333333;
+  //   margin: 0px;
+  // }
+  // .bars {
+  //   font-size: 40px;
+  // }
+  .width-sidebar-narrow {
+    width: 6%;
+  }
+
+  .width-others-narrow {
+    width: 94%;
+  }
+
+  .width-sidebar-wide {
+    width: 15%;
+  }
+
+  .width-others-wide {
+    width: 85%;
+  }
+}

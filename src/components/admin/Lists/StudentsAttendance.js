@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 const apiUrl = process.env.API_URL;
 
-function StudentAttendance() {
+function StudentAttendance({ sideBarShow }) {
   const [loading, setLoading] = useState(true);
   const [salesmen, setSalesmen] = useState([]);
   const [search, setSearch] = useState("");
@@ -107,7 +107,11 @@ function StudentAttendance() {
     <section className="main">
       <div className="row pt-5 m-0">
         <div
-          className="col-xl-10 col-lg-9 col-md-9 mr-auto main-view"
+          className={
+            sideBarShow
+              ? "width-others-wide mr-auto main-view"
+              : "width-others-narrow mr-auto main-view"
+          }
           id="main-view"
         >
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">

@@ -7,7 +7,7 @@ const keyMap = {
   SHOW: "enter",
 };
 
-function Salesmen() {
+function Salesmen({ sideBarShow }) {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -59,7 +59,11 @@ function Salesmen() {
     <section className="main">
       <div className="row pt-5 m-0">
         <div
-          className="col-xl-10 col-lg-9 col-md-9 mr-auto main-view"
+          className={
+            sideBarShow
+              ? "width-others-wide mr-auto main-view"
+              : "width-others-narrow mr-auto main-view"
+          }
           id="main-view"
         >
           <div className="row pt-md-2 pr-2 pl-2 mt-md-3 mb-5" dir="rtl">

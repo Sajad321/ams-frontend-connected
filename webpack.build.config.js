@@ -43,7 +43,7 @@ module.exports = {
     new webpackBundleAnalyzer.BundleAnalyzerPlugin({ analyzerMode: "static" }),
 
     new HtmlWebpackPlugin({
-      title: "Amjad",
+      title: "نظام ادارة حسابات وحضور حسين الهاشمي",
       minify: {
         // see https://github.com/kangax/html-minifier#options-quick-reference
         removeComments: true,

@@ -39,7 +39,7 @@ module.exports = {
   },
   target: "electron-renderer",
   plugins: [
-    new HtmlWebpackPlugin({ title: "Amjad" }),
+    new HtmlWebpackPlugin({ title: "نظام ادارة حسابات وحضور حسين الهاشمي" }),
     new webpack.DefinePlugin({
       "process.env.API_URL": JSON.stringify("http://localhost:8000"),
       "process.env.NODE_ENV": JSON.stringify("development"),

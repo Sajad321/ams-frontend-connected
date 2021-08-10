@@ -1,10 +1,14 @@
 import React from "react";
 
-function AdminFooter() {
+function AdminFooter({ sideBarShow }) {
   return (
     <footer>
       <div
-        className="col-xl-10 col-lg-9 col-md-9 fixed-bottom mr-auto admin-nav-bg bottom-bar"
+        className={
+          sideBarShow
+            ? "width-others-wide fixed-bottom mr-auto admin-nav-bg bottom-bar"
+            : "width-others-wide fixed-bottom mr-auto admin-nav-bg bottom-bar"
+        }
         id="bottom-bar"
       >
         <div className="row justify-content-center mt-3">

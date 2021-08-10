@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from "../common/Modal.js";
+import { InstitutesModal } from "../common/Modal.js";
 const apiUrl = process.env.API_URL;
 
-function Institutes({ edit }) {
+function Institutes({ edit, sideBarShow }) {
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
@@ -76,7 +76,11 @@ function Institutes({ edit }) {
     <section className="main">
       <div className="row pt-5 m-0">
         <div
-          className="col-xl-10 col-lg-9 col-md-9 mr-auto main-view"
+          className={
+            sideBarShow
+              ? "width-others-wide mr-auto main-view"
+              : "width-others-narrow mr-auto main-view"
+          }
           id="main-view"
         >
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5" dir="rtl">
@@ -116,7 +120,10 @@ function Institutes({ edit }) {
               </div>
             </div>
             <div className="col-sm-3 p-2" dir="ltr">
-              <Modal show={modalShow} onHide={() => setModalShow(false)} />
+              <InstitutesModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+              />
               <div
                 className="card card-common card-height"
                 onClick={() => setModalShow(true)}

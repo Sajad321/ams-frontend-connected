@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const apiUrl = process.env.API_URL;
 
-function MainAdmin() {
+function MainAdmin({ sideBarShow }) {
   const [data, setData] = useState({
     students_count: "",
     institutes_count: "",
@@ -33,7 +33,11 @@ function MainAdmin() {
     <section className="main">
       <div className="row pt-5 m-0" dir="rtl">
         <div
-          className="col-xl-10 col-lg-9 col-md-9 mr-auto main-view"
+          className={
+            sideBarShow
+              ? "width-others-wide mr-auto main-view"
+              : "width-others-narrow mr-auto main-view"
+          }
           id="main-view"
         >
           <div className="row pt-md-2 pr-2 pl-2 mt-md-3 mb-5">

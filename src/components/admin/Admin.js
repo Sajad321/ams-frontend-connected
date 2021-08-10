@@ -12,6 +12,39 @@ const apiUrl = process.env.API_URL;
 
 function Admin(props) {
   const [page, setPage] = useState("Main");
+
+  const [sideBarShow, setSideBarShow] = useState(true);
+
+  const sideEvent = () => {
+    let nav = document.querySelectorAll("#nav-text");
+    let sideBar = document.getElementById("side-bar");
+    let topBar = document.getElementById("top-bar");
+    let bottomBar = document.getElementById("bottom-bar");
+    let mainView = document.getElementById("main-view");
+    if (!sideBarShow) {
+      console.log("showed");
+      for (let i = 0; i < nav.length; i++) {
+        nav[i].style.display = "block";
+      }
+      sideBar.className = "width-sidebar-wide sidebar rightfixed p-0";
+      topBar.className =
+        "width-others-wide fixed-top mr-auto admin-nav-bg top-navbar top-height logo";
+      bottomBar.className =
+        "width-others-wide fixed-bottom mr-auto admin-nav-bg bottom-bar";
+      mainView.className = "width-others-wide mr-auto main-view";
+    } else {
+      console.log("cut");
+      for (let i = 0; i < nav.length; i++) {
+        nav[i].style.display = "none";
+      }
+      sideBar.className = "width-sidebar-narrow sidebar rightfixed p-0";
+      topBar.className =
+        "width-others-narrow fixed-top mr-auto admin-nav-bg top-navbar top-height logo";
+      bottomBar.className =
+        "width-others-narrow fixed-bottom mr-auto admin-nav-bg bottom-bar";
+      mainView.className = "width-others-narrow mr-auto main-view";
+    }
+  };
   const [dataToChange, setDataToChange] = useState({});
   const AdminHeaderFunction = (Act) => {
     return (
@@ -26,6 +59,9 @@ function Admin(props) {
         StudentsAttendanceButton={handleStudentsAttendanceButton}
         AddStudentButton={handleAddStudentButton}
         AddInstituteButton={handleAddInstituteButton}
+        sideEvent={sideEvent}
+        sideBarShow={sideBarShow}
+        setSideBarShow={setSideBarShow}
       />
     );
   };
@@ -86,8 +122,8 @@ function Admin(props) {
         {/* End of Navbar */}
 
         {/* Main */}
-        <MainAdmin />
-        <AdminFooter />
+        <MainAdmin sideEvent={sideEvent} sideBarShow={sideBarShow} />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "Reports") {
@@ -97,7 +133,7 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* Reports */}
         <Reports />
-        <AdminFooter />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "Students") {
@@ -106,8 +142,8 @@ function Admin(props) {
         {AdminHeaderFunction({ Students: "active" })}
         {/* End of Navbar */}
         {/* Students */}
-        <Students />
-        <AdminFooter />
+        <Students sideEvent={sideEvent} sideBarShow={sideBarShow} />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "StudentsInstallments") {
@@ -116,8 +152,11 @@ function Admin(props) {
         {AdminHeaderFunction({ StudentsInstallments: "active" })}
         {/* End of Navbar */}
         {/* StudentsInstallments */}
-        <StudentsInstallments edit={handleEditStudentButton} />
-        <AdminFooter />
+        <StudentsInstallments
+          edit={handleEditStudentButton}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "Institutes") {
@@ -126,8 +165,11 @@ function Admin(props) {
         {AdminHeaderFunction({ Institutes: "active" })}
         {/* End of Navbar */}
         {/* Institutes */}
-        <Institutes edit={handleEditInstituteButton} />
-        <AdminFooter />
+        <Institutes
+          edit={handleEditInstituteButton}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "StudentsAttendance") {
@@ -136,8 +178,8 @@ function Admin(props) {
         {AdminHeaderFunction({ StudentsAttendance: "active" })}
         {/* End of Navbar */}
         {/* StudentsAttendance */}
-        <StudentsAttendance />
-        <AdminFooter />
+        <StudentsAttendance sideBarShow={sideBarShow} />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "AddStudent") {
@@ -146,8 +188,12 @@ function Admin(props) {
         {AdminHeaderFunction({ AddStudent: "active" })}
         {/* End of Navbar */}
         {/* AddStudent */}
-        <AddStudent page={handleMainButton} dataToChange={dataToChange} />
-        <AdminFooter />
+        <AddStudent
+          page={handleMainButton}
+          dataToChange={dataToChange}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "AddInstitute") {
@@ -156,8 +202,12 @@ function Admin(props) {
         {AdminHeaderFunction({ AddInstitute: "active" })}
         {/* End of Navbar */}
         {/* AddInstitute */}
-        <AddInstitute page={handleMainButton} dataToChange={dataToChange} />
-        <AdminFooter />
+        <AddInstitute
+          page={handleMainButton}
+          dataToChange={dataToChange}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   }

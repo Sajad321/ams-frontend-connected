@@ -7,12 +7,16 @@ import {
   faSignInAlt,
   faArrowRight,
   faPlus,
+  faPlusCircle,
   faMinus,
   faBars,
   faChartLine,
   faUsers,
   faHouseUser,
   faCog,
+  faUserGraduate,
+  faHome,
+  faSchool,
 } from "@fortawesome/free-solid-svg-icons";
 
 function initFontAwesome() {
@@ -23,12 +27,16 @@ function initFontAwesome() {
   library.add(faSignInAlt);
   library.add(faArrowRight);
   library.add(faPlus);
+  library.add(faPlusCircle);
   library.add(faMinus);
   library.add(faBars);
   library.add(faCog);
   library.add(faChartLine);
   library.add(faUsers);
+  library.add(faHome);
   library.add(faHouseUser);
+  library.add(faUserGraduate);
+  library.add(faSchool);
 }
 
 export default initFontAwesome;
