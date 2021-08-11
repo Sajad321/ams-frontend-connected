@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InstitutesModal } from "../common/Modal.js";
 const apiUrl = process.env.API_URL;
 
-function Institutes({ edit, sideBarShow }) {
+function Institutes({ edit, sideBarShow, handleAttendanceButton }) {
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
@@ -123,6 +123,7 @@ function Institutes({ edit, sideBarShow }) {
               <InstitutesModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
+                handleAttendanceButton={handleAttendanceButton}
               />
               <div
                 className="card card-common card-height"

@@ -3,6 +3,7 @@ import AdminHeader from "./AdminHeader";
 import AdminFooter from "./AdminFooter";
 import MainAdmin from "./MainAdmin";
 import Institutes from "./Institutes";
+import Attendance from "./Attendance";
 import Students from "./Lists/Students";
 import StudentsInstallments from "./Lists/StudentsInstallments";
 import StudentsAttendance from "./Lists/StudentsAttendance";
@@ -90,6 +91,10 @@ function Admin(props) {
     setPage("Institutes");
     setDataToChange({});
   };
+  const handleAttendanceButton = () => {
+    setPage("Attendance");
+    setDataToChange({});
+  };
 
   const handleStudentsAttendanceButton = () => {
     setPage("StudentsAttendance");
@@ -126,16 +131,6 @@ function Admin(props) {
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
-  } else if (page == "Reports") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Reports: "active" })}
-        {/* End of Navbar */}
-        {/* Reports */}
-        <Reports />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
   } else if (page == "Students") {
     return (
       <Fragment>
@@ -168,7 +163,18 @@ function Admin(props) {
         <Institutes
           edit={handleEditInstituteButton}
           sideBarShow={sideBarShow}
+          handleAttendanceButton={handleAttendanceButton}
         />
+        <AdminFooter sideBarShow={sideBarShow} />
+      </Fragment>
+    );
+  } else if (page == "Attendance") {
+    return (
+      <Fragment>
+        {AdminHeaderFunction()}
+        {/* End of Navbar */}
+        {/* Reports */}
+        <Attendance sideBarShow={sideBarShow} />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );

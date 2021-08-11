@@ -24,7 +24,14 @@ export function InstitutesModal(props) {
           <Button onClick={props.onHide}>عرض الحضور</Button>
         </div>
         <div className="col-5 offset-1">
-          <Button onClick={props.onHide}>بدء تسجيل الحضور</Button>
+          <Button
+            onClick={() => {
+              props.handleAttendanceButton();
+              props.onHide();
+            }}
+          >
+            بدء تسجيل الحضور
+          </Button>
         </div>
       </Modal.Footer>
     </Modal>
