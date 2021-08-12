@@ -3,8 +3,10 @@ import { Route, Switch } from "react-router-dom";
 import HomePage from "./home/HomePage";
 import StudentInfo from "./admin/StudentInfo";
 import PageNotFound from "./PageNotFound";
+import Login from "../auth/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useToken from "../auth/useToken";
 // fontawesome
 import initFontAwesome from "./common/initFontAwesome";
 initFontAwesome();
@@ -12,6 +14,7 @@ initFontAwesome();
 const apiUrl = process.env.API_URL;
 
 function App() {
+  const { token, setToken } = useToken();
   const callSecureApi = async () => {
     try {
       const response = await fetch(`${apiUrl}/users`, {
@@ -36,6 +39,10 @@ function App() {
           render={(routeProps) => <HomePage {...routeProps} />}
         />
         <Route path="/sai" component={StudentInfo} />
+        <Route
+          path="/login"
+          render={(routeProps) => <Login {...routeProps} setToken={setToken} />}
+        />
         <Route component={PageNotFound} />
       </Switch>
       <ToastContainer autoClose={3000} position="top-left" />

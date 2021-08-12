@@ -7,7 +7,7 @@ const url = require("url");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, studentInfoWindow;
+let mainWindow, studentInfoWindow, loginWindow;
 
 // Keep a reference for dev mode
 let dev = false;
@@ -55,8 +55,18 @@ function createWindow() {
     },
     autoHideMenuBar: true,
   });
+  loginWindow = new BrowserWindow({
+    minWidth: 600,
+    minHeight: 600,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+  });
   // and load the index.html of the app.
-  let indexPath, studentInfoPath;
+  let indexPath, studentInfoPath, loginPath;
 
   if (dev && process.argv.indexOf("--noDevServer") === -1) {
     indexPath = url.format({
@@ -72,6 +82,13 @@ function createWindow() {
       hash: "#sai",
       slashes: true,
     });
+    loginPath = url.format({
+      protocol: "http:",
+      host: "localhost:8080",
+      pathname: "index.html",
+      hash: "#login",
+      slashes: true,
+    });
   } else {
     indexPath = url.format({
       protocol: "file:",
@@ -84,15 +101,21 @@ function createWindow() {
       hash: "#sai",
       slashes: true,
     });
+    studentInfoPath = url.format({
+      protocol: "file:",
+      pathname: path.join(__dirname, "dist", "index.html"),
+      hash: "#login",
+      slashes: true,
+    });
   }
 
+  loginWindow.loadURL(loginPath);
   mainWindow.loadURL(indexPath);
   studentInfoWindow.loadURL(studentInfoPath);
 
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
-    mainWindow.maximize();
-    mainWindow.show();
+    loginWindow.show();
 
     // const template = [
     //   {
@@ -125,9 +148,26 @@ function createWindow() {
     ipcMain.on("abort-student-attendance", () => {
       studentInfoWindow.hide();
     });
+    ipcMain.on("login", () => {
+      loginWindow.show();
+      mainWindow.hide();
+    });
+    ipcMain.on("finished-login", () => {
+      loginWindow.hide();
+      mainWindow.show();
+      mainWindow.maximize();
+    });
   });
   // Emitted when the window is closed.
   mainWindow.on("closed", function () {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null;
+    studentInfoWindow = null;
+    app.quit();
+  });
+  loginWindow.on("closed", function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.

@@ -116,7 +116,11 @@ function AdminHeader(props) {
                   </a>{" "}
                 </div>
               </div>{" "}
-              <a href="#" className="nav_link_bottom">
+              <a
+                href="#"
+                className="nav_link_bottom"
+                onClick={props.logoutWithRedirect}
+              >
                 {" "}
                 <FontAwesomeIcon
                   icon="cog"

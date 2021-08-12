@@ -8,6 +8,7 @@ import "popper.js/dist/popper";
 import "./assets/sass/styles.scss";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./components/App";
+import history from "./auth/history";
 
 let root = document.createElement("div");
 
@@ -31,7 +32,7 @@ document.body.appendChild(root);
 // };
 // Now we can render our application into it
 render(
-  <HashRouter>
+  <HashRouter history={history}>
     <App />
   </HashRouter>,
   document.getElementById("root")

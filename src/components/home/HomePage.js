@@ -1,14 +1,18 @@
 import React, { useState, Fragment, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Admin from "../admin/Admin";
+import Login from "../../auth/Login";
 const apiUrl = process.env.API_URL;
+var { ipcRenderer } = require("electron");
 
 const HomePage = (props) => {
   const [loading, setLoading] = useState(false);
-  const logoutWithRedirect = () =>
-    logout({
-      returnTo: window.location.origin,
-    });
+
+  const logoutWithRedirect = () => {
+    sessionStorage.removeItem("token");
+    ipcRenderer.send("login");
+  };
 
   useEffect(() => {
     const callSecureApi = async () => {
@@ -30,27 +34,6 @@ const HomePage = (props) => {
     };
   }, []);
 
-  if (false) {
-    return (
-      <div>
-        {!isAuthenticated && (
-          <div className="jumbotron">
-            <div className="row row-content justify-content-center">
-              <div className="col-12 col-sm-4">
-                <button
-                  onClick={loginWithRedirect}
-                  className="btn btn-primary btn-block btn-lg"
-                >
-                  <FontAwesomeIcon icon="sign-in-alt" /> Log in
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  } else {
-    return <Admin logoutWithRedirect={logoutWithRedirect} />;
-  }
+  return <Admin logoutWithRedirect={logoutWithRedirect} />;
 };
 export default HomePage;
