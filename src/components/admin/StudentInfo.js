@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { HotKeys, GlobalHotKeys } from "react-hotkeys";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import IMG from "../../public/photos/pic.jpg";
 
 var { ipcRenderer } = require("electron");
 const keyMap = {
@@ -22,7 +23,7 @@ function StudentInfo(props) {
         <div className="col-2 col-sm-3 p-0 text-center text-white">
           <div className="row">
             <div className="col-12">
-              <FontAwesomeIcon icon="user" size="7x" className="mt-4" />
+              {/* <img src={IMG} className="mt-4 img-student-attendance" /> */}
             </div>
           </div>
         </div>

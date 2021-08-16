@@ -149,13 +149,15 @@ function createWindow() {
       studentInfoWindow.hide();
     });
     ipcMain.on("login", () => {
-      loginWindow.show();
       mainWindow.hide();
+      loginWindow.show();
+      loginWindow.focus();
     });
     ipcMain.on("finished-login", () => {
       loginWindow.hide();
       mainWindow.show();
       mainWindow.maximize();
+      mainWindow.focus();
     });
   });
   // Emitted when the window is closed.

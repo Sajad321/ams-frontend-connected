@@ -4,7 +4,8 @@ import { Modal, Button } from "react-bootstrap";
 export function InstitutesModal(props) {
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -41,7 +42,8 @@ export function InstitutesModal(props) {
 export function AddModal(props) {
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       size="md"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -80,6 +82,17 @@ export function AddModal(props) {
             معهد
           </Button>
         </div>
+        <div className="">
+          <Button
+            onClick={() => {
+              props.AddBatchButton();
+              props.onHide();
+            }}
+            className="modal-add-nav"
+          >
+            دفعة
+          </Button>
+        </div>
       </Modal.Footer>
     </Modal>
   );
@@ -88,7 +101,8 @@ export function AddModal(props) {
 export function StudentsModal(props) {
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       size="md"
       aria-labelledby="contained-modal-title-vcenter"
       centered

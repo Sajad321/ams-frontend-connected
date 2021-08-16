@@ -43,11 +43,6 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.API_URL": JSON.stringify("http://localhost:8000"),
       "process.env.NODE_ENV": JSON.stringify("development"),
-      "process.env.Domain": JSON.stringify("alamjadtest.us.auth0.com"),
-      "process.env.ClientId": JSON.stringify(
-        "oNDBNN4mZ8bxSt1DNr5vPjqae4R5r6wh"
-      ),
-      "process.env.API_Audience": JSON.stringify("Amjad"),
     }),
   ],
   devtool: "cheap-source-map",

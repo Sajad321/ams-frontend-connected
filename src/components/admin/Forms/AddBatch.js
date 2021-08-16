@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
-function AddInsitute({ page, dataToChange, sideBarShow }) {
+function AddBatch({ page, dataToChange, sideBarShow }) {
   const [dataToSend, setDataToSend] = useState({
     id: "",
     name: "",
@@ -61,7 +61,7 @@ function AddInsitute({ page, dataToChange, sideBarShow }) {
                 <div className="form-group row">
                   <div className="col-md-4 offset-md-6 order-last order-md-first">
                     <input
-                      type="text"
+                      type="number"
                       placeholder="الاسم"
                       className="form-control text"
                       onChange={handleNameChange}
@@ -73,7 +73,7 @@ function AddInsitute({ page, dataToChange, sideBarShow }) {
                     htmlFor="institute"
                     className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
                   >
-                    اسم المعهد
+                    رقم الدفعة
                   </label>
                 </div>
                 <div className="form-group row">
@@ -83,7 +83,7 @@ function AddInsitute({ page, dataToChange, sideBarShow }) {
                         type="submit"
                         className="btn btn-success btn-block"
                       >
-                        حفظ المعهد
+                        حفظ الدفعة
                       </button>
                     ) : (
                       <button disabled className="btn btn-success btn-block">
@@ -101,4 +101,4 @@ function AddInsitute({ page, dataToChange, sideBarShow }) {
   );
 }
 
-export default AddInsitute;
+export default AddBatch;

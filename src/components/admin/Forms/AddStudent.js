@@ -6,6 +6,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
   const [data, setData] = useState({
     zones: [],
     pharmacies: [],
+    batches: [],
   });
   const [pharmacies, setPharmacies] = useState([
     { id: "", pharmacy_id: "", name: "" },
@@ -21,6 +22,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     d_class: "",
     pharmacy_id: "",
     support: "",
+    photo: "",
   });
   const [saving, setSaving] = useState(false);
   const [choosenPharmacies, setChoosenPharmacies] = useState([]);
@@ -76,8 +78,21 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     setPharmacies(nee);
     setDataToSend({ ...dataToSend, pharmacies: nee });
   };
-  const handleSupportChange = (e) =>
+  const handlePhotoChange = (e) => {
+    setDataToSend({
+      ...dataToSend,
+      photo: e.target.files[0].name,
+    });
+
+    var fr = new FileReader();
+    fr.onload = function (event) {
+      document.getElementById("myimage").src = event.target.result;
+    };
+    fr.readAsDataURL(e.target.files[0]);
+  };
+  const handleSupportChange = (e) => {
     setDataToSend({ ...dataToSend, support: e.target.value });
+  };
   const handleAddPharmacyButton = (e) => {
     setPharmacies([...pharmacies, { id: "", pharmacy_id: "", name: "" }]);
   };
@@ -119,7 +134,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
   };
   return (
     <section className="main">
-      <div className="row pt-5 m-0">
+      <div className="row padding-form m-0">
         <div
           className={
             sideBarShow
@@ -129,10 +144,19 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
           id="main-view"
         >
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
-            <div className="col-sm-12 p-2">
+            <div className="col-5">
+              <div className="col-2 offset-6 order-last order-md-first mt-5">
+                {dataToSend.photo ? (
+                  <img id="myimage" className="img-student-attendance" />
+                ) : (
+                  <img src="" className="img-student-attendance" />
+                )}
+              </div>
+            </div>
+            <div className="col-7 p-2">
               <form onSubmit={handleSubmit}>
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <input
                       id="doctor"
                       type="text"
@@ -145,13 +169,13 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   </div>
                   <label
                     htmlFor="doctor"
-                    className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
+                    className="col-2 col-form-label text-center text-white order-first order-md-last"
                   >
                     اسم الطالب
                   </label>
                 </div>
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <select
                       id="zone"
                       onChange={handleZoneChange}
@@ -176,7 +200,32 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   </label>
                 </div>
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
+                    <select
+                      id="batch"
+                      onChange={handleZoneChange}
+                      className="form-control"
+                      dir="rtl"
+                      value={dataToSend.batch_id}
+                      required
+                    >
+                      <option selected>اختر</option>
+                      {data.batches.map((batch) => (
+                        <option key={batch.id} value={batch.id}>
+                          {batch.batch}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <label
+                    htmlFor="batch"
+                    className="col-2 col-form-label text-center text-white order-first order-md-last"
+                  >
+                    الدفعة
+                  </label>
+                </div>
+                <div className="form-group row">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <input
                       id="phone"
                       type="text"
@@ -195,7 +244,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                 </div>
 
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <input
                       id="date"
                       type="date"
@@ -213,7 +262,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   </label>
                 </div>
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <input
                       id="support"
                       type="text"
@@ -232,13 +281,12 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   </label>
                 </div>
                 <div className="form-group row">
-                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                  <div className="col-7 offset-1 order-last order-md-first">
                     <input
                       id="photo"
                       type="file"
-                      onChange={handleSupportChange}
+                      onChange={handlePhotoChange}
                       className="form-control text"
-                      value={dataToSend.photo}
                       required
                     ></input>
                   </div>
@@ -250,7 +298,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   </label>
                 </div>
                 <div className="form-group row">
-                  <div className="col-10 offset-1 col-sm-3 offset-sm-6 mt-3">
+                  <div className="col-3 offset-2 mt-3">
                     {!saving ? (
                       <button
                         type="submit"

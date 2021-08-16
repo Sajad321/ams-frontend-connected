@@ -9,6 +9,7 @@ import StudentsInstallments from "./Lists/StudentsInstallments";
 import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
 import AddInstitute from "./Forms/AddInstitute";
+import AddBatch from "./Forms/AddBatch";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -60,6 +61,7 @@ function Admin(props) {
         StudentsAttendanceButton={handleStudentsAttendanceButton}
         AddStudentButton={handleAddStudentButton}
         AddInstituteButton={handleAddInstituteButton}
+        AddBatchButton={handleAddBatchButton}
         sideEvent={sideEvent}
         sideBarShow={sideBarShow}
         setSideBarShow={setSideBarShow}
@@ -108,6 +110,10 @@ function Admin(props) {
 
   const handleAddInstituteButton = () => {
     setPage("AddInstitute");
+    setDataToChange({});
+  };
+  const handleAddBatchButton = () => {
+    setPage("AddBatch");
     setDataToChange({});
   };
 
@@ -209,6 +215,20 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* AddInstitute */}
         <AddInstitute
+          page={handleMainButton}
+          dataToChange={dataToChange}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
+      </Fragment>
+    );
+  } else if (page == "AddBatch") {
+    return (
+      <Fragment>
+        {AdminHeaderFunction({ AddBatch: "active" })}
+        {/* End of Navbar */}
+        {/* AddInstitute */}
+        <AddBatch
           page={handleMainButton}
           dataToChange={dataToChange}
           sideBarShow={sideBarShow}
