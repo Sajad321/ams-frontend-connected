@@ -4,32 +4,24 @@ const apiUrl = process.env.API_URL;
 
 function AddStudent({ page, dataToChange, sideBarShow }) {
   const [data, setData] = useState({
-    zones: [],
-    pharmacies: [],
+    institutes: [],
     batches: [],
   });
-  const [pharmacies, setPharmacies] = useState([
-    { id: "", pharmacy_id: "", name: "" },
-  ]);
   const [dataToSend, setDataToSend] = useState({
     id: "",
     name: "",
-    date_of_joining: "",
-    email: "",
-    zone_id: "",
+    dob: "",
+    institute_id: "",
     phone: "",
-    speciality: "",
-    d_class: "",
-    pharmacy_id: "",
-    support: "",
-    photo: "",
+    batch_id: "",
+    note: "",
+    photo: null,
   });
   const [saving, setSaving] = useState(false);
-  const [choosenPharmacies, setChoosenPharmacies] = useState([]);
   useEffect(() => {
     const getStuff = async () => {
       try {
-        const response = await fetch(`${apiUrl}/doctors-form`, {
+        const response = await fetch(`${apiUrl}/students-form`, {
           method: "GET",
           headers: {
             Authorization: `Bearer`,
@@ -38,7 +30,6 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
 
         const responseData = await response.json();
         setData(responseData);
-        setChoosenPharmacies(responseData.pharmacies);
       } catch (error) {
         console.log(error.message);
       }
@@ -46,38 +37,22 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     getStuff();
     if (Object.keys(dataToChange).length != 0) {
       setDataToSend(dataToChange);
-      if (dataToChange.pharmacies.length != 0) {
-        setPharmacies(dataToChange.pharmacies);
-      }
     }
   }, []);
-  const handleDoctorChange = (e) =>
+  const handleNameChange = (e) =>
     setDataToSend({ ...dataToSend, name: e.target.value });
-  const handleZoneChange = (e) => {
-    setChoosenPharmacies(
-      [...data.pharmacies].filter((p) => p.zone_id == e.target.value)
-    );
-    setDataToSend({ ...dataToSend, zone_id: e.target.value });
+  const handleInstituteChange = (e) => {
+    setDataToSend({ ...dataToSend, institute_id: e.target.value });
+  };
+  const handleBatchChange = (e) => {
+    setDataToSend({ ...dataToSend, batch_id: e.target.value });
   };
   const handleDateChange = (e) =>
-    setDataToSend({ ...dataToSend, date_of_joining: e.target.value });
-  const handleEmailChange = (e) =>
-    setDataToSend({ ...dataToSend, email: e.target.value });
+    setDataToSend({ ...dataToSend, dob: e.target.value });
   const handlePhoneChange = (e) =>
     setDataToSend({ ...dataToSend, phone: e.target.value });
-  const handleSpecialityChange = (e) =>
-    setDataToSend({ ...dataToSend, speciality: e.target.value });
-  const handleD_classChange = (e) =>
-    setDataToSend({ ...dataToSend, d_class: e.target.value });
-  const handlePharmacyChange = (e, i) => {
-    let nee = [...pharmacies];
-    nee[i] = {
-      ...nee[i],
-      pharmacy_id: e.target.value,
-    };
-    setPharmacies(nee);
-    setDataToSend({ ...dataToSend, pharmacies: nee });
-  };
+  const handleNoteChange = (e) =>
+    setDataToSend({ ...dataToSend, note: e.target.value });
   const handlePhotoChange = (e) => {
     setDataToSend({
       ...dataToSend,
@@ -89,19 +64,6 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
       document.getElementById("myimage").src = event.target.result;
     };
     fr.readAsDataURL(e.target.files[0]);
-  };
-  const handleSupportChange = (e) => {
-    setDataToSend({ ...dataToSend, support: e.target.value });
-  };
-  const handleAddPharmacyButton = (e) => {
-    setPharmacies([...pharmacies, { id: "", pharmacy_id: "", name: "" }]);
-  };
-  const handleRemovePharmacyButton = (e) => {
-    const list = [...pharmacies];
-    if (list.length > 1) {
-      list.pop();
-      setPharmacies(list);
-    }
   };
   const saveDoctor = async () => {
     try {
@@ -158,17 +120,17 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                 <div className="form-group row">
                   <div className="col-7 offset-1 order-last order-md-first">
                     <input
-                      id="doctor"
+                      id="name"
                       type="text"
                       placeholder="الاسم"
                       className="form-control text"
-                      onChange={handleDoctorChange}
+                      onChange={handleNameChange}
                       value={dataToSend.name}
                       required
                     ></input>
                   </div>
                   <label
-                    htmlFor="doctor"
+                    htmlFor="name"
                     className="col-2 col-form-label text-center text-white order-first order-md-last"
                   >
                     اسم الطالب
@@ -177,17 +139,17 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                 <div className="form-group row">
                   <div className="col-7 offset-1 order-last order-md-first">
                     <select
-                      id="zone"
-                      onChange={handleZoneChange}
+                      id="institute"
+                      onChange={handleInstituteChange}
                       className="form-control"
                       dir="rtl"
-                      value={dataToSend.zone_id}
+                      value={dataToSend.institute_id}
                       required
                     >
                       <option selected>اختر</option>
-                      {data.zones.map((zone) => (
-                        <option key={zone.id} value={zone.id}>
-                          {zone.zone}
+                      {data.institutes.map((institute) => (
+                        <option key={institute.id} value={institute.id}>
+                          {institute.name}
                         </option>
                       ))}
                     </select>
@@ -203,7 +165,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                   <div className="col-7 offset-1 order-last order-md-first">
                     <select
                       id="batch"
-                      onChange={handleZoneChange}
+                      onChange={handleBatchChange}
                       className="form-control"
                       dir="rtl"
                       value={dataToSend.batch_id}
@@ -212,7 +174,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       <option selected>اختر</option>
                       {data.batches.map((batch) => (
                         <option key={batch.id} value={batch.id}>
-                          {batch.batch}
+                          {batch.batch_num}
                         </option>
                       ))}
                     </select>
@@ -250,7 +212,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       type="date"
                       className="form-control text"
                       onChange={handleDateChange}
-                      value={dataToSend.date_of_joining}
+                      value={dataToSend.dob}
                       required
                     ></input>
                   </div>
@@ -264,17 +226,17 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                 <div className="form-group row">
                   <div className="col-7 offset-1 order-last order-md-first">
                     <input
-                      id="support"
+                      id="note"
                       type="text"
-                      onChange={handleSupportChange}
-                      placeholder="الدعم"
+                      onChange={handleNoteChange}
+                      placeholder="الملاحظات"
                       className="form-control text"
-                      value={dataToSend.support}
+                      value={dataToSend.note}
                       required
                     ></input>
                   </div>
                   <label
-                    htmlFor="support"
+                    htmlFor="note"
                     className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
                   >
                     الملاحظات

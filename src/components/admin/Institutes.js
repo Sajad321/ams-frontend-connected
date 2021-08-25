@@ -3,15 +3,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InstitutesModal } from "../common/Modal.js";
 const apiUrl = process.env.API_URL;
 
-function Institutes({ edit, sideBarShow, handleAttendanceButton }) {
+function Institutes({
+  edit,
+  sideBarShow,
+  handleStartAttendanceButton,
+  handleStudentsAttendanceButton,
+  handleStudentsInstallmentsButton,
+}) {
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [searchedInstitutes, setSearchedInstitutes] = useState([...institutes]);
+  const [modalShow, setModalShow] = useState(false);
   useEffect(() => {
     const getInstitutes = async () => {
       try {
-        const response = await fetch(`${apiUrl}/institutes`, {
+        const response = await fetch(`${apiUrl}/institute`, {
           method: "GET",
           headers: {
             Authorization: `Bearer`,
@@ -71,7 +78,6 @@ function Institutes({ edit, sideBarShow, handleAttendanceButton }) {
   const handleEditButton = (institute) => {
     edit(institute);
   };
-  const [modalShow, setModalShow] = useState(false);
   return (
     <section className="main">
       <div className="row pt-5 m-0">
@@ -119,49 +125,35 @@ function Institutes({ edit, sideBarShow, handleAttendanceButton }) {
                 </div>
               </div>
             </div>
-            <div className="col-sm-3 p-2" dir="ltr">
-              <InstitutesModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-                handleAttendanceButton={handleAttendanceButton}
-              />
-              <div
-                className="card card-common card-height"
-                onClick={() => setModalShow(true)}
-              >
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-10 col-sm-9 text-right text-white">
-                      <h5>البنوك</h5>
-                    </div>
-                    <div className="col-2 col-sm-3 p-0 text-center text-white">
-                      <FontAwesomeIcon icon="users" size="3x" />
-                    </div>
-                    <button
-                      onClick={() => handleEditButton()}
-                      className="btn btn-secondary text-white"
-                    >
-                      تعديل
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             {searchType == "0"
               ? institutes.map((institute) => {
                   return (
-                    <div className="col-sm-3 p-2" key={institute.id}>
+                    <div className="col-sm-3 p-2" dir="ltr" key={institute.id}>
+                      <InstitutesModal
+                        show={modalShow}
+                        onHide={() => setModalShow(false)}
+                        handleStartAttendanceButton={
+                          handleStartAttendanceButton
+                        }
+                        handleStudentsInstallmentsButton={
+                          handleStudentsInstallmentsButton
+                        }
+                        handleStudentsAttendanceButton={
+                          handleStudentsAttendanceButton
+                        }
+                        institute_id={institute.id}
+                      />
                       <div
                         className="card card-common card-height"
-                        onClick={handleInsitute}
+                        onClick={() => setModalShow(true)}
                       >
                         <div className="card-body">
                           <div className="row">
-                            <div className="col-10 col-sm-9 text-right text-secondary">
+                            <div className="col-10 col-sm-9 text-right text-white">
                               <h5>{institute.name}</h5>
                             </div>
-                            <div className="col-2 col-sm-3 p-0 text-center text-secondary">
+                            <div className="col-2 col-sm-3 p-0 text-center text-white">
                               <FontAwesomeIcon icon="users" size="3x" />
                             </div>
                             <button

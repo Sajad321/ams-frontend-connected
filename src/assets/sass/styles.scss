@@ -214,7 +214,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .card-common {
   background-color: #3d467c;
 }
-
+.card-footer {
+  background-color: #313863;
+}
 .see-more {
   cursor: pointer;
 }
@@ -259,7 +261,9 @@ footer {
 // .modal {
 //   background-color: #222;
 // }
-
+.modal-text-form {
+  font-size: larger;
+}
 .close {
   position: absolute;
   left: 20px;
@@ -465,6 +469,11 @@ thead .button.descending::after {
 .img-student-attendance {
   width: 200px;
   height: 200px;
+}
+
+.font-student-info {
+  margin-top: 100px;
+  font-size: 25px;
 }
 
 .padding-form {

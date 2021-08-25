@@ -4,6 +4,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
+// const messages = require("./messages.json");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -44,17 +45,6 @@ function createWindow() {
     },
     autoHideMenuBar: true,
   });
-  studentInfoWindow = new BrowserWindow({
-    minWidth: 600,
-    minHeight: 600,
-    show: false,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-    autoHideMenuBar: true,
-  });
   loginWindow = new BrowserWindow({
     minWidth: 600,
     minHeight: 600,
@@ -75,13 +65,6 @@ function createWindow() {
       pathname: "index.html",
       slashes: true,
     });
-    studentInfoPath = url.format({
-      protocol: "http:",
-      host: "localhost:8080",
-      pathname: "index.html",
-      hash: "#sai",
-      slashes: true,
-    });
     loginPath = url.format({
       protocol: "http:",
       host: "localhost:8080",
@@ -95,13 +78,7 @@ function createWindow() {
       pathname: path.join(__dirname, "dist", "index.html"),
       slashes: true,
     });
-    studentInfoPath = url.format({
-      protocol: "file:",
-      pathname: path.join(__dirname, "dist", "index.html"),
-      hash: "#sai",
-      slashes: true,
-    });
-    studentInfoPath = url.format({
+    loginPath = url.format({
       protocol: "file:",
       pathname: path.join(__dirname, "dist", "index.html"),
       hash: "#login",
@@ -111,7 +88,6 @@ function createWindow() {
 
   loginWindow.loadURL(loginPath);
   mainWindow.loadURL(indexPath);
-  studentInfoWindow.loadURL(studentInfoPath);
 
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
@@ -142,12 +118,59 @@ function createWindow() {
       );
       // mainWindow.webContents.openDevTools();
     }
-    ipcMain.on("show-student-info", () => {
-      studentInfoWindow.show();
-    });
-    ipcMain.on("abort-student-attendance", () => {
-      studentInfoWindow.hide();
-    });
+    // ipcMain.on("show-student-info", (event, args) => {
+    //   if (studentInfoWindow != null) {
+    //     studentInfoWindow.close();
+    //     studentInfoWindow = null;
+    //   }
+    //   studentInfoWindow = new BrowserWindow({
+    //     minWidth: 600,
+    //     minHeight: 600,
+    //     show: false,
+    //     frame: false,
+    //     webPreferences: {
+    //       nodeIntegration: true,
+    //       contextIsolation: false,
+    //     },
+    //     autoHideMenuBar: true,
+    //   });
+    //   console.log(args[0]);
+    //   studentInfoPath = () => {
+    //     if (dev && process.argv.indexOf("--noDevServer") === -1) {
+    //       return url.format({
+    //         protocol: "http:",
+    //         host: "localhost:8080",
+    //         pathname: "index.html",
+    //         hash: `#sai/${args[0]}`,
+    //         slashes: true,
+    //       });
+    //     } else {
+    //       return url.format({
+    //         protocol: "file:",
+    //         pathname: path.join(__dirname, "dist", "index.html"),
+    //         hash: `#sai/${args[0]}`,
+    //         slashes: true,
+    //       });
+    //     }
+    //   };
+    //   studentInfoWindow.loadURL(studentInfoPath());
+
+    //   studentInfoWindow.show();
+    // });
+    // ipcMain.on("abort-student-attendance", () => {
+    //   studentInfoWindow.hide();
+    //   mainWindow.focus();
+    //   mainWindow.webContents.send("aborted");
+    // });
+    // ipcMain.on("accept-student-attendance", (event, args) => {
+    //   studentInfoWindow.hide();
+    //   mainWindow.focus();
+    //   console.log(args);
+    //   event.sender.send("accepted", [args[0]]);
+    //   // event.reply("accepted", [args[0]]);
+    //   // messages.student_attendance_id = args[0];
+    //   // messages.accepted = true;
+    // });
     ipcMain.on("login", () => {
       mainWindow.hide();
       loginWindow.show();

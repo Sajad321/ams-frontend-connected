@@ -53,65 +53,77 @@ function AdminHeader(props) {
                   {" "}
                   <a
                     href="#"
-                    className="nav_link active"
+                    className={"nav_link " + props.Active.Main}
                     onClick={props.MainButton}
                   >
                     {" "}
                     <FontAwesomeIcon
                       icon="home"
-                      className="nav_logo-icon"
+                      className={"nav_logo-icon " + props.Active.Main}
                       color="white"
                       size="2x"
                     />
-                    <span className="nav_name" id="nav-text">
+                    <span
+                      className={"nav_name " + props.Active.Main}
+                      id="nav-text"
+                    >
                       الرئيسية
                     </span>{" "}
                   </a>{" "}
                   <a
                     href="#"
-                    className="nav_link"
+                    className={"nav_link " + props.Active.Institutes}
                     onClick={props.InstitutesButton}
                   >
                     {" "}
                     <FontAwesomeIcon
                       icon="school"
-                      className="nav_logo-icon"
+                      className={"nav_logo-icon " + props.Active.Institutes}
                       color="white"
                       size="2x"
                     />
-                    <span className="nav_name" id="nav-text">
+                    <span
+                      className={"nav_name " + props.Active.Institutes}
+                      id="nav-text"
+                    >
                       المعاهد
                     </span>{" "}
                   </a>{" "}
                   <a
                     href="#"
-                    className="nav_link"
+                    className={"nav_link " + props.Active.Students}
                     onClick={() => setStudentsModalShow(true)}
                   >
                     {" "}
                     <FontAwesomeIcon
                       icon="user-graduate"
-                      className="nav_logo-icon"
+                      className={"nav_logo-icon " + props.Active.Students}
                       color="white"
                       size="2x"
                     />
-                    <span className="nav_name" id="nav-text">
+                    <span
+                      className={"nav_name " + props.Active.Students}
+                      id="nav-text"
+                    >
                       الطلاب
                     </span>{" "}
                   </a>{" "}
                   <a
                     href="#"
-                    className="nav_link"
+                    className={"nav_link " + props.Active.Add}
                     onClick={() => setAddModalShow(true)}
                   >
                     {" "}
                     <FontAwesomeIcon
                       icon="plus-circle"
-                      className="nav_logo-icon"
+                      className={"nav_logo-icon " + props.Active.Add}
                       color="white"
                       size="2x"
                     />
-                    <span className="nav_name" id="nav-text">
+                    <span
+                      className={"nav_name " + props.Active.Add}
+                      id="nav-text"
+                    >
                       اضافة
                     </span>{" "}
                   </a>{" "}

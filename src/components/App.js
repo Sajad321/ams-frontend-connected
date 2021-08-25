@@ -38,11 +38,12 @@ function App() {
           path="/"
           render={(routeProps) => <HomePage {...routeProps} />}
         />
-        <Route path="/sai" component={StudentInfo} />
         <Route
           path="/login"
           render={(routeProps) => <Login {...routeProps} setToken={setToken} />}
         />
+        <Route path="/sai/:id" component={StudentInfo} />
+        <Route path="/sai" exact component={StudentInfo} />
         <Route component={PageNotFound} />
       </Switch>
       <ToastContainer autoClose={3000} position="top-left" />

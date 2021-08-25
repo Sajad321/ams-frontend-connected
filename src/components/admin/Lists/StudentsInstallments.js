@@ -1,93 +1,223 @@
 import React, { useState, useEffect, Fragment } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
 function StudentsInstallments({ edit, sideBarShow }) {
-  const [doctors, setDoctors] = useState([]);
+  const [data, setData] = useState({
+    students: [],
+    installments: [],
+  });
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
-  const [searchedDoctors, setSearchedDoctors] = useState([...doctors]);
+  const [searchedStudents, setSearchedStudents] = useState({ ...data });
   useEffect(() => {
-    const getDoctors = async () => {
+    const getInstallments = async () => {
       try {
-        const response = await fetch(`${apiUrl}/doctors-detail`, {
+        const response = await fetch(`${apiUrl}/student-install`, {
           method: "GET",
           headers: {
             Authorization: `Bearer`,
           },
         });
-
         const responseData = await response.json();
-        setDoctors(responseData.doctors);
-        setSearchedDoctors(responseData.doctors);
+        setData({
+          students: responseData.students,
+          installments: responseData.installments.sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }),
+        });
+
+        setSearchedStudents({
+          students: responseData.students,
+          installments: responseData.installments.sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }),
+        });
       } catch (error) {
         console.log(error.message);
       }
     };
-    getDoctors();
+    getInstallments();
   }, []);
+  const handleBatchChange = (e) => {
+    const getInstallments = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/student-install`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        });
+        const responseData = await response.json();
+        setData({
+          students: responseData.students,
+          installments: responseData.installments.sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }),
+        });
+
+        setSearchedStudents({
+          students: responseData.students,
+          installments: responseData.installments.sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }),
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getInstallments();
+  };
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
-  const handleSearch2Change = (e) => {
-    setSearch2(e.target.value);
-  };
   const handleSearchButton = (e) => {
     e.preventDefault();
     const reg = new RegExp(search, "i");
     if (searchType == "1") {
-      setSearchedDoctors(
-        [...doctors].filter(
-          (d) => d.date_of_joining <= search2 && d.date_of_joining >= search
-        )
-      );
+      setSearchedStudents([...students].filter((d) => d.name.match(reg)));
     } else if (searchType == "2") {
-      setSearchedDoctors([...doctors].filter((d) => d.name.match(reg)));
-    } else if (searchType == "3") {
-      setSearchedDoctors([...doctors].filter((d) => d.zone.match(reg)));
-    } else if (searchType == "4") {
-      setSearchedDoctors([...doctors].filter((d) => d.speciality.match(reg)));
+      setSearchedStudents([...students].filter((d) => d.institute.match(reg)));
     }
   };
-  const handleEditButton = (doctor) => {
-    edit(doctor);
+  const handleEditButton = (student) => {
+    edit(student);
   };
-  const render_report_activity = (report_activity) => {
-    if (report_activity == true) {
-      return <td className="bg-success d-block mt-3"></td>;
-    } else if (report_activity == false) {
-      return <td className="bg-danger d-block mt-3"></td>;
+  const handleInstallmentsToggle = (studentIndex, id, received) => {
+    if (searchType == "0") {
+      const installmentIndex = data.students[
+        studentIndex
+      ].installment_received.findIndex((i) => i.id == id);
+      let nee = [...data.students];
+      let nee1 = [...nee[studentIndex].installment_received];
+      nee1[installmentIndex] = {
+        ...nee1[installmentIndex],
+        received: received,
+      };
+      nee[studentIndex].installment_received[installmentIndex] =
+        nee1[installmentIndex];
+      setData({
+        ...data,
+        students: nee,
+      });
     } else {
-      return <td className="d-block mt-3"></td>;
+      const installmentIndex = searchedStudents.students.findIndex(
+        (o) => o.id == id
+      );
+      let nee = [...searchedStudents.students];
+      let nee1 = [...nee[studentIndex].installment_received];
+      nee1[installmentIndex] = {
+        ...nee1[installmentIndex],
+        received: received,
+      };
+      nee[studentIndex].installment_received[installmentIndex] =
+        nee1[installmentIndex];
+      setSearchedStudents({
+        ...data,
+        students: nee,
+      });
     }
   };
+  const handleInstallmentsToggleButton = (index, id, received) => {
+    const toggleInstallment = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/installments/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ received: received == 0 ? 1 : 0 }),
+        });
+
+        const responseData = await response.json();
+      } catch (error) {
+        console.log(error.message);
+        handleInstallmentsToggle(index, id, received);
+        toast.warn("حصل خطأ");
+      }
+    };
+    toggleInstallment();
+    handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
+    toast.success("تم استلام القسط");
+  };
+  const printTable = () => {
+    let divToPrint = document.getElementById("print-table");
+    newWin = window.open("");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.print();
+    newWin.close();
+  };
+  const render_installments = (student, installment, index) => {
+    const installment_received = student.installment_received.filter(
+      (installment_received) =>
+        installment_received.installment_id == installment.id
+    )[0];
+    if (installment_received) {
+      if (
+        installment_received.received == "1" &&
+        installment.id == installment_received.installment_id
+      ) {
+        return (
+          <td className="" key={installment_received.id}>
+            <FontAwesomeIcon
+              icon="check-circle"
+              size="2x"
+              color="green"
+              onClick={() =>
+                handleInstallmentsToggleButton(
+                  index,
+                  installment_received.id,
+                  installment_received.received
+                )
+              }
+            />
+          </td>
+        );
+      } else if (
+        installment_received.received == "0" &&
+        installment.id == installment_received.installment_id
+      ) {
+        return (
+          <td className="" key={installment_received.id}>
+            <FontAwesomeIcon
+              icon="times-circle"
+              size="2x"
+              color="red"
+              onClick={() =>
+                handleInstallmentsToggleButton(
+                  index,
+                  installment_received.id,
+                  installment_received.received
+                )
+              }
+            />
+          </td>
+        );
+      }
+    } else {
+      return <td className="" key={installment.id}></td>;
+    }
+  };
+
   const render_table = () => {
     if (searchType == "0") {
-      const render_doctors = doctors.map((doctor) => {
+      const render_data = data.students.map((student, index) => {
         return (
-          <tr key={doctor.id} className="font-weight-bold">
-            <td>{doctor.name}</td>
-            <td>
-              {doctor.pharmacies.map((pharmacy) => {
-                if (doctor.pharmacies.length == 1) {
-                  return `${pharmacy.name}`;
-                } else {
-                  return `${pharmacy.name}, `;
-                }
-              })}
-            </td>
-            {render_report_activity(doctor.report_activity)}
-            <td>
+          <tr key={student.id} className="font-weight-bold">
+            <td className="text-white">{student.name}</td>
+            {data.installments.map((installment) => {
+              return render_installments(student, installment, index);
+            })}
+            {/* <td>
               <button
-                onClick={() => handleEditButton(doctor)}
+                onClick={() => handleEditButton(student)}
                 className="btn btn-secondary text-white"
               >
                 تعديل
               </button>
-            </td>
+            </td> */}
           </tr>
         );
       });
@@ -95,47 +225,35 @@ function StudentsInstallments({ edit, sideBarShow }) {
         <table
           className="table table-striped table-bordered table-hover text"
           dir="rtl"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr>
               <th>الاسم</th>
-              {searchedDoctors.map((doctor) => {
+              {data.installments.map((installment) => {
                 return (
-                  <th key={doctor.id}>
-                    {doctor.name}
+                  <th key={installment.id}>
+                    معهد {installment.institute_name}
                     <br />
-                    {doctor.date}
+                    القسط {installment.name}
+                    <br />
+                    {installment.date}
                   </th>
                 );
               })}
             </tr>
           </thead>
-          <tbody>{render_doctors}</tbody>
+          <tbody>{render_data}</tbody>
         </table>
       );
     } else {
-      const render_doctors = searchedDoctors.map((doctor) => {
+      const render_data = searchedStudents.students.map((student) => {
         return (
-          <tr key={doctor.id} className="font-weight-bold">
-            <td>{doctor.name}</td>
-            <td>
-              {doctor.pharmacies.map((pharmacy) => {
-                if (doctor.pharmacies.length == 1) {
-                  return `${pharmacy.name}`;
-                } else {
-                  return `${pharmacy.name}, `;
-                }
-              })}
-            </td>
-            {render_report_activity(doctor.report_activity)}
-            <td>
-              <button
-                onClick={() => handleEditButton(doctor)}
-                className="btn btn-secondary text-white"
-              >
-                تعديل
-              </button>
-            </td>
+          <tr key={student.id} className="font-weight-bold">
+            <td className="text-white">{student.name}</td>
+            {searchedStudents.installments.map((installment) => {
+              return render_installments(student, installment, index);
+            })}
           </tr>
         );
       });
@@ -143,22 +261,25 @@ function StudentsInstallments({ edit, sideBarShow }) {
         <table
           className="table table-striped table-bordered table-hover text"
           dir="rtl"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr>
               <th>الاسم</th>
-              {searchedDoctors.map((doctor) => {
+              {searchedStudents.installments.map((installment) => {
                 return (
-                  <th key={doctor.id}>
-                    {doctor.name}
+                  <th key={installment.id}>
+                    معهد {installment.institute_name}
                     <br />
-                    {doctor.date}
+                    القسط {installment.name}
+                    <br />
+                    {installment.date}
                   </th>
                 );
               })}
             </tr>
           </thead>
-          <tbody>{render_doctors}</tbody>
+          <tbody>{render_data}</tbody>
         </table>
       );
     }
@@ -176,7 +297,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
           <input
             type="text"
             className="form-control text"
-            id="searchDoctor"
+            id="searchStudent"
             onChange={handleSearchChange}
             placeholder="ابحث"
           ></input>
@@ -188,7 +309,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
           <input
             type="text"
             className="form-control text"
-            id="searchZone"
+            id="searchInstitute"
             onChange={handleSearchChange}
             placeholder="ابحث"
           ></input>
@@ -210,13 +331,14 @@ function StudentsInstallments({ edit, sideBarShow }) {
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
             <div className="col-12">
               <div className="row mt-3">
-                <div className="col-12 col-md-8 order-last order-md-first">
-                  <form onSubmit={handleSearchButton}>
+                <div className="col-8">
+                  <form onSubmit={printTable}>
                     <div className="form-group row mt-1">
                       <div className="col-2 text">
                         <button
                           type="submit"
                           className="btn btn-secondary btn-sm mt-1"
+                          onClick={handleSearchButton}
                         >
                           ابحث
                         </button>
@@ -239,7 +361,21 @@ function StudentsInstallments({ edit, sideBarShow }) {
                     </div>
                   </form>
                 </div>
-                <div className="col-12 col-md-4 order-first order-md-last">
+                <div className="col-1 offset-1 pt-1">
+                  <select
+                    id="batch"
+                    onChange={handleBatchChange}
+                    className="form-control"
+                    dir="rtl"
+                  >
+                    <option value="0" defaultValue>
+                      الدفعة
+                    </option>
+                    <option value="1">الاسم</option>
+                    <option value="2">المعهد</option>
+                  </select>
+                </div>
+                <div className="col-2">
                   <h2 className="text text-white">اقساط الطلاب</h2>
                 </div>
               </div>

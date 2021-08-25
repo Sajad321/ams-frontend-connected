@@ -40,6 +40,7 @@
   "scripts": {
     "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
     "start": "cross-env NODE_ENV=development webpack serve --hot --host localhost --config=./webpack.dev.config.js --mode development",
+    "build:python": "PyInstaller --clean -F --onefile -y .\\main.spec",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "prepackage": "rimraf ./build && mkdir build && rimraf ./dist && mkdir dist && rimraf ./windows_installer && mkdir windows_installer",
     "package": "npm run build",

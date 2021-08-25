@@ -62,7 +62,7 @@ function AddBatch({ page, dataToChange, sideBarShow }) {
                   <div className="col-md-4 offset-md-6 order-last order-md-first">
                     <input
                       type="number"
-                      placeholder="الاسم"
+                      placeholder="رقم الدفعة"
                       className="form-control text"
                       onChange={handleNameChange}
                       value={dataToSend.name}

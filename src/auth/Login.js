@@ -2,11 +2,20 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 const { ipcRenderer } = require("electron");
+const apiUrl = process.env.API_URL;
 
 async function loginUser(credentials) {
-  return { token: "test1s" };
+  return fetch(
+    `${apiUrl}/login?username=${credentials.username}&password=${credentials.password}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // body: JSON.stringify(credentials),
+    }
+  ).then((data) => data.json());
 }
-
 export default function Login({ setToken }) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
@@ -25,31 +34,31 @@ export default function Login({ setToken }) {
 
   return (
     <div className="d-flex justify-content-center align-items-center main pb-5 text-white ">
-      <form onSubmit={handleSubmit} className="w-50">
-        <h3 className="text-center mb-3">Sign In</h3>
+      <form onSubmit={handleSubmit} className="w-50" dir="rtl">
+        <h3 className="text-center mb-3">تسجيل الدخول</h3>
 
         <div className="form-group">
-          <label>Username</label>
+          <label className="float-right">اسم المستخدم</label>
           <input
             type="username"
             className="form-control"
-            placeholder="Enter Username"
+            placeholder="Username"
             onChange={(e) => setUserName(e.target.value)}
           />
         </div>
 
         <div className="form-group">
-          <label>Password</label>
+          <label className="float-right">كلمة المرور</label>
           <input
             type="password"
             className="form-control"
-            placeholder="Enter password"
+            placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <button type="submit" className="btn btn-primary btn-block">
-          Login
+          سجل الدخول
         </button>
       </form>
     </div>

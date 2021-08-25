@@ -6,10 +6,7 @@ function MainAdmin({ sideBarShow }) {
   const [data, setData] = useState({
     students_count: "",
     institutes_count: "",
-    pharmacies_count: "",
-    reports_count: "",
-    orders_count: "",
-    items_count: "",
+    institutes: [],
   });
   useEffect(() => {
     const getMain = async () => {
@@ -79,69 +76,31 @@ function MainAdmin({ sideBarShow }) {
                 </div>
               </div>
             </div>
-            <div className="col-sm-6 p-2">
-              <div className="card card-common">
-                <div className="card-body" dir="ltr">
-                  <div className="d-flex justify-content-between">
-                    <FontAwesomeIcon
-                      icon="chart-line"
-                      color="white"
-                      size="3x"
-                    />
-                    <div className="text-right text-white">
-                      <h5>الحضور اليومي لمعهد البنوك</h5>
-                      <h3>{data.pharmacies_count}</h3>
+            {data.institutes.map((institute) => {
+              return (
+                <div className="col-sm-6 p-2" key={institute.id}>
+                  <div className="card card-common">
+                    <div className="card-body" dir="ltr">
+                      <div className="d-flex justify-content-between">
+                        <FontAwesomeIcon
+                          icon="chart-line"
+                          color="white"
+                          size="3x"
+                        />
+                        <div className="text-right text-white">
+                          <h5>عدد طلاب معهد {institute.name}</h5>
+                          <h3>{institute.students_institute_count}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-footer text-white">
+                      <i className="fas fa-sync mr-3"></i>
+                      <span>تم التحديث الان</span>
                     </div>
                   </div>
                 </div>
-                <div className="card-footer text-white">
-                  <i className="fas fa-sync mr-3"></i>
-                  <span>تم التحديث الان</span>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6 p-2">
-              <div className="card card-common">
-                <div className="card-body" dir="ltr">
-                  <div className="d-flex justify-content-between">
-                    <FontAwesomeIcon
-                      icon="chart-line"
-                      color="white"
-                      size="3x"
-                    />
-                    <div className="text-right text-white">
-                      <h5>الحضور اليومي لمعهد زيونة</h5>
-                      <h3>{data.orders_count}</h3>
-                    </div>
-                  </div>
-                </div>
-                <div className="card-footer text-white">
-                  <i className="fas fa-sync mr-3"></i>
-                  <span>تم التحديث الان</span>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6 p-2">
-              <div className="card card-common">
-                <div className="card-body" dir="ltr">
-                  <div className="d-flex justify-content-between">
-                    <FontAwesomeIcon
-                      icon="chart-line"
-                      color="white"
-                      size="3x"
-                    />
-                    <div className="text-right text-white">
-                      <h5>الحضور اليومي لمعهد الصليخ</h5>
-                      <h3>{data.reports_count}</h3>
-                    </div>
-                  </div>
-                </div>
-                <div className="card-footer text-white">
-                  <i className="fas fa-sync mr-3"></i>
-                  <span>تم التحديث الان</span>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

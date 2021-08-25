@@ -17,6 +17,8 @@ import {
   faUserGraduate,
   faHome,
   faSchool,
+  faCheckCircle,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 function initFontAwesome() {
@@ -37,6 +39,8 @@ function initFontAwesome() {
   library.add(faHouseUser);
   library.add(faUserGraduate);
   library.add(faSchool);
+  library.add(faCheckCircle);
+  library.add(faTimesCircle);
 }
 
 export default initFontAwesome;

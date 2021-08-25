@@ -2,6 +2,8 @@
 ##########################
 builds/
 windows_installer
+SAPI
+build
 
 # Development folders and files #
 #################################
@@ -11,6 +13,7 @@ node_modules/
 *.compiled.*
 docs
 for-code
+py_src
 
 # Folder config file #
 ######################
@@ -55,3 +58,9 @@ ehthumbs.db
 # Windows shortcuts #
 #####################
 *.lnk
+
+.vscode
+
+main.spec
+requirements.txt
+sapi.db

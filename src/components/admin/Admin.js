@@ -48,13 +48,17 @@ function Admin(props) {
     }
   };
   const [dataToChange, setDataToChange] = useState({});
+  const [attendanceStartData, setAttendanceStartData] = useState({
+    institute_id: "",
+    batch_id: "",
+    date: "",
+  });
   const AdminHeaderFunction = (Act) => {
     return (
       <AdminHeader
         logoutWithRedirect={props.logoutWithRedirect}
         Active={Act}
         MainButton={handleMainButton}
-        FinalReportButton={handleFinalReportButton}
         StudentsButton={handleStudentsButton}
         StudentsInstallmentsButton={handleStudentsInstallmentsButton}
         InstitutesButton={handleInstitutesButton}
@@ -74,8 +78,8 @@ function Admin(props) {
     setDataToChange({});
   };
 
-  const handleFinalReportButton = () => {
-    setPage("Reports");
+  const handleInstitutesButton = () => {
+    setPage("Institutes");
     setDataToChange({});
   };
 
@@ -84,17 +88,13 @@ function Admin(props) {
     setDataToChange({});
   };
 
-  const handleStudentsInstallmentsButton = () => {
-    setPage("StudentsInstallments");
-    setDataToChange({});
+  const handleStartAttendanceButton = (institute_id, batch_id, date) => {
+    setPage("Attendance");
+    setAttendanceStartData({ institute_id, batch_id, date });
   };
 
-  const handleInstitutesButton = () => {
-    setPage("Institutes");
-    setDataToChange({});
-  };
-  const handleAttendanceButton = () => {
-    setPage("Attendance");
+  const handleStudentsInstallmentsButton = () => {
+    setPage("StudentsInstallments");
     setDataToChange({});
   };
 
@@ -150,7 +150,7 @@ function Admin(props) {
   } else if (page == "StudentsInstallments") {
     return (
       <Fragment>
-        {AdminHeaderFunction({ StudentsInstallments: "active" })}
+        {AdminHeaderFunction({ Students: "active" })}
         {/* End of Navbar */}
         {/* StudentsInstallments */}
         <StudentsInstallments
@@ -169,7 +169,9 @@ function Admin(props) {
         <Institutes
           edit={handleEditInstituteButton}
           sideBarShow={sideBarShow}
-          handleAttendanceButton={handleAttendanceButton}
+          handleStartAttendanceButton={handleStartAttendanceButton}
+          handleStudentsInstallmentsButton={handleStudentsInstallmentsButton}
+          handleStudentsAttendanceButton={handleStudentsAttendanceButton}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
@@ -177,17 +179,21 @@ function Admin(props) {
   } else if (page == "Attendance") {
     return (
       <Fragment>
-        {AdminHeaderFunction()}
+        {AdminHeaderFunction({ Main: "active" })}
         {/* End of Navbar */}
         {/* Reports */}
-        <Attendance sideBarShow={sideBarShow} />
+        <Attendance
+          sideBarShow={sideBarShow}
+          page={page}
+          attendanceStartData={attendanceStartData}
+        />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
   } else if (page == "StudentsAttendance") {
     return (
       <Fragment>
-        {AdminHeaderFunction({ StudentsAttendance: "active" })}
+        {AdminHeaderFunction({ Students: "active" })}
         {/* End of Navbar */}
         {/* StudentsAttendance */}
         <StudentsAttendance sideBarShow={sideBarShow} />
@@ -197,7 +203,7 @@ function Admin(props) {
   } else if (page == "AddStudent") {
     return (
       <Fragment>
-        {AdminHeaderFunction({ AddStudent: "active" })}
+        {AdminHeaderFunction({ Add: "active" })}
         {/* End of Navbar */}
         {/* AddStudent */}
         <AddStudent
@@ -211,7 +217,7 @@ function Admin(props) {
   } else if (page == "AddInstitute") {
     return (
       <Fragment>
-        {AdminHeaderFunction({ AddInstitute: "active" })}
+        {AdminHeaderFunction({ Add: "active" })}
         {/* End of Navbar */}
         {/* AddInstitute */}
         <AddInstitute
@@ -225,7 +231,7 @@ function Admin(props) {
   } else if (page == "AddBatch") {
     return (
       <Fragment>
-        {AdminHeaderFunction({ AddBatch: "active" })}
+        {AdminHeaderFunction({ Add: "active" })}
         {/* End of Navbar */}
         {/* AddInstitute */}
         <AddBatch
