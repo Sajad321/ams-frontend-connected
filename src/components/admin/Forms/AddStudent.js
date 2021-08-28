@@ -5,15 +5,13 @@ const apiUrl = process.env.API_URL;
 function AddStudent({ page, dataToChange, sideBarShow }) {
   const [data, setData] = useState({
     institutes: [],
-    batches: [],
   });
   const [dataToSend, setDataToSend] = useState({
     id: "",
     name: "",
     dob: "",
-    institute_id: 0,
-    phone: 0,
-    batch_id: 0,
+    institute_id: "",
+    phone: "",
     note: "",
     photo: null,
   });
@@ -21,7 +19,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
   useEffect(() => {
     const getStuff = async () => {
       try {
-        const response = await fetch(`${apiUrl}/students-form`, {
+        const response = await fetch(`${apiUrl}/institute`, {
           method: "GET",
           headers: {
             Authorization: `Bearer`,
@@ -43,9 +41,6 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     setDataToSend({ ...dataToSend, name: e.target.value });
   const handleInstituteChange = (e) => {
     setDataToSend({ ...dataToSend, institute_id: Number(e.target.value) });
-  };
-  const handleBatchChange = (e) => {
-    setDataToSend({ ...dataToSend, batch_id: Number(e.target.value) });
   };
   const handleDateChange = (e) =>
     setDataToSend({ ...dataToSend, dob: e.target.value });
@@ -81,7 +76,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
           `${
             dataToSend.id != ""
               ? "/" + dataToSend.id
-              : `?name=${dataToSend.name}&dob=${dataToSend.dob}&institute_id=${dataToSend.institute_id}&batch_id=${dataToSend.batch_id}&phone=${dataToSend.phone}&note=${dataToSend.note}`
+              : `?name=${dataToSend.name}&dob=${dataToSend.dob}&institute_id=${dataToSend.institute_id}&phone=${dataToSend.phone}&note=${dataToSend.note}`
           }`,
         {
           method: dataToSend.id != "" ? "PATCH" : "POST",
@@ -92,7 +87,6 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
           // JSON.stringify({
           //   ...dataToSend,
           //   institute_id: Number(dataToSend.institute_id),
-          //   batch_id: Number(dataToSend.batch_id),
           //   phone: Number(dataToSend.phone),
           // }),
         }
@@ -173,35 +167,10 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                     </select>
                   </div>
                   <label
-                    htmlFor="zone"
+                    htmlFor="institute"
                     className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
                   >
                     المعهد
-                  </label>
-                </div>
-                <div className="form-group row">
-                  <div className="col-7 offset-1 order-last order-md-first">
-                    <select
-                      id="batch"
-                      onChange={handleBatchChange}
-                      className="form-control"
-                      dir="rtl"
-                      value={dataToSend.batch_id}
-                      // required
-                    >
-                      <option selected>اختر</option>
-                      {data.batches.map((batch) => (
-                        <option key={batch.id} value={batch.id}>
-                          {batch.batch_num}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <label
-                    htmlFor="batch"
-                    className="col-2 col-form-label text-center text-white order-first order-md-last"
-                  >
-                    الدفعة
                   </label>
                 </div>
                 <div className="form-group row">

@@ -6,24 +6,47 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
   const [dataToSend, setDataToSend] = useState({
     id: "",
     name: "",
+    institute_id: "",
+    date: "",
   });
+  const [institutes, setInstitutes] = useState([]);
   useEffect(() => {
+    const getStuff = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/institute`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        });
+
+        const responseData = await response.json();
+        setInstitutes(responseData.institutes);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getStuff();
     if (Object.keys(dataToChange).length) {
       setDataToSend(dataToChange);
     }
   }, []);
   const handleNameChange = (e) =>
     setDataToSend({ ...dataToSend, name: e.target.value });
+  const handleInstituteChange = (e) =>
+    setDataToSend({ ...dataToSend, institute_id: Number(e.target.value) });
+  const handleDateChange = (e) =>
+    setDataToSend({ ...dataToSend, date: e.target.value });
   const [saving, setSaving] = useState(false);
-  const saveInstitute = async () => {
+  const saveInstallment = async () => {
     try {
       setSaving(true);
       const response = await fetch(
-        `${apiUrl}/institute` +
+        `${apiUrl}/installment` +
           `${
             dataToSend.id != ""
               ? "/" + dataToSend.id
-              : `?&name=${dataToSend.name}`
+              : `?&name=${dataToSend.name}&institute_id=${dataToSend.institute_id}&date=${dataToSend.date}`
           }`,
         {
           method: dataToSend.id != "" ? "PATCH" : "POST",
@@ -36,7 +59,7 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
 
       const responseData = await response.json();
 
-      toast.success("تم حفظ المعهد");
+      toast.success("تم حفظ القسط");
       page();
     } catch (error) {
       console.log(error.message);
@@ -46,7 +69,7 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    saveInstitute();
+    saveInstallment();
   };
   return (
     <section className="main">
@@ -74,10 +97,53 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
                     ></input>
                   </div>
                   <label
+                    htmlFor="name"
+                    className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
+                  >
+                    اسم القسط
+                  </label>
+                </div>
+                <div className="form-group row">
+                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                    <select
+                      id="institute"
+                      onChange={handleInstituteChange}
+                      className="form-control"
+                      dir="rtl"
+                      value={dataToSend.institute_id}
+                      required
+                    >
+                      <option selected>اختر</option>
+                      {institutes.map((institute) => (
+                        <option key={institute.id} value={institute.id}>
+                          {institute.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <label
                     htmlFor="institute"
                     className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
                   >
-                    اسم المعهد
+                    المعهد
+                  </label>
+                </div>
+                <div className="form-group row">
+                  <div className="col-md-4 offset-md-6 order-last order-md-first">
+                    <input
+                      id="date"
+                      type="date"
+                      className="form-control text"
+                      onChange={handleDateChange}
+                      value={dataToSend.date}
+                      required
+                    ></input>
+                  </div>
+                  <label
+                    htmlFor="date"
+                    className="col-12 col-md-2 col-form-label text-center text-white order-first order-md-last"
+                  >
+                    التاريخ
                   </label>
                 </div>
                 <div className="form-group row">

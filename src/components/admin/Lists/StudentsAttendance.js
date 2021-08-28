@@ -11,8 +11,27 @@ function StudentsAttendance({ edit, sideBarShow }) {
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
-  const [searchedDoctors, setSearchedDoctors] = useState({ ...data });
+  const [searchedData, setSearchedData] = useState({ ...data });
+  const [instituteData, setInstituteData] = useState({ ...data });
+  const [institute, setInstitute] = useState("0");
+  const [institutes, setInstitutes] = useState([]);
   useEffect(() => {
+    const getStuff = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/institute`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        });
+
+        const responseData = await response.json();
+        setInstitutes(responseData.institutes);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getStuff();
     const getAttendance = async () => {
       try {
         const response = await fetch(`${apiUrl}/students-attendance`, {
@@ -26,7 +45,14 @@ function StudentsAttendance({ edit, sideBarShow }) {
           students: responseData.students,
           attendance: responseData.attendance,
         });
-        setSearchedDoctors(responseData.doctors);
+        setSearchedData({
+          students: responseData.students,
+          attendance: responseData.attendance,
+        });
+        setInstituteData({
+          students: responseData.students,
+          attendance: responseData.attendance,
+        });
       } catch (error) {
         console.log(error.message);
       }
@@ -46,21 +72,25 @@ function StudentsAttendance({ edit, sideBarShow }) {
     e.preventDefault();
     const reg = new RegExp(search, "i");
     if (searchType == "1") {
-      setSearchedDoctors(
-        [...doctors].filter(
-          (d) => d.date_of_joining <= search2 && d.date_of_joining >= search
+      setSearchedData(
+        [...data.attendance].filter(
+          (d) => d.date <= search2 && d.date >= search
         )
       );
     } else if (searchType == "2") {
-      setSearchedDoctors([...doctors].filter((d) => d.name.match(reg)));
+      setSearchedData([...data.students].filter((d) => d.name.match(reg)));
     } else if (searchType == "3") {
-      setSearchedDoctors([...doctors].filter((d) => d.zone.match(reg)));
+      setSearchedData(
+        [...data.students].filter((d) => d.institute_id.match(reg))
+      );
     } else if (searchType == "4") {
-      setSearchedDoctors([...doctors].filter((d) => d.speciality.match(reg)));
+      setSearchedData(
+        [...data.students].filter((d) => d.speciality.match(reg))
+      );
     }
   };
-  const handleEditButton = (doctor) => {
-    edit(doctor);
+  const handleEditButton = (student) => {
+    edit(student);
   };
   const handleAttendanceToggle = (studentIndex, id, attended) => {
     if (searchType == "0") {
@@ -130,6 +160,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
               icon="check-circle"
               size="2x"
               color="green"
+              className="check-icon"
               onClick={() =>
                 handleAttendanceToggleButton(
                   index,
@@ -149,7 +180,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
             <FontAwesomeIcon
               icon="times-circle"
               size="2x"
-              color="red"
+              className="times-icon"
               onClick={() =>
                 handleAttendanceToggleButton(
                   index,
@@ -204,31 +235,44 @@ function StudentsAttendance({ edit, sideBarShow }) {
         </table>
       );
     } else {
-      const render_data = searchedDoctors.map((doctor) => {
-        return (
-          <tr key={doctor.id} className="font-weight-bold">
-            <td>{doctor.name}</td>
-            <td>
-              {doctor.pharmacies.map((pharmacy) => {
-                if (doctor.pharmacies.length == 1) {
-                  return `${pharmacy.name}`;
-                } else {
-                  return `${pharmacy.name}, `;
-                }
-              })}
-            </td>
-            {renderAttendance(doctor.report_activity)}
-            <td>
+      const render_data =
+        institute == "1"
+          ? instituteData.students.map((student, index) => {
+              return (
+                <tr key={student.id} className="font-weight-bold">
+                  <td className="text-white">{student.name}</td>
+                  {data.attendance.map((attendance) => {
+                    return renderAttendance(student, attendance, index);
+                  })}
+                  {/* <td>
               <button
-                onClick={() => handleEditButton(doctor)}
+                onClick={() => handleEditButton(student)}
                 className="btn btn-secondary text-white"
               >
                 تعديل
               </button>
-            </td>
-          </tr>
-        );
-      });
+            </td> */}
+                </tr>
+              );
+            })
+          : searchedData.students.map((student, index) => {
+              return (
+                <tr key={student.id} className="font-weight-bold">
+                  <td className="text-white">{student.name}</td>
+                  {data.attendance.map((attendance) => {
+                    return renderAttendance(student, attendance, index);
+                  })}
+                  {/* <td>
+              <button
+                onClick={() => handleEditButton(student)}
+                className="btn btn-secondary text-white"
+              >
+                تعديل
+              </button>
+            </td> */}
+                </tr>
+              );
+            });
       return (
         <table
           className="table table-striped table-bordered table-hover text"
@@ -238,14 +282,8 @@ function StudentsAttendance({ edit, sideBarShow }) {
           <thead className="thead-dark">
             <tr>
               <th>الاسم</th>
-              {searchedDoctors.map((doctor) => {
-                return (
-                  <th key={doctor.id}>
-                    {doctor.name}
-                    <br />
-                    {doctor.date}
-                  </th>
-                );
+              {data.attendance.map((attendance) => {
+                return <th key={attendance.id}>{attendance.date}</th>;
               })}
             </tr>
           </thead>
@@ -267,7 +305,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
           <input
             type="text"
             className="form-control text"
-            id="searchDoctor"
+            id="searchstudent"
             onChange={handleSearchChange}
             placeholder="ابحث"
           ></input>
@@ -287,6 +325,17 @@ function StudentsAttendance({ edit, sideBarShow }) {
       );
     }
   };
+  const handleInstituteChange = (e) => {
+    setInstitute("1");
+    setInstituteData({
+      students: [...data.students].filter(
+        (d) => d.institute_id == e.target.value
+      ),
+      attendance: [...data.attendance].filter(
+        (d) => d.institute_id == e.target.value
+      ),
+    });
+  };
   return (
     <section className="main">
       <div className="row pt-5 m-0">
@@ -302,7 +351,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
             <div className="col-12">
               <div className="row mt-3">
                 <div className="col-8">
-                  <form onSubmit={printTable}>
+                  <form onSubmit={handleSearchButton}>
                     <div className="form-group row mt-1">
                       <div className="col-2 text">
                         <button
@@ -323,7 +372,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
                             الكل
                           </option>
                           <option value="1">الاسم</option>
-                          <option value="2">المعهد</option>
+                          <option value="2">التاريخ</option>
                         </select>
                       </div>
                       {searchBar()}
@@ -332,16 +381,19 @@ function StudentsAttendance({ edit, sideBarShow }) {
                 </div>
                 <div className="col-1 offset-1 pt-1">
                   <select
-                    id="searchType"
-                    onChange={handleSearchTypeChange}
+                    id="institute"
+                    onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
                   >
                     <option value="0" defaultValue>
-                      الدفعة
+                      المعهد
                     </option>
-                    <option value="1">الاسم</option>
-                    <option value="2">المعهد</option>
+                    {institutes.map((institute) => (
+                      <option key={institute.id} value={institute.id}>
+                        {institute.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-2">

@@ -8,11 +8,28 @@ function StudentsInstallments({ edit, sideBarShow }) {
     students: [],
     installments: [],
   });
+  const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
   const [searchedStudents, setSearchedStudents] = useState({ ...data });
   useEffect(() => {
+    const getStuff = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/institute`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        });
+
+        const responseData = await response.json();
+        setInstitutes(responseData.institutes);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getStuff();
     const getInstallments = async () => {
       try {
         const response = await fetch(`${apiUrl}/student-install`, {
@@ -23,14 +40,30 @@ function StudentsInstallments({ edit, sideBarShow }) {
         });
         const responseData = await response.json();
         setData({
-          students: responseData.students,
+          students: responseData.students.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }),
           installments: responseData.installments.sort((a, b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
           }),
         });
 
         setSearchedStudents({
-          students: responseData.students,
+          students: responseData.students.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }),
           installments: responseData.installments.sort((a, b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
           }),
@@ -41,7 +74,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
     };
     getInstallments();
   }, []);
-  const handleBatchChange = (e) => {
+  const handleInstituteChange = (e) => {
     const getInstallments = async () => {
       try {
         const response = await fetch(`${apiUrl}/student-install`, {
@@ -51,15 +84,32 @@ function StudentsInstallments({ edit, sideBarShow }) {
           },
         });
         const responseData = await response.json();
+        console.log(responseData);
         setData({
-          students: responseData.students,
+          students: responseData.students.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }),
           installments: responseData.installments.sort((a, b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
           }),
         });
 
         setSearchedStudents({
-          students: responseData.students,
+          students: responseData.students.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }),
           installments: responseData.installments.sort((a, b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
           }),
@@ -165,6 +215,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
               icon="check-circle"
               size="2x"
               color="green"
+              className="check-icon"
               onClick={() =>
                 handleInstallmentsToggleButton(
                   index,
@@ -184,7 +235,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
             <FontAwesomeIcon
               icon="times-circle"
               size="2x"
-              color="red"
+              className="times-icon"
               onClick={() =>
                 handleInstallmentsToggleButton(
                   index,
@@ -247,7 +298,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
         </table>
       );
     } else {
-      const render_data = searchedStudents.students.map((student) => {
+      const render_data = searchedStudents.students.map((student, index) => {
         return (
           <tr key={student.id} className="font-weight-bold">
             <td className="text-white">{student.name}</td>
@@ -303,18 +354,6 @@ function StudentsInstallments({ edit, sideBarShow }) {
           ></input>
         </div>
       );
-    } else if (searchType == "2") {
-      return (
-        <div className="col-7">
-          <input
-            type="text"
-            className="form-control text"
-            id="searchInstitute"
-            onChange={handleSearchChange}
-            placeholder="ابحث"
-          ></input>
-        </div>
-      );
     }
   };
   return (
@@ -354,7 +393,6 @@ function StudentsInstallments({ edit, sideBarShow }) {
                             الكل
                           </option>
                           <option value="1">الاسم</option>
-                          <option value="2">المعهد</option>
                         </select>
                       </div>
                       {searchBar()}
@@ -363,16 +401,19 @@ function StudentsInstallments({ edit, sideBarShow }) {
                 </div>
                 <div className="col-1 offset-1 pt-1">
                   <select
-                    id="batch"
-                    onChange={handleBatchChange}
+                    id="institute"
+                    onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
                   >
                     <option value="0" defaultValue>
-                      الدفعة
+                      المعهد
                     </option>
-                    <option value="1">الاسم</option>
-                    <option value="2">المعهد</option>
+                    {institutes.map((institute) => (
+                      <option key={institute.id} value={institute.id}>
+                        {institute.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-2">

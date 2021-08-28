@@ -9,7 +9,7 @@ import StudentsInstallments from "./Lists/StudentsInstallments";
 import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
 import AddInstitute from "./Forms/AddInstitute";
-import AddBatch from "./Forms/AddBatch";
+import AddInstallment from "./Forms/AddInstallment";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -50,7 +50,6 @@ function Admin(props) {
   const [dataToChange, setDataToChange] = useState({});
   const [attendanceStartData, setAttendanceStartData] = useState({
     institute_id: "",
-    batch_id: "",
     date: "",
   });
   const AdminHeaderFunction = (Act) => {
@@ -65,7 +64,7 @@ function Admin(props) {
         StudentsAttendanceButton={handleStudentsAttendanceButton}
         AddStudentButton={handleAddStudentButton}
         AddInstituteButton={handleAddInstituteButton}
-        AddBatchButton={handleAddBatchButton}
+        AddInstallmentButton={handleAddInstallmentButton}
         sideEvent={sideEvent}
         sideBarShow={sideBarShow}
         setSideBarShow={setSideBarShow}
@@ -88,9 +87,9 @@ function Admin(props) {
     setDataToChange({});
   };
 
-  const handleStartAttendanceButton = (institute_id, batch_id, date) => {
+  const handleStartAttendanceButton = (institute_id, date) => {
     setPage("Attendance");
-    setAttendanceStartData({ institute_id, batch_id, date });
+    setAttendanceStartData({ institute_id, date });
   };
 
   const handleStudentsInstallmentsButton = () => {
@@ -112,8 +111,8 @@ function Admin(props) {
     setPage("AddInstitute");
     setDataToChange({});
   };
-  const handleAddBatchButton = () => {
-    setPage("AddBatch");
+  const handleAddInstallmentButton = () => {
+    setPage("AddInstallment");
     setDataToChange({});
   };
 
@@ -124,6 +123,10 @@ function Admin(props) {
   const handleEditInstituteButton = (institute) => {
     setDataToChange(institute);
     setPage("AddInstitute");
+  };
+  const handleEditInstallmentButton = (installment) => {
+    setDataToChange(installment);
+    setPage("AddInstallment");
   };
 
   if (page == "Main") {
@@ -143,7 +146,11 @@ function Admin(props) {
         {AdminHeaderFunction({ Students: "active" })}
         {/* End of Navbar */}
         {/* Students */}
-        <Students sideEvent={sideEvent} sideBarShow={sideBarShow} />
+        <Students
+          sideEvent={sideEvent}
+          sideBarShow={sideBarShow}
+          edit={handleEditStudentButton}
+        />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
@@ -154,7 +161,7 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* StudentsInstallments */}
         <StudentsInstallments
-          edit={handleEditStudentButton}
+          edit={handleEditInstallmentButton}
           sideBarShow={sideBarShow}
         />
         <AdminFooter sideBarShow={sideBarShow} />
@@ -228,13 +235,13 @@ function Admin(props) {
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
-  } else if (page == "AddBatch") {
+  } else if (page == "AddInstallment") {
     return (
       <Fragment>
         {AdminHeaderFunction({ Add: "active" })}
         {/* End of Navbar */}
         {/* AddInstitute */}
-        <AddBatch
+        <AddInstallment
           page={handleMainButton}
           dataToChange={dataToChange}
           sideBarShow={sideBarShow}

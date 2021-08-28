@@ -17,7 +17,6 @@ function StudentInfo({ history, match }) {
     student_attendance_id: "",
     name: "",
     institute: "",
-    batch_num: "",
     installments: [],
     total_absence: "",
     incrementally_absence: "",
@@ -50,7 +49,6 @@ function StudentInfo({ history, match }) {
           student_attendance_id: responseData.student_attendance_id,
           name: responseData.name,
           institute: responseData.institute,
-          batch_num: responseData.batch_num,
           installments: responseData.installments,
           total_absence: responseData.total_absence,
           incrementally_absence: responseData.incrementally_absence,
@@ -162,7 +160,6 @@ function StudentInfo({ history, match }) {
         <div className="col-8 col-sm-9 text-right text-white">
           <p className="mb-3">الاسم: {student.name}</p>
           <p className="mb-3">المعهد: {student.institute}</p>
-          <p className="mb-3">الدفعة: {student.batch_num}</p>
           <p className="mb-3">
             {student.installments.map((installment) => {
               return render_installment(installment);

@@ -12,7 +12,7 @@ function AdminHeader(props) {
         onHide={() => setAddModalShow(false)}
         AddStudentButton={props.AddStudentButton}
         AddInstituteButton={props.AddInstituteButton}
-        AddBatchButton={props.AddBatchButton}
+        AddInstallmentButton={props.AddInstallmentButton}
       />
       <StudentsModal
         show={studentsModalShow}

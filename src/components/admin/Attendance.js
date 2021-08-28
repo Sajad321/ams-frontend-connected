@@ -11,19 +11,18 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
     student_attendance_id: "",
     name: "",
     institute: "",
-    batch_num: "",
     installments: [],
     total_absence: "",
     incrementally_absence: "",
   });
   const [photo, setPhoto] = useState({});
-  const { institute_id, batch_id, date } = attendanceStartData;
+  const { institute_id, date } = attendanceStartData;
 
   useEffect(() => {
     const sendAttendance = async () => {
       try {
         const response = await fetch(
-          `${apiUrl}/attendance?institute_id=${institute_id}&batch_id=${batch_id}&date=${date}`,
+          `${apiUrl}/attendance?institute_id=${institute_id}&date=${date}`,
           {
             method: "POST",
           }
@@ -88,7 +87,6 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
         student_attendance_id: responseData.student_attendance_id,
         name: responseData.name,
         institute: responseData.institute,
-        batch_num: responseData.batch_num,
         installments: responseData.installments,
         total_absence: responseData.total_absence,
         incrementally_absence: responseData.incrementally_absence,

@@ -7,12 +7,8 @@ const apiUrl = process.env.API_URL;
 
 export function InstitutesModal(props) {
   const [data, setData] = useState({
-    batch_id: "",
     date: "",
   });
-  const handleBatchChange = (e) => {
-    setData({ ...data, batch_id: e.target.value });
-  };
   const handleDateChange = (e) => {
     setData({ ...data, date: e.target.value });
   };
@@ -33,29 +29,7 @@ export function InstitutesModal(props) {
       </Modal.Header>
       <Modal.Body>
         <h4 className="text-right">ماذا تريد ان تختار ؟</h4>
-        <div className="form-group row mt-2" dir="ltr">
-          <div className="col-5 offset-3">
-            <select
-              id="batch"
-              onChange={handleBatchChange}
-              className="form-control"
-              dir="rtl"
-              value={data.batch_id}
-              required
-            >
-              <option selected>اختر</option>
-              <option>1</option>
-              <option>2</option>
-            </select>
-          </div>
-          <label
-            htmlFor="batch"
-            className="col-2 col-form-label text-center text-white modal-text-form"
-          >
-            الدفعة
-          </label>
-        </div>
-        <div className="form-group row mb-0" dir="ltr">
+        <div className="form-group row mb-0 mt-2" dir="ltr">
           <div className="col-5 offset-3">
             <input
               id="date"
@@ -103,11 +77,7 @@ export function InstitutesModal(props) {
         <div className="">
           <Button
             onClick={() => {
-              props.handleStartAttendanceButton(
-                props.institute_id,
-                data.batch_id,
-                data.date
-              );
+              props.handleStartAttendanceButton(props.institute_id, data.date);
               props.onHide();
             }}
             className="modal-add-nav"
@@ -144,6 +114,17 @@ export function AddModal(props) {
         <div className="">
           <Button
             onClick={() => {
+              props.AddInstallmentButton();
+              props.onHide();
+            }}
+            className="modal-add-nav"
+          >
+            قسط
+          </Button>
+        </div>
+        <div className="">
+          <Button
+            onClick={() => {
               props.AddStudentButton();
               props.onHide();
             }}
@@ -161,17 +142,6 @@ export function AddModal(props) {
             className="modal-add-nav"
           >
             معهد
-          </Button>
-        </div>
-        <div className="">
-          <Button
-            onClick={() => {
-              props.AddBatchButton();
-              props.onHide();
-            }}
-            className="modal-add-nav"
-          >
-            دفعة
           </Button>
         </div>
       </Modal.Footer>
@@ -284,7 +254,6 @@ export function StudentsInfoModal(props) {
           <div className="col-8 col-sm-9 text-right text-white font-student-info">
             <p className="mb-2">الاسم: {props.name}</p>
             <p className="mb-2">المعهد: {props.institute}</p>
-            <p className="mb-2">الدفعة: {props.batch_num}</p>
             <p className="mb-2">رقم الهاتف: {props.phone}</p>
             <p className="mb-2">المواليد: {props.dob}</p>
           </div>
@@ -446,7 +415,6 @@ export function StudentInfoAttendanceModal({ show, onHide, student, photo }) {
             <div className="col-8 col-sm-9 text-right text-white">
               <p className="mb-3">الاسم: {student.name}</p>
               <p className="mb-3">المعهد: {student.institute}</p>
-              <p className="mb-3">الدفعة: {student.batch_num}</p>
               <p className="mb-3">
                 {student.installments.map((installment) => {
                   return render_installment(installment);

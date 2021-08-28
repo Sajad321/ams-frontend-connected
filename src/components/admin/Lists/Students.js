@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StudentsInfoModal } from "../../common/Modal";
 const apiUrl = process.env.API_URL;
 
-function Salesmen({ sideBarShow }) {
+function Salesmen({ sideBarShow, edit }) {
   const [students, setStudents] = useState([]);
+  const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [searchedStudents, setSearchedStudents] = useState([...students]);
@@ -13,7 +14,6 @@ function Salesmen({ sideBarShow }) {
     id: "",
     name: "",
     institute: "",
-    batch_num: "",
     phone: "",
     dob: "",
     student: {},
@@ -52,6 +52,22 @@ function Salesmen({ sideBarShow }) {
   };
 
   useEffect(() => {
+    const getStuff = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/institute`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        });
+
+        const responseData = await response.json();
+        setInstitutes(responseData.institutes);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getStuff();
     const getStudents = async () => {
       try {
         const response = await fetch(`${apiUrl}/students`, {
@@ -62,8 +78,28 @@ function Salesmen({ sideBarShow }) {
         });
 
         const responseData = await response.json();
-        setStudents(responseData);
-        setSearchedStudents(responseData);
+        setStudents(
+          responseData.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          })
+        );
+        setSearchedStudents(
+          responseData.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          })
+        );
       } catch (error) {
         console.log(error.message);
       }
@@ -89,6 +125,21 @@ function Salesmen({ sideBarShow }) {
     } else if (searchType == "2") {
       setSearchedStudents([...students].filter((d) => d.institute.match(reg)));
     }
+  };
+
+  const handleInstituteChange = (e) => {
+    setInstitute("1");
+    setInstituteData({
+      students: [...data.students].filter(
+        (d) => d.institute_id == e.target.value
+      ),
+      attendance: [...data.attendance].filter(
+        (d) => d.institute_id == e.target.value
+      ),
+    });
+  };
+  const handleEditButton = (student) => {
+    edit(student);
   };
   const searchBar = () => {
     if (searchType == "0") {
@@ -169,15 +220,18 @@ function Salesmen({ sideBarShow }) {
                 <div className="col-1 offset-1 pt-1">
                   <select
                     id="searchType"
-                    onChange={handleSearchTypeChange}
+                    onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
                   >
                     <option value="0" defaultValue>
-                      الدفعة
+                      المعهد
                     </option>
-                    <option value="1">الاسم</option>
-                    <option value="2">المعهد</option>
+                    {institutes.map((institute) => (
+                      <option key={institute.id} value={institute.id}>
+                        {institute.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-2">
@@ -194,7 +248,6 @@ function Salesmen({ sideBarShow }) {
               id={studentsInfoModal.id}
               name={studentsInfoModal.name}
               institute={studentsInfoModal.institute}
-              batch_num={studentsInfoModal.batch_num}
               phone={studentsInfoModal.phone}
               dob={studentsInfoModal.dob}
               student={studentsInfoModal.student}
@@ -222,7 +275,6 @@ function Salesmen({ sideBarShow }) {
                                 id: student.id,
                                 name: student.name,
                                 institute: student.institute,
-                                batch_num: student.batch_num,
                                 phone: student.phone,
                                 dob: student.dob,
                                 student: student,
@@ -233,18 +285,6 @@ function Salesmen({ sideBarShow }) {
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0">الاسم: {student.name}</p>
-                                  <p className="mb-0">
-                                    المعهد: {student.institute}
-                                  </p>
-                                  <p className="mb-0">
-                                    الدفعة: {student.batch_num}
-                                  </p>
-                                  <p className="mb-0">
-                                    رقم الهاتف: {student.phone}
-                                  </p>
-                                  <p className="mb-0">
-                                    المواليد: {student.dob}
-                                  </p>
                                 </div>
                                 <button
                                   onClick={() => handleEditButton(student)}
@@ -276,7 +316,6 @@ function Salesmen({ sideBarShow }) {
                                 id: student.id,
                                 name: student.name,
                                 institute: student.institute,
-                                batch_num: student.batch_num,
                                 phone: student.phone,
                                 dob: student.dob,
                                 student: student,
@@ -289,9 +328,6 @@ function Salesmen({ sideBarShow }) {
                                   <p className="mb-0">الاسم: {student.name}</p>
                                   <p className="mb-0">
                                     المعهد: {student.institute}
-                                  </p>
-                                  <p className="mb-0">
-                                    الدفعة: {student.batch_num}
                                   </p>
                                   <p className="mb-0">
                                     رقم الهاتف: {student.phone}
