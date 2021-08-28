@@ -11,9 +11,9 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     id: "",
     name: "",
     dob: "",
-    institute_id: "",
-    phone: "",
-    batch_id: "",
+    institute_id: 0,
+    phone: 0,
+    batch_id: 0,
     note: "",
     photo: null,
   });
@@ -42,47 +42,65 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
   const handleNameChange = (e) =>
     setDataToSend({ ...dataToSend, name: e.target.value });
   const handleInstituteChange = (e) => {
-    setDataToSend({ ...dataToSend, institute_id: e.target.value });
+    setDataToSend({ ...dataToSend, institute_id: Number(e.target.value) });
   };
   const handleBatchChange = (e) => {
-    setDataToSend({ ...dataToSend, batch_id: e.target.value });
+    setDataToSend({ ...dataToSend, batch_id: Number(e.target.value) });
   };
   const handleDateChange = (e) =>
     setDataToSend({ ...dataToSend, dob: e.target.value });
   const handlePhoneChange = (e) =>
-    setDataToSend({ ...dataToSend, phone: e.target.value });
+    setDataToSend({ ...dataToSend, phone: Number(e.target.value) });
   const handleNoteChange = (e) =>
     setDataToSend({ ...dataToSend, note: e.target.value });
   const handlePhotoChange = (e) => {
     setDataToSend({
       ...dataToSend,
-      photo: e.target.files[0].name,
+      photo: new Blob([e.target.files[0]], { type: "image/jpeg" }),
     });
-
     var fr = new FileReader();
     fr.onload = function (event) {
       document.getElementById("myimage").src = event.target.result;
     };
     fr.readAsDataURL(e.target.files[0]);
   };
-  const saveDoctor = async () => {
+  const saveStudent = async () => {
     try {
       setSaving(true);
+      let formData = new FormData();
+      // for (let name in dataToSend) {
+      //   formData.append(name, dataToSend[name]);
+      // }
+      // formData.append("name", dataToSend.name);
+      formData.append("photo", dataToSend.photo);
+      for (var key of formData.entries()) {
+        console.log(key[0] + ", " + key[1]);
+      }
       const response = await fetch(
-        `${apiUrl}/doctors` +
-          `${dataToSend.id != "" ? "/" + dataToSend.id : ""}`,
+        `${apiUrl}/student` +
+          `${
+            dataToSend.id != ""
+              ? "/" + dataToSend.id
+              : `?name=${dataToSend.name}&dob=${dataToSend.dob}&institute_id=${dataToSend.institute_id}&batch_id=${dataToSend.batch_id}&phone=${dataToSend.phone}&note=${dataToSend.note}`
+          }`,
         {
           method: dataToSend.id != "" ? "PATCH" : "POST",
-          headers: {
-            Authorization: `Bearer`,
-          },
-          body: JSON.stringify(dataToSend),
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
+          body: formData,
+          // JSON.stringify({
+          //   ...dataToSend,
+          //   institute_id: Number(dataToSend.institute_id),
+          //   batch_id: Number(dataToSend.batch_id),
+          //   phone: Number(dataToSend.phone),
+          // }),
         }
       );
 
       const responseData = await response.json();
 
-      toast.success("تم حفظ الطبيب");
+      toast.success("تم حفظ الطالب");
       page();
     } catch (error) {
       console.log(error.message);
@@ -92,7 +110,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    saveDoctor();
+    saveStudent();
   };
   return (
     <section className="main">
@@ -111,7 +129,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                 {dataToSend.photo ? (
                   <img id="myimage" className="img-student-attendance" />
                 ) : (
-                  <img src="" className="img-student-attendance" />
+                  <img src="" id="myimage" className="img-student-attendance" />
                 )}
               </div>
             </div>
@@ -126,7 +144,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control text"
                       onChange={handleNameChange}
                       value={dataToSend.name}
-                      required
+                      // required
                     ></input>
                   </div>
                   <label
@@ -144,7 +162,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control"
                       dir="rtl"
                       value={dataToSend.institute_id}
-                      required
+                      // required
                     >
                       <option selected>اختر</option>
                       {data.institutes.map((institute) => (
@@ -169,7 +187,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control"
                       dir="rtl"
                       value={dataToSend.batch_id}
-                      required
+                      // required
                     >
                       <option selected>اختر</option>
                       {data.batches.map((batch) => (
@@ -213,7 +231,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control text"
                       onChange={handleDateChange}
                       value={dataToSend.dob}
-                      required
+                      // required
                     ></input>
                   </div>
                   <label
@@ -232,7 +250,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       placeholder="الملاحظات"
                       className="form-control text"
                       value={dataToSend.note}
-                      required
+                      // required
                     ></input>
                   </div>
                   <label
@@ -249,7 +267,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       type="file"
                       onChange={handlePhotoChange}
                       className="form-control text"
-                      required
+                      // required
                     ></input>
                   </div>
                   <label
