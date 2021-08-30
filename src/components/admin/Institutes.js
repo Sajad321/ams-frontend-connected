@@ -14,7 +14,7 @@ function Institutes({
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [searchedInstitutes, setSearchedInstitutes] = useState([...institutes]);
-  const [modalShow, setModalShow] = useState(false);
+  const [modal, setModal] = useState({ visible: false, institute_id: "" });
   useEffect(() => {
     const getInstitutes = async () => {
       try {
@@ -126,27 +126,28 @@ function Institutes({
               </div>
             </div>
 
+            <InstitutesModal
+              show={modal.visible}
+              onHide={() => setModal({ visible: false, institute_id: "" })}
+              handleStartAttendanceButton={handleStartAttendanceButton}
+              handleStudentsInstallmentsButton={
+                handleStudentsInstallmentsButton
+              }
+              handleStudentsAttendanceButton={handleStudentsAttendanceButton}
+              institute_id={modal.institute_id}
+            />
             {searchType == "0"
               ? institutes.map((institute) => {
                   return (
                     <div className="col-sm-3 p-2" dir="ltr" key={institute.id}>
-                      <InstitutesModal
-                        show={modalShow}
-                        onHide={() => setModalShow(false)}
-                        handleStartAttendanceButton={
-                          handleStartAttendanceButton
-                        }
-                        handleStudentsInstallmentsButton={
-                          handleStudentsInstallmentsButton
-                        }
-                        handleStudentsAttendanceButton={
-                          handleStudentsAttendanceButton
-                        }
-                        institute_id={institute.id}
-                      />
                       <div
                         className="card card-common card-height"
-                        onClick={() => setModalShow(true)}
+                        onClick={() =>
+                          setModal({
+                            visible: true,
+                            institute_id: institute.id,
+                          })
+                        }
                       >
                         <div className="card-body">
                           <div className="row">

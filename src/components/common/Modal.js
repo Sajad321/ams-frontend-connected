@@ -316,7 +316,10 @@ export function StudentInfoAttendanceModal({
   onHide,
   student,
   photo,
+  date,
   institute_id,
+  students,
+  setStudents,
 }) {
   const handleAttendanceButton = () => {
     const toggleAttendance = async () => {
@@ -332,6 +335,16 @@ export function StudentInfoAttendanceModal({
         );
 
         const responseData = await response.json();
+        setStudents([
+          ...students,
+          {
+            id: responseData.student_id,
+            student_name: responseData.student_name,
+            student_attendance_id: student.student_attendance_id,
+            institute_name: student.institute_name,
+            date,
+          },
+        ]);
       } catch (error) {
         console.log(error.message);
         // handleAttendanceToggle(index, id, attended);
@@ -385,7 +398,7 @@ export function StudentInfoAttendanceModal({
   }
   const render_installment = (installment) => {
     const installment_received = student.installments.filter(
-      (installment) => installment.installment_id == installment.installment_id
+      (i) => i.installment_id == installment.installment_id
     )[0];
     if (
       installment_received.received == "1" &&

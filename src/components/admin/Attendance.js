@@ -3,7 +3,7 @@ import { StudentInfoAttendanceModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
 // var { ipcRenderer } = require("electron");
 
-function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
+function Attendance({ sideBarShow, page, attendanceStartData }) {
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState({
     visible: false,
@@ -18,7 +18,6 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
   });
   const [photo, setPhoto] = useState({});
   const { institute_id, date } = attendanceStartData;
-
   useEffect(() => {
     const sendAttendance = async () => {
       try {
@@ -38,20 +37,33 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
     sendAttendance();
   }, []);
 
-  const handleEditButton = (student) => {
-    edit(student);
-  };
-  const handleStudentAttendance = async (student_attendance_id) => {
+  // const RemoveStudentAttendance = async (student_attendance_id) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${apiUrl}/students-attendance?student_attendance_id=${student_attendance_id}&attended=0`,
+  //       {
+  //         method: "PATCH",
+  //       }
+  //     );
+
+  //     const responseData = await response.json();
+  //     // setStudents(responseData.students);
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
+
+  const handleRemoveButton = async (student_attendance_id, i) => {
     try {
       const response = await fetch(
-        `${apiUrl}/students-attendance?student_attendance_id=${student_attendance_id}&attended=1`,
+        `${apiUrl}/students-attendance?student_attendance_id=${student_attendance_id}&attended=0`,
         {
           method: "PATCH",
         }
       );
 
       const responseData = await response.json();
-      // setStudents(responseData.students);
+      setStudents([...students].filter((student, index) => index != i));
     } catch (error) {
       console.log(error.message);
     }
@@ -112,7 +124,11 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
       if (e.key != "Enter") {
         UPC += textInput;
       } else {
-        if ((UPC.length > 5) & (UPC.split("|")[1] == "besmarty")) {
+        if (
+          (UPC.length > 5) &
+          (UPC.split("|")[1] == "besmarty") &
+          (UPC.split("|")[0].substring(0, 2) != "Tab")
+        ) {
           console.log(UPC.split("|")[0]);
           showHandler(UPC.split("|")[0]);
           UPC = "";
@@ -159,6 +175,9 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
               student={student}
               photo={photo}
               institute_id={institute_id}
+              date={date}
+              students={students}
+              setStudents={setStudents}
             />
             <div className="col-12">
               <div className="table-responsive">
@@ -175,15 +194,23 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student) => {
+                    {students.map((student, index) => {
                       return (
-                        <tr key={student.id} className="font-weight-bold">
-                          <td>{student.name}</td>
-                          <td>{student.institute}</td>
+                        <tr
+                          key={student.id}
+                          className="font-weight-bold text-white"
+                        >
+                          <td>{student.student_name}</td>
+                          <td>{student.institute_name}</td>
                           <td>{student.date}</td>
                           <td>
                             <button
-                              onClick={() => handleEditButton(student)}
+                              onClick={() =>
+                                handleRemoveButton(
+                                  student.student_attendance_id,
+                                  index
+                                )
+                              }
                               className="btn btn-danger text-white"
                             >
                               حذف
