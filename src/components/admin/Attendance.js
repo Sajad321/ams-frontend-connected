@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { StudentInfoAttendanceModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
-var { ipcRenderer } = require("electron");
+// var { ipcRenderer } = require("electron");
 
 function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
   const [students, setStudents] = useState([]);
@@ -10,7 +10,8 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
     id: "",
     student_attendance_id: "",
     name: "",
-    institute: "",
+    institute_name: "",
+    institute_id: "",
     installments: [],
     total_absence: "",
     incrementally_absence: "",
@@ -29,17 +30,17 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
         );
 
         const responseData = await response.json();
-        // setStudents(responseData.students);
+        // setStudent({ ...student, attendance_id: responseData.attendance_id });
       } catch (error) {
         console.log(error.message);
       }
     };
     sendAttendance();
   }, []);
+
   const handleEditButton = (student) => {
     edit(student);
   };
-
   const handleStudentAttendance = async (student_attendance_id) => {
     try {
       const response = await fetch(
@@ -64,7 +65,7 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
   const getStudent = async (id) => {
     try {
       const responseJson = await fetch(
-        `${apiUrl}/attendance-start?student_id=${id}`,
+        `${apiUrl}/attendance-start?student_id=${Number(id)}`,
         {
           method: "GET",
           headers: {
@@ -86,7 +87,8 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
         id: id,
         student_attendance_id: responseData.student_attendance_id,
         name: responseData.name,
-        institute: responseData.institute,
+        institute_name: responseData.institute,
+        institute_id: responseData.institute_id,
         installments: responseData.installments,
         total_absence: responseData.total_absence,
         incrementally_absence: responseData.incrementally_absence,
@@ -104,18 +106,24 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
   };
 
   let UPC = "";
-  if (page == "Attendance") {
-    document.addEventListener("keypress", function (e) {
+  function qrCodeScanner(e) {
+    if ((student.visible == false) & (page == "Attendance")) {
       const textInput = e.key || String.fromCharCode(e.keyCode);
       if (e.key != "Enter") {
         UPC += textInput;
       } else {
-        console.log(UPC.split("|")[0]);
-        showHandler(UPC.split("|")[0]);
-        UPC = "";
+        if ((UPC.length > 5) & (UPC.split("|")[1] == "besmarty")) {
+          console.log(UPC.split("|")[0]);
+          showHandler(UPC.split("|")[0]);
+          UPC = "";
+        } else {
+          console.log(UPC, "else");
+          UPC = "";
+        }
       }
-    });
+    }
   }
+  document.addEventListener("keypress", qrCodeScanner);
   // if (messages.accepted == true) {
   //   console.log(messages);
   //   handleStudentAttendance(messages.student_attendance_id, 1);
@@ -126,7 +134,7 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
   //   handleStudentAttendance(args[0], 1);
   // });
   return (
-    <section className="main">
+    <section className="main" id="attendance">
       <div className="row m-0">
         <div
           className={
@@ -150,6 +158,7 @@ function Attendance({ edit, sideBarShow, page, attendanceStartData }) {
               onHide={() => setStudent({ ...student, visible: false })}
               student={student}
               photo={photo}
+              institute_id={institute_id}
             />
             <div className="col-12">
               <div className="table-responsive">

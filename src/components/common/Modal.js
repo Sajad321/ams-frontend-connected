@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
 import { HotKeys, GlobalHotKeys } from "react-hotkeys";
 
 const apiUrl = process.env.API_URL;
 
 export function InstitutesModal(props) {
-  const [data, setData] = useState({
-    date: "",
-  });
+  const [date, setDate] = useState("");
   const handleDateChange = (e) => {
-    setData({ ...data, date: e.target.value });
+    setDate(e.target.value);
   };
   return (
     <Modal
@@ -36,7 +35,7 @@ export function InstitutesModal(props) {
               type="date"
               className="form-control text"
               onChange={handleDateChange}
-              value={data.date}
+              value={date}
               required
             ></input>
           </div>
@@ -77,7 +76,7 @@ export function InstitutesModal(props) {
         <div className="">
           <Button
             onClick={() => {
-              props.handleStartAttendanceButton(props.institute_id, data.date);
+              props.handleStartAttendanceButton(props.institute_id, date);
               props.onHide();
             }}
             className="modal-add-nav"
@@ -312,19 +311,30 @@ const keyMap = {
   ABORT: "space",
 };
 
-export function StudentInfoAttendanceModal({ show, onHide, student, photo }) {
+export function StudentInfoAttendanceModal({
+  show,
+  onHide,
+  student,
+  photo,
+  institute_id,
+}) {
   const handleAttendanceButton = () => {
     const toggleAttendance = async () => {
       try {
-        const response = await fetch(`${apiUrl}/attendance/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify({ attended: attended == 0 ? 1 : 0 }),
-        });
+        const response = await fetch(
+          `${apiUrl}/students-attendance?student_attendance_id=${Number(
+            student.student_attendance_id
+          )}&attended=${1}`,
+          {
+            method: "PATCH",
+            // body: JSON.stringify({ attended: attended == 0 ? 1 : 0 }),
+          }
+        );
 
         const responseData = await response.json();
       } catch (error) {
         console.log(error.message);
-        handleAttendanceToggle(index, id, attended);
+        // handleAttendanceToggle(index, id, attended);
         toast.warn("حصل خطأ");
       }
     };
@@ -335,6 +345,7 @@ export function StudentInfoAttendanceModal({ show, onHide, student, photo }) {
     // const d = document.getElementById("ss");
     // d.innerText = "HI";
     // ipcRenderer.send("abort-student-attendance");
+    onHide();
   };
   const acceptHandler = () => {
     // const d = document.getElementById("ss");
@@ -342,6 +353,22 @@ export function StudentInfoAttendanceModal({ show, onHide, student, photo }) {
     // ipcRenderer.send("accept-student-attendance", [
     //   student.student_attendance_id,
     // ]);
+    if (
+      (student.institute_id != institute_id) |
+      student.installments.filter(
+        (installment) => installment.received == "0"
+      )[0].received |
+      (student.incrementally_absence >= 1)
+    ) {
+      let box = confirm("هل انت متأكد ؟");
+      if (box) {
+        handleAttendanceButton();
+        onHide();
+      }
+    } else {
+      handleAttendanceButton();
+      onHide();
+    }
   };
   const handlers = {
     ABORT: abortHandler,
@@ -414,7 +441,7 @@ export function StudentInfoAttendanceModal({ show, onHide, student, photo }) {
             </div>
             <div className="col-8 col-sm-9 text-right text-white">
               <p className="mb-3">الاسم: {student.name}</p>
-              <p className="mb-3">المعهد: {student.institute}</p>
+              <p className="mb-3">المعهد: {student.institute_name}</p>
               <p className="mb-3">
                 {student.installments.map((installment) => {
                   return render_installment(installment);
