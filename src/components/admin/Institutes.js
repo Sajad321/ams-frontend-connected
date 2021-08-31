@@ -52,11 +52,11 @@ function Institutes({
     }
   };
 
-  const handleInsitute = () => {
-    if (confirm("هل تود البدء بتسجيل الحضور")) {
-      console.log("yes");
-    }
-  };
+  // const handleInsitute = () => {
+  //   if (confirm("هل تود البدء بتسجيل الحضور")) {
+  //     console.log("yes");
+  //   }
+  // };
 
   const searchBar = () => {
     if (searchType == "0") {

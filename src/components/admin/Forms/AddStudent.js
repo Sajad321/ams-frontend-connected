@@ -75,7 +75,11 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
         `${apiUrl}/student` +
           `${
             dataToSend.id != ""
-              ? "/" + dataToSend.id
+              ? `?student_id=${Number(dataToSend.id)}&name=${
+                  dataToSend.name
+                }&dob=${dataToSend.dob}&institute_id=${
+                  dataToSend.institute_id
+                }&phone=${dataToSend.phone}&note=${dataToSend.note}`
               : `?name=${dataToSend.name}&dob=${dataToSend.dob}&institute_id=${dataToSend.institute_id}&phone=${dataToSend.phone}&note=${dataToSend.note}`
           }`,
         {

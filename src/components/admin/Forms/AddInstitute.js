@@ -22,8 +22,8 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
         `${apiUrl}/institute` +
           `${
             dataToSend.id != ""
-              ? "/" + dataToSend.id
-              : `?&name=${dataToSend.name}`
+              ? `?institute_id=${dataToSend.id}&name=${dataToSend.name}`
+              : `?name=${dataToSend.name}`
           }`,
         {
           method: dataToSend.id != "" ? "PATCH" : "POST",
