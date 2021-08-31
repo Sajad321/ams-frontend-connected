@@ -14,7 +14,11 @@ function Institutes({
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [searchedInstitutes, setSearchedInstitutes] = useState([...institutes]);
-  const [modal, setModal] = useState({ visible: false, institute_id: "" });
+  const [modal, setModal] = useState({
+    visible: false,
+    institute_id: "",
+    institute_name: "",
+  });
   useEffect(() => {
     const getInstitutes = async () => {
       try {
@@ -128,13 +132,20 @@ function Institutes({
 
             <InstitutesModal
               show={modal.visible}
-              onHide={() => setModal({ visible: false, institute_id: "" })}
+              onHide={() =>
+                setModal({
+                  visible: false,
+                  institute_id: "",
+                  institute_name: "",
+                })
+              }
               handleStartAttendanceButton={handleStartAttendanceButton}
               handleStudentsInstallmentsButton={
                 handleStudentsInstallmentsButton
               }
               handleStudentsAttendanceButton={handleStudentsAttendanceButton}
               institute_id={modal.institute_id}
+              institute_name={modal.institute_name}
             />
             {searchType == "0"
               ? institutes.map((institute) => {
@@ -146,6 +157,7 @@ function Institutes({
                           setModal({
                             visible: true,
                             institute_id: institute.id,
+                            institute_name: institute._name,
                           })
                         }
                       >

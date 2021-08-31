@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AddModal, StudentsModal } from "../common/Modal";
+import SettingsModal from "../common/SettingsModal";
+
 function AdminHeader(props) {
   const [addModalShow, setAddModalShow] = useState(false);
   const [studentsModalShow, setStudentsModalShow] = useState(false);
+  const [settingsModalShow, setSettingsModalShow] = useState(false);
   return (
     <nav className="navbar navbar-dark navbar-expand-md">
       <AddModal
@@ -20,6 +23,11 @@ function AdminHeader(props) {
         StudentsAttendanceButton={props.StudentsAttendanceButton}
         StudentsInstallmentsButton={props.StudentsInstallmentsButton}
         StudentsButton={props.StudentsButton}
+      />
+      <SettingsModal
+        show={settingsModalShow}
+        onHide={() => setSettingsModalShow(false)}
+        logoutWithRedirect={props.logoutWithRedirect}
       />
       <div className="row">
         <div
@@ -132,7 +140,7 @@ function AdminHeader(props) {
               <a
                 href="#"
                 className="nav_link_bottom"
-                onClick={props.logoutWithRedirect}
+                onClick={() => setSettingsModalShow(true)}
               >
                 {" "}
                 <FontAwesomeIcon
