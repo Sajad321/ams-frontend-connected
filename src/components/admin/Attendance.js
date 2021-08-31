@@ -1,5 +1,6 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { StudentInfoAttendanceModal } from "../common/Modal";
+import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 // var { ipcRenderer } = require("electron");
 
@@ -64,8 +65,10 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
 
       const responseData = await response.json();
       setStudents([...students].filter((student, index) => index != i));
+      toast.success("تم حذف حضور الطالب");
     } catch (error) {
       console.log(error.message);
+      toast.success("حصل خطأ");
     }
   };
 
@@ -85,14 +88,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
           },
         }
       );
-      const responseBlob = await fetch(`${apiUrl}/photo?student_id=${id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer`,
-        },
-      });
       const responseData = await responseJson.json();
-      const responseImg = await responseBlob.blob();
       setStudent({
         ...student,
         visible: true,
@@ -103,8 +99,22 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         institute_id: responseData.institute_id,
         installments: responseData.installments,
         total_absence: responseData.total_absence,
-        incrementally_absence: responseData.incrementally_absence,
+        incrementally_absence: Number(responseData.incrementally_absence),
       });
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    try {
+      const responseBlob = await fetch(`${apiUrl}/photo?student_id=${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+
+      const responseImg = await responseBlob.blob();
+
       setPhoto(new Blob([responseImg], { type: "image/jpeg" }));
     } catch (error) {
       console.log(error.message);
@@ -182,6 +192,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
               onHide={() => setStudent({ ...student, visible: false })}
               student={student}
               photo={photo}
+              setPhoto={setPhoto}
               institute_id={institute_id}
               date={date}
               students={students}

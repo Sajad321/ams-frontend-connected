@@ -337,6 +337,7 @@ export function StudentInfoAttendanceModal({
   onHide,
   student,
   photo,
+  setPhoto,
   date,
   institute_id,
   students,
@@ -380,6 +381,7 @@ export function StudentInfoAttendanceModal({
     // d.innerText = "HI";
     // ipcRenderer.send("abort-student-attendance");
     onHide();
+    setPhoto({});
   };
   const acceptHandler = () => {
     // const d = document.getElementById("ss");
@@ -388,7 +390,6 @@ export function StudentInfoAttendanceModal({
     //   student.student_attendance_id,
     // ]);
     if (
-      (student.institute_id != institute_id) |
       student.installments.filter(
         (installment) => installment.received == "0"
       )[0].received |
@@ -398,15 +399,17 @@ export function StudentInfoAttendanceModal({
       if (box) {
         handleAttendanceButton();
         onHide();
+        setPhoto({});
       }
     } else {
       handleAttendanceButton();
       onHide();
+      setPhoto({});
     }
   };
   const handlers = {
     ABORT: abortHandler,
-    ACCEPT: acceptHandler,
+    ACCEPT: student.institute_id != institute_id ? () => {} : acceptHandler,
   };
 
   if (document.getElementById("student-info-img") != null) {
@@ -450,7 +453,10 @@ export function StudentInfoAttendanceModal({
   return (
     <Modal
       show={show}
-      onHide={onHide}
+      onHide={() => {
+        onHide();
+        setPhoto({});
+      }}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -501,12 +507,18 @@ export function StudentInfoAttendanceModal({
           >
             الغاء
           </Button>
-          <Button
-            onClick={acceptHandler}
-            className="col-4 modal-add-nav btn-success"
-          >
-            تسجيل حضور
-          </Button>
+          {student.institute_id != institute_id ? (
+            <Button className="col-4 modal-add-nav btn-success" disabled={true}>
+              تسجيل حضور
+            </Button>
+          ) : (
+            <Button
+              onClick={acceptHandler}
+              className="col-4 modal-add-nav btn-success"
+            >
+              تسجيل حضور
+            </Button>
+          )}
         </GlobalHotKeys>
       </Modal.Footer>
     </Modal>
