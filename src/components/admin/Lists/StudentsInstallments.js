@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
+import printJS from "print-js";
 const apiUrl = process.env.API_URL;
 
 function StudentsInstallments({ edit, sideBarShow }) {
@@ -10,9 +11,10 @@ function StudentsInstallments({ edit, sideBarShow }) {
   });
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
+  const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
-  const [searchedStudents, setSearchedStudents] = useState({ ...data });
+  const [searchedData, setSearchedData] = useState({ ...data });
   useEffect(() => {
     const getStuff = async () => {
       try {
@@ -54,7 +56,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
           }),
         });
 
-        setSearchedStudents({
+        setSearchedData({
           students: responseData.students.sort((a, b) => {
             if (a.name < b.name) {
               return -1;
@@ -74,52 +76,52 @@ function StudentsInstallments({ edit, sideBarShow }) {
     };
     getInstallments();
   }, []);
-  const handleInstituteChange = (e) => {
-    const getInstallments = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/student-install`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-        const responseData = await response.json();
-        console.log(responseData);
-        setData({
-          students: responseData.students.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          }),
-          installments: responseData.installments.sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }),
-        });
+  // const handleInstituteChange = (e) => {
+  //   const getInstallments = async () => {
+  //     try {
+  //       const response = await fetch(`${apiUrl}/student-install`, {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer`,
+  //         },
+  //       });
+  //       const responseData = await response.json();
+  //       console.log(responseData);
+  //       setData({
+  //         students: responseData.students.sort((a, b) => {
+  //           if (a.name < b.name) {
+  //             return -1;
+  //           }
+  //           if (a.name > b.name) {
+  //             return 1;
+  //           }
+  //           return 0;
+  //         }),
+  //         installments: responseData.installments.sort((a, b) => {
+  //           return new Date(a.date).getTime() - new Date(b.date).getTime();
+  //         }),
+  //       });
 
-        setSearchedStudents({
-          students: responseData.students.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          }),
-          installments: responseData.installments.sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }),
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getInstallments();
-  };
+  //       setSearchedStudents({
+  //         students: responseData.students.sort((a, b) => {
+  //           if (a.name < b.name) {
+  //             return -1;
+  //           }
+  //           if (a.name > b.name) {
+  //             return 1;
+  //           }
+  //           return 0;
+  //         }),
+  //         installments: responseData.installments.sort((a, b) => {
+  //           return new Date(a.date).getTime() - new Date(b.date).getTime();
+  //         }),
+  //       });
+  //     } catch (error) {
+  //       console.log(error.message);
+  //     }
+  //   };
+  //   getInstallments();
+  // };
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
@@ -129,17 +131,69 @@ function StudentsInstallments({ edit, sideBarShow }) {
   const handleSearchButton = (e) => {
     e.preventDefault();
     const reg = new RegExp(search, "i");
-    if (searchType == "1") {
-      setSearchedStudents([...students].filter((d) => d.name.match(reg)));
-    } else if (searchType == "2") {
-      setSearchedStudents([...students].filter((d) => d.institute.match(reg)));
+
+    if (searchInstitute != "0") {
+      if (searchType == "1") {
+        setSearchedData({
+          students: [...data.students].filter(
+            (d) => d.name.match(reg) && d.institute_id == searchInstitute
+          ),
+          installments: [...data.installments].filter(
+            (d) => d.institute_id == searchInstitute
+          ),
+        });
+      }
+    } else {
+      if (searchType == "1") {
+        setSearchedData({
+          students: [...data.students].filter((d) => d.name.match(reg)),
+          installments: [...data.installments],
+        });
+      }
     }
   };
+
+  const handleInstituteChange = (e) => {
+    if (e.target.value != "0") {
+      setSearchInstitute(e.target.value);
+      setSearchedData({
+        students: [...data.students].filter(
+          (d) => d.institute_id == e.target.value
+        ),
+        installments: [...data.installments].filter(
+          (d) => d.institute_id == e.target.value
+        ),
+      });
+    } else {
+      setSearchInstitute("0");
+      setSearchedData({
+        students: [...data.students],
+        installments: [...data.installments],
+      });
+    }
+  };
+
   const handleEditButton = (student) => {
     edit(student);
   };
   const handleInstallmentsToggle = (studentIndex, id, received) => {
-    if (searchType == "0") {
+    if ((searchType != "0") | (searchInstitute != "0")) {
+      const installmentIndex = searchedData.students.findIndex(
+        (o) => o.id == id
+      );
+      let nee = [...searchedStudents.students];
+      let nee1 = [...nee[studentIndex].installment_received];
+      nee1[installmentIndex] = {
+        ...nee1[installmentIndex],
+        received: received,
+      };
+      nee[studentIndex].installment_received[installmentIndex] =
+        nee1[installmentIndex];
+      setSearchedStudents({
+        ...data,
+        students: nee,
+      });
+    } else if (searchType == "0") {
       const installmentIndex = data.students[
         studentIndex
       ].installment_received.findIndex((i) => i.id == id);
@@ -155,31 +209,19 @@ function StudentsInstallments({ edit, sideBarShow }) {
         ...data,
         students: nee,
       });
-    } else {
-      const installmentIndex = searchedStudents.students.findIndex(
-        (o) => o.id == id
-      );
-      let nee = [...searchedStudents.students];
-      let nee1 = [...nee[studentIndex].installment_received];
-      nee1[installmentIndex] = {
-        ...nee1[installmentIndex],
-        received: received,
-      };
-      nee[studentIndex].installment_received[installmentIndex] =
-        nee1[installmentIndex];
-      setSearchedStudents({
-        ...data,
-        students: nee,
-      });
     }
   };
   const handleInstallmentsToggleButton = (index, id, received) => {
     const toggleInstallment = async () => {
       try {
-        const response = await fetch(`${apiUrl}/installments/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify({ received: received == 0 ? 1 : 0 }),
-        });
+        const response = await fetch(
+          `${apiUrl}/student-installment?student_installment_id=${Number(
+            id
+          )}&receive=${received == 0 ? 1 : 0}`,
+          {
+            method: "PATCH",
+          }
+        );
 
         const responseData = await response.json();
       } catch (error) {
@@ -188,17 +230,39 @@ function StudentsInstallments({ edit, sideBarShow }) {
         toast.warn("حصل خطأ");
       }
     };
-    toggleInstallment();
-    handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
-    toast.success("تم استلام القسط");
+    let box = confirm("هل انت متأكد؟");
+    if (box) {
+      toggleInstallment();
+      handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
+      toast.success("تم تغيير حالة القسط");
+    }
   };
+  function PrintElem(elem) {
+    var mywindow = window.open("", "PRINT", "height=400,width=600");
+
+    mywindow.document.write(
+      "<html><head><title>" + document.title + "</title>"
+    );
+    mywindow.document.write("</head><body >");
+    mywindow.document.write("<h1>" + document.title + "</h1>");
+    mywindow.document.write(document.getElementById(elem).innerHTML);
+    mywindow.document.write("</body></html>");
+
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10*/
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
+  }
   const printTable = () => {
-    let divToPrint = document.getElementById("print-table");
-    newWin = window.open("");
-    newWin.document.write(divToPrint.outerHTML);
-    newWin.print();
-    newWin.close();
+    // let divToPrint = document.getElementById("print-table");
+    // PrintElem(divToPrint);
+    // printJS({ printable: "print-table", type: "html", targetStyles: ["*"] });
+    window.print();
   };
+
   const render_installments = (student, installment, index) => {
     const installment_received = student.installment_received.filter(
       (installment_received) =>
@@ -210,7 +274,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
         installment.id == installment_received.installment_id
       ) {
         return (
-          <td className="" key={installment_received.id}>
+          <td className="t-date" key={installment_received.id}>
             <FontAwesomeIcon
               icon="check-circle"
               size="2x"
@@ -231,7 +295,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
         installment.id == installment_received.installment_id
       ) {
         return (
-          <td className="" key={installment_received.id}>
+          <td className="t-date" key={installment_received.id}>
             <FontAwesomeIcon
               icon="times-circle"
               size="2x"
@@ -248,16 +312,51 @@ function StudentsInstallments({ edit, sideBarShow }) {
         );
       }
     } else {
-      return <td className="" key={installment.id}></td>;
+      return <td className="t-date" key={installment.id}></td>;
     }
   };
 
   const render_table = () => {
-    if (searchType == "0") {
+    if ((searchType != "0") | (searchInstitute != "0")) {
+      const render_data = searchedData.students.map((student, index) => {
+        return (
+          <tr key={student.id} className="font-weight-bold">
+            <td className="text-white t-name">{student.name}</td>
+            {searchedData.installments.map((installment) => {
+              return render_installments(student, installment, index);
+            })}
+          </tr>
+        );
+      });
+      return (
+        <table
+          className="table table-dark table-striped table-bordered table-hover text"
+          dir="rtl"
+        >
+          <thead className="thead-dark">
+            <tr>
+              <th className="t-name">الاسم</th>
+              {searchedData.installments.map((installment) => {
+                return (
+                  <th key={installment.id} className="t-date">
+                    معهد {installment.institute_name}
+                    <br />
+                    القسط {installment.name}
+                    <br />
+                    {installment.date}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>{render_data}</tbody>
+        </table>
+      );
+    } else if (searchType == "0") {
       const render_data = data.students.map((student, index) => {
         return (
           <tr key={student.id} className="font-weight-bold">
-            <td className="text-white">{student.name}</td>
+            <td className="text-white t-name">{student.name}</td>
             {data.installments.map((installment) => {
               return render_installments(student, installment, index);
             })}
@@ -274,52 +373,15 @@ function StudentsInstallments({ edit, sideBarShow }) {
       });
       return (
         <table
-          className="table table-striped table-bordered table-hover text"
+          className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
-          id="print-table"
         >
           <thead className="thead-dark">
             <tr>
-              <th>الاسم</th>
+              <th className="t-name">الاسم</th>
               {data.installments.map((installment) => {
                 return (
-                  <th key={installment.id}>
-                    معهد {installment.institute_name}
-                    <br />
-                    القسط {installment.name}
-                    <br />
-                    {installment.date}
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>{render_data}</tbody>
-        </table>
-      );
-    } else {
-      const render_data = searchedStudents.students.map((student, index) => {
-        return (
-          <tr key={student.id} className="font-weight-bold">
-            <td className="text-white">{student.name}</td>
-            {searchedStudents.installments.map((installment) => {
-              return render_installments(student, installment, index);
-            })}
-          </tr>
-        );
-      });
-      return (
-        <table
-          className="table table-striped table-bordered table-hover text"
-          dir="rtl"
-          id="print-table"
-        >
-          <thead className="thead-dark">
-            <tr>
-              <th>الاسم</th>
-              {searchedStudents.installments.map((installment) => {
-                return (
-                  <th key={installment.id}>
+                  <th key={installment.id} className="t-date">
                     معهد {installment.institute_name}
                     <br />
                     القسط {installment.name}
@@ -371,7 +433,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
             <div className="col-12">
               <div className="row mt-3">
                 <div className="col-8">
-                  <form onSubmit={printTable}>
+                  <form>
                     <div className="form-group row mt-1">
                       <div className="col-2 text">
                         <button
@@ -399,7 +461,12 @@ function StudentsInstallments({ edit, sideBarShow }) {
                     </div>
                   </form>
                 </div>
-                <div className="col-1 offset-1 pt-1">
+                <div className="col-1 pt-1">
+                  <button onClick={printTable} className="btn btn-light">
+                    طباعة
+                  </button>
+                </div>
+                <div className="col-1 pt-1">
                   <select
                     id="institute"
                     onChange={handleInstituteChange}
@@ -421,7 +488,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12" id="print-table">
               <div className="table-responsive">{render_table()}</div>
             </div>
           </div>

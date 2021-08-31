@@ -9,6 +9,7 @@ function Salesmen({ sideBarShow, edit }) {
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [searchedStudents, setSearchedStudents] = useState([...students]);
+  const [searchInstitute, setSearchInstitute] = useState("0");
   const [studentsInfoModal, setStudentsInfoModal] = useState({
     visible: false,
     id: "",
@@ -120,23 +121,30 @@ function Salesmen({ sideBarShow, edit }) {
     e.preventDefault();
     // setLoading(true);
     const reg = new RegExp(search, "i");
-    if (searchType == "1") {
-      setSearchedStudents([...students].filter((d) => d.name.match(reg)));
-    } else if (searchType == "2") {
-      setSearchedStudents([...students].filter((d) => d.institute.match(reg)));
+    if (searchInstitute != "0") {
+      if (searchType == "1") {
+        setSearchedStudents(
+          [...students].filter(
+            (d) => d.name.match(reg) && d.institute_id == searchInstitute
+          )
+        );
+      }
+    } else {
+      if (searchType == "1") {
+        setSearchedStudents([...students].filter((d) => d.name.match(reg)));
+      }
     }
   };
-
   const handleInstituteChange = (e) => {
-    setInstitute("1");
-    setInstituteData({
-      students: [...data.students].filter(
-        (d) => d.institute_id == e.target.value
-      ),
-      attendance: [...data.attendance].filter(
-        (d) => d.institute_id == e.target.value
-      ),
-    });
+    if (e.target.value != "0") {
+      setSearchInstitute(e.target.value);
+      setSearchedStudents(
+        [...students].filter((d) => d.institute_id == e.target.value)
+      );
+    } else {
+      setSearchInstitute("0");
+      setSearchedStudents([...students]);
+    }
   };
   const handleEditButton = (student) => {
     edit(student);
@@ -210,7 +218,6 @@ function Salesmen({ sideBarShow, edit }) {
                             الكل
                           </option>
                           <option value="1">الاسم</option>
-                          <option value="2">المعهد</option>
                         </select>
                       </div>
                       {searchBar()}
@@ -256,8 +263,8 @@ function Salesmen({ sideBarShow, edit }) {
             />
             <div className="col-12" dir="rtl">
               <div className="row">
-                {searchType == "0"
-                  ? students.map((student) => {
+                {(searchType != "0") | (searchInstitute != "0")
+                  ? searchedStudents.map((student) => {
                       return (
                         <div
                           className="col-3 p-2 m-0"
@@ -298,7 +305,7 @@ function Salesmen({ sideBarShow, edit }) {
                         </div>
                       );
                     })
-                  : searchedStudents.map((student) => {
+                  : students.map((student) => {
                       return (
                         <div
                           className="col-3 p-2 m-0"
@@ -326,15 +333,6 @@ function Salesmen({ sideBarShow, edit }) {
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0">الاسم: {student.name}</p>
-                                  <p className="mb-0">
-                                    المعهد: {student.institute}
-                                  </p>
-                                  <p className="mb-0">
-                                    رقم الهاتف: {student.phone}
-                                  </p>
-                                  <p className="mb-0">
-                                    المواليد: {student.dob}
-                                  </p>
                                 </div>
                                 <button
                                   onClick={() => handleEditButton(student)}

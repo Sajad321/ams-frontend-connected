@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
+import printJS from "print-js";
 const apiUrl = process.env.API_URL;
 
 function StudentsAttendance({ edit, sideBarShow }) {
@@ -175,10 +176,14 @@ function StudentsAttendance({ edit, sideBarShow }) {
   const handleAttendanceToggleButton = (index, id, attended) => {
     const toggleAttendance = async () => {
       try {
-        const response = await fetch(`${apiUrl}/attendance/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify({ attended: attended == 0 ? 1 : 0 }),
-        });
+        const response = await fetch(
+          `${apiUrl}/students-attendance?student_attendance_id=${Number(
+            id
+          )}&attended=${attended == 0 ? 1 : 0}`,
+          {
+            method: "PATCH",
+          }
+        );
 
         const responseData = await response.json();
       } catch (error) {
@@ -187,16 +192,24 @@ function StudentsAttendance({ edit, sideBarShow }) {
         toast.warn("حصل خطأ");
       }
     };
-    toggleAttendance();
-    handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
-    toast.success("تم استلام القسط");
+    let box = confirm("هل انت متأكد؟");
+    if (box) {
+      toggleAttendance();
+      handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
+      toast.success("تم تغيير حالة الحضور");
+    }
   };
   const printTable = () => {
-    let divToPrint = document.getElementById("print-table");
-    newWin = window.open("");
-    newWin.document.write(divToPrint.outerHTML);
-    newWin.print();
-    newWin.close();
+    // let divToPrint = document.getElementById("print-table");
+    // newWin = window.open("");
+    // newWin.document.write(divToPrint.outerHTML);
+    // newWin.print();
+    // newWin.close();
+    printJS({
+      printable: "print-table",
+      type: "html",
+    });
+    // window.print();
   };
 
   const searchBar = () => {
@@ -242,7 +255,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
         attendance.id == student_attendance.attendance_id
       ) {
         return (
-          <td className="" key={student_attendance.student_attendance_id}>
+          <td className="t-date" key={student_attendance.student_attendance_id}>
             <FontAwesomeIcon
               icon="check-circle"
               size="2x"
@@ -263,7 +276,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
         attendance.id == student_attendance.attendance_id
       ) {
         return (
-          <td className="" key={student_attendance.student_attendance_id}>
+          <td className="t-date" key={student_attendance.student_attendance_id}>
             <FontAwesomeIcon
               icon="times-circle"
               size="2x"
@@ -280,7 +293,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
         );
       }
     } else {
-      return <td className="" key={attendance.id}></td>;
+      return <td key={attendance.id} className="t-date"></td>;
     }
   };
   const render_table = () => {
@@ -288,7 +301,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
       const render_data = searchedData.students.map((student, index) => {
         return (
           <tr key={student.id} className="font-weight-bold">
-            <td className="text-white">{student.name}</td>
+            <td className="text-white t-name">{student.name}</td>
             {data.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
@@ -305,15 +318,18 @@ function StudentsAttendance({ edit, sideBarShow }) {
       });
       return (
         <table
-          className="table table-striped table-bordered table-hover text"
+          className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
-          id="print-table"
         >
           <thead className="thead-dark">
             <tr>
-              <th>الاسم</th>
+              <th className="t-name">الاسم</th>
               {data.attendance.map((attendance) => {
-                return <th key={attendance.id}>{attendance.date}</th>;
+                return (
+                  <th key={attendance.id} className="t-date">
+                    {attendance.date}
+                  </th>
+                );
               })}
             </tr>
           </thead>
@@ -323,8 +339,8 @@ function StudentsAttendance({ edit, sideBarShow }) {
     } else if (searchType == "0") {
       const render_data = data.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold">
-            <td className="text-white">{student.name}</td>
+          <tr key={student.id} className="font-weight-bold" className="d-flex">
+            <td className="text-white t-name">{student.name}</td>
             {data.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
@@ -341,15 +357,19 @@ function StudentsAttendance({ edit, sideBarShow }) {
       });
       return (
         <table
-          className="table table-striped table-bordered table-hover text"
+          className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
-          id="print-table"
+          border="1"
         >
           <thead className="thead-dark">
-            <tr>
-              <th>الاسم</th>
+            <tr className="d-flex">
+              <th className="t-name">الاسم</th>
               {data.attendance.map((attendance) => {
-                return <th key={attendance.id}>{attendance.date}</th>;
+                return (
+                  <th key={attendance.id} className="t-date">
+                    {attendance.date}
+                  </th>
+                );
               })}
             </tr>
           </thead>
@@ -401,7 +421,12 @@ function StudentsAttendance({ edit, sideBarShow }) {
                     </div>
                   </form>
                 </div>
-                <div className="col-1 offset-1 pt-1">
+                <div className="col-1 pt-1">
+                  <button onClick={printTable} className="btn btn-light">
+                    طباعة
+                  </button>
+                </div>
+                <div className="col-1 pt-1">
                   <select
                     id="institute"
                     onChange={handleInstituteChange}
@@ -423,7 +448,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12" id="print-table">
               <div className="table-responsive">{render_table()}</div>
             </div>
           </div>
