@@ -142,7 +142,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control text"
                       onChange={handleNameChange}
                       value={dataToSend.name}
-                      // required
+                      required
                     ></input>
                   </div>
                   <label
@@ -160,7 +160,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control"
                       dir="rtl"
                       value={dataToSend.institute_id}
-                      // required
+                      required
                     >
                       <option selected>اختر</option>
                       {data.institutes.map((institute) => (
@@ -204,7 +204,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control text"
                       onChange={handleDateChange}
                       value={dataToSend.dob}
-                      // required
+                      required
                     ></input>
                   </div>
                   <label
@@ -240,6 +240,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       type="file"
                       onChange={handlePhotoChange}
                       className="form-control text"
+                      accept=".jpg,.jpeg"
                       // required
                     ></input>
                   </div>

@@ -288,17 +288,17 @@ function Salesmen({ sideBarShow, edit }) {
                               });
                             }}
                           >
-                            <div className="card-body pb-2 pt-3 pr-3 pl-3">
+                            <div className="card-body p-3">
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0">الاسم: {student.name}</p>
                                 </div>
-                                <button
+                                {/* <button
                                   onClick={() => handleEditButton(student)}
                                   className="btn btn-secondary text-white mt-2"
                                 >
                                   تعديل
-                                </button>
+                                </button> */}
                               </div>
                             </div>
                           </div>
@@ -329,17 +329,17 @@ function Salesmen({ sideBarShow, edit }) {
                               });
                             }}
                           >
-                            <div className="card-body pb-2 pt-3 pr-3 pl-3">
+                            <div className="card-body p-3">
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0">الاسم: {student.name}</p>
                                 </div>
-                                <button
+                                {/* <button
                                   onClick={() => handleEditButton(student)}
                                   className="btn btn-secondary text-white mt-2"
                                 >
                                   تعديل
-                                </button>
+                                </button> */}
                               </div>
                             </div>
                           </div>

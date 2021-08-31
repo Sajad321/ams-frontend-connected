@@ -3,6 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import { HotKeys, GlobalHotKeys } from "react-hotkeys";
+import { ipcRenderer } from "electron";
 
 const apiUrl = process.env.API_URL;
 
@@ -264,10 +265,28 @@ export function StudentsInfoModal(props) {
           <div className="col-2 col-sm-3 p-0 text-center text-white">
             <div className="row">
               <div className="col-12 mt-3">
-                <img id="student-img" className="img-student-attendance" />
+                <img
+                  id="student-img"
+                  className="img-student-attendance"
+                  onClick={() =>
+                    ipcRenderer.send(
+                      "download-button",
+                      `${apiUrl}/photo?student_id=${props.id}`
+                    )
+                  }
+                />
               </div>
               <div className="col-12 mt-3">
-                <img id="student-qr" className="img-student-attendance" />
+                <img
+                  id="student-qr"
+                  className="img-student-attendance"
+                  onClick={() =>
+                    ipcRenderer.send(
+                      "download-button",
+                      `${apiUrl}/qr?student_id=${props.id}`
+                    )
+                  }
+                />
               </div>
             </div>
           </div>

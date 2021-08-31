@@ -4,6 +4,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
+const { download } = require("electron-dl");
 // const messages = require("./messages.json");
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -202,6 +203,12 @@ function createWindow() {
   });
 }
 
+ipcMain.on("download-button", (event, info) => {
+  const win = BrowserWindow.getFocusedWindow();
+  download(win, info, { saveAs: true })
+    .then((dl) => console.log("Finished Download"))
+    .catch((error) => console.log(error.message));
+});
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
