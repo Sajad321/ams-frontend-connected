@@ -14,7 +14,10 @@ export function InstitutesModal(props) {
   return (
     <Modal
       show={props.show}
-      onHide={props.onHide}
+      onHide={() => {
+        setDate("");
+        props.onHide();
+      }}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -55,7 +58,7 @@ export function InstitutesModal(props) {
           <Button
             onClick={() => {
               props.handleStudentsAttendanceButton(props.institute_id);
-              props.onHide;
+              props.onHide();
             }}
             className="modal-add-nav"
           >
@@ -66,7 +69,7 @@ export function InstitutesModal(props) {
           <Button
             onClick={() => {
               props.handleStudentsInstallmentsButton(props.institute_id);
-              props.onHide;
+              props.onHide();
             }}
             className="modal-add-nav"
           >
@@ -74,15 +77,33 @@ export function InstitutesModal(props) {
           </Button>
         </div>
         <div className="">
-          <Button
-            onClick={() => {
-              props.handleStartAttendanceButton(props.institute_id, date);
-              props.onHide();
-            }}
-            className="modal-add-nav"
-          >
-            بدء تسجيل الحضور
-          </Button>
+          {date == "" ? (
+            <Button
+              onClick={() => {
+                props.handleStartAttendanceButton(props.institute_id, date);
+                setDate("");
+                props.onHide();
+              }}
+              className="modal-add-nav"
+              disabled={true}
+            >
+              بدء تسجيل الحضور
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                let box = confirm("هل انت متأكد؟");
+                if (box) {
+                  props.handleStartAttendanceButton(props.institute_id, date);
+                  setDate("");
+                  props.onHide();
+                }
+              }}
+              className="modal-add-nav"
+            >
+              بدء تسجيل الحضور
+            </Button>
+          )}
         </div>
       </Modal.Footer>
     </Modal>

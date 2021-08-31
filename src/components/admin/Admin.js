@@ -192,6 +192,7 @@ function Admin(props) {
         <Attendance
           sideBarShow={sideBarShow}
           page={page}
+          mainPage={handleMainButton}
           attendanceStartData={attendanceStartData}
         />
         <AdminFooter sideBarShow={sideBarShow} />

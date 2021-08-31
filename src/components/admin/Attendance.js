@@ -3,7 +3,7 @@ import { StudentInfoAttendanceModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
 // var { ipcRenderer } = require("electron");
 
-function Attendance({ sideBarShow, page, attendanceStartData }) {
+function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState({
     visible: false,
@@ -160,10 +160,18 @@ function Attendance({ sideBarShow, page, attendanceStartData }) {
           }
           id="main-view"
         >
-          <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
-            <div className="col-12">
-              <div className="row mt-3">
-                <div className="col-12 col-md-4 order-first order-md-last">
+          <div className="row pt-5 pr-2 pl-2 mt-3 mb-5">
+            <div className="col-12 mb-3">
+              <div className="row pt-3">
+                <div className="col-2 align-self-center">
+                  <button
+                    onClick={mainPage}
+                    className="btn btn-danger text-white"
+                  >
+                    انهاء عملية تسجيل الحضور
+                  </button>
+                </div>
+                <div className="col-10">
                   <h2 className="text-right text-white">الحضور</h2>
                 </div>
               </div>
