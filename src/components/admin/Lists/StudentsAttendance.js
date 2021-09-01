@@ -5,7 +5,6 @@ import printJS from "print-js";
 const apiUrl = process.env.API_URL;
 
 function StudentsAttendance({
-  edit,
   sideBarShow,
   data,
   setData,
@@ -238,6 +237,7 @@ function StudentsAttendance({
     const student_attendance = student.student_attendance.filter(
       (student_attendance) => student_attendance.attendance_id == attendance.id
     )[0];
+    console.log(student_attendance);
     if (student_attendance) {
       if (
         student_attendance.attended == "1" &&
@@ -289,8 +289,9 @@ function StudentsAttendance({
     if ((searchType != "0") | (searchInstitute != "0")) {
       const render_data = searchedData.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold">
-            <td className="text-white t-name">{student.name}</td>
+          <tr key={student.id} className="font-weight-bold text-white">
+            <td className="t-id">{index + 1}</td>
+            <td className="t-name">{student.name}</td>
             {searchedData.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
@@ -313,6 +314,7 @@ function StudentsAttendance({
         >
           <thead className="thead-dark">
             <tr>
+              <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
               {searchedData.attendance.map((attendance) => {
                 return (
@@ -329,8 +331,13 @@ function StudentsAttendance({
     } else if (searchType == "0") {
       const render_data = data.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold" className="d-flex">
-            <td className="text-white t-name">{student.name}</td>
+          <tr
+            key={student.id}
+            className="font-weight-bold text-white"
+            className="d-flex"
+          >
+            <td className="t-id">{index + 1}</td>
+            <td className="t-name">{student.name}</td>
             {data.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
@@ -353,6 +360,7 @@ function StudentsAttendance({
         >
           <thead className="thead-dark">
             <tr className="d-flex">
+              <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
               {data.attendance.map((attendance) => {
                 return (

@@ -268,7 +268,7 @@ function Salesmen({ sideBarShow, edit }) {
                   ? searchedStudents.map((student) => {
                       return (
                         <div
-                          className="col-3 p-2 m-0"
+                          className="col-12 p-2 m-0"
                           key={student.id}
                           dir="ltr"
                         >
@@ -292,7 +292,9 @@ function Salesmen({ sideBarShow, edit }) {
                             <div className="card-body p-3">
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
-                                  <p className="mb-0">الاسم: {student.name}</p>
+                                  <p className="mb-0" dir="rtl">
+                                    {index + 1} {" - "} {student.name}
+                                  </p>
                                 </div>
                                 {/* <button
                                   onClick={() => handleEditButton(student)}
@@ -306,10 +308,10 @@ function Salesmen({ sideBarShow, edit }) {
                         </div>
                       );
                     })
-                  : students.map((student) => {
+                  : students.map((student, index) => {
                       return (
                         <div
-                          className="col-3 p-2 m-0"
+                          className="col-12 p-2 m-0"
                           key={student.id}
                           dir="ltr"
                         >
@@ -333,7 +335,9 @@ function Salesmen({ sideBarShow, edit }) {
                             <div className="card-body p-3">
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
-                                  <p className="mb-0">الاسم: {student.name}</p>
+                                  <p className="mb-0" dir="rtl">
+                                    {index + 1} {" - "} {student.name}
+                                  </p>
                                 </div>
                                 {/* <button
                                   onClick={() => handleEditButton(student)}

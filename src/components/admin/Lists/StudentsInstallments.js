@@ -17,7 +17,7 @@ function StudentsInstallments({
   const [searchType, setSearchType] = useState("0");
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
-  const [search2, setSearch2] = useState("");
+  console.log(searchedData);
   useEffect(() => {
     setSearchInstitute(institute);
     if (institute != "0") {
@@ -29,52 +29,6 @@ function StudentsInstallments({
       });
     }
   }, []);
-  // const handleInstituteChange = (e) => {
-  //   const getInstallments = async () => {
-  //     try {
-  //       const response = await fetch(`${apiUrl}/student-install`, {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer`,
-  //         },
-  //       });
-  //       const responseData = await response.json();
-  //       console.log(responseData);
-  //       setData({
-  //         students: responseData.students.sort((a, b) => {
-  //           if (a.name < b.name) {
-  //             return -1;
-  //           }
-  //           if (a.name > b.name) {
-  //             return 1;
-  //           }
-  //           return 0;
-  //         }),
-  //         installments: responseData.installments.sort((a, b) => {
-  //           return new Date(a.date).getTime() - new Date(b.date).getTime();
-  //         }),
-  //       });
-
-  //       setSearchedStudents({
-  //         students: responseData.students.sort((a, b) => {
-  //           if (a.name < b.name) {
-  //             return -1;
-  //           }
-  //           if (a.name > b.name) {
-  //             return 1;
-  //           }
-  //           return 0;
-  //         }),
-  //         installments: responseData.installments.sort((a, b) => {
-  //           return new Date(a.date).getTime() - new Date(b.date).getTime();
-  //         }),
-  //       });
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   };
-  //   getInstallments();
-  // };
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
@@ -190,25 +144,25 @@ function StudentsInstallments({
       toast.success("تم تغيير حالة القسط");
     }
   };
-  function PrintElem(elem) {
-    var mywindow = window.open("", "PRINT", "height=400,width=600");
+  // function PrintElem(elem) {
+  //   var mywindow = window.open("", "PRINT", "height=400,width=600");
 
-    mywindow.document.write(
-      "<html><head><title>" + document.title + "</title>"
-    );
-    mywindow.document.write("</head><body >");
-    mywindow.document.write("<h1>" + document.title + "</h1>");
-    mywindow.document.write(document.getElementById(elem).innerHTML);
-    mywindow.document.write("</body></html>");
+  //   mywindow.document.write(
+  //     "<html><head><title>" + document.title + "</title>"
+  //   );
+  //   mywindow.document.write("</head><body >");
+  //   mywindow.document.write("<h1>" + document.title + "</h1>");
+  //   mywindow.document.write(document.getElementById(elem).innerHTML);
+  //   mywindow.document.write("</body></html>");
 
-    mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*/
+  //   mywindow.document.close(); // necessary for IE >= 10
+  //   mywindow.focus(); // necessary for IE >= 10*/
 
-    mywindow.print();
-    mywindow.close();
+  //   mywindow.print();
+  //   mywindow.close();
 
-    return true;
-  }
+  //   return true;
+  // }
   const printTable = () => {
     // let divToPrint = document.getElementById("print-table");
     // PrintElem(divToPrint);
@@ -278,8 +232,9 @@ function StudentsInstallments({
     if ((searchType != "0") | (searchInstitute != "0")) {
       const render_data = searchedData.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold">
-            <td className="text-white t-name">{student.name}</td>
+          <tr key={student.id} className="d-flex font-weight-bold text-white">
+            <td className="t-id">{index + 1}</td>
+            <td className="t-name">{student.name}</td>
             {searchedData.installments.map((installment) => {
               return render_installments(student, installment, index);
             })}
@@ -293,7 +248,8 @@ function StudentsInstallments({
           border="1"
         >
           <thead className="thead-dark">
-            <tr>
+            <tr className="d-flex">
+              <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
               {searchedData.installments.map((installment) => {
                 return (
@@ -314,8 +270,9 @@ function StudentsInstallments({
     } else if (searchType == "0") {
       const render_data = data.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold">
-            <td className="text-white t-name">{student.name}</td>
+          <tr key={student.id} className="d-flex font-weight-bold text-white">
+            <td className="t-id">{index + 1}</td>
+            <td className="t-name">{student.name}</td>
             {data.installments.map((installment) => {
               return render_installments(student, installment, index);
             })}
@@ -337,7 +294,8 @@ function StudentsInstallments({
           border="1"
         >
           <thead className="thead-dark">
-            <tr>
+            <tr className="d-flex">
+              <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
               {data.installments.map((installment) => {
                 return (

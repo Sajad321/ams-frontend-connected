@@ -224,18 +224,12 @@ function Admin(props) {
 
   const handleStudentsInstallmentsButton = (institute_id) => {
     setInstitute(institute_id);
-    getStuff();
-    getInstallments();
-    getAttendance();
     setPage("StudentsInstallments");
     setDataToChange({});
   };
 
   const handleStudentsAttendanceButton = (institute_id) => {
     setInstitute(institute_id);
-    getStuff();
-    getInstallments();
-    getAttendance();
     setPage("StudentsAttendance");
     setDataToChange({});
   };
