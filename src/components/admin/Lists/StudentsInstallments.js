@@ -425,7 +425,7 @@ function StudentsInstallments({
                     onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
-                    value={institute}
+                    value={searchInstitute}
                   >
                     <option value="0" defaultValue>
                       المعهد

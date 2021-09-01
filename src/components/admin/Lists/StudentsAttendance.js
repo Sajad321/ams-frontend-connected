@@ -103,9 +103,9 @@ function StudentsAttendance({
       });
     }
   };
-  const handleEditButton = (student) => {
-    edit(student);
-  };
+  // const handleEditButton = (student) => {
+  //   edit(student);
+  // };
   const handleAttendanceToggle = (studentIndex, id, attended) => {
     if ((searchType != "0") | (searchInstitute != "0")) {
       const attendanceIndex = searchedData.students[
@@ -201,15 +201,36 @@ function StudentsAttendance({
       );
     } else if (searchType == "2") {
       return (
-        <div className="col-7">
-          <input
-            type="text"
-            className="form-control text"
-            id="searchZone"
-            onChange={handleSearchChange}
-            placeholder="ابحث"
-          ></input>
-        </div>
+        <Fragment>
+          <div className="col-5 offset-2 col-md-3 offset-md-0 order-0 order-md-2">
+            <input
+              type="date"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearchChange}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-1 order-md-3 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            من
+          </p>
+          <div className="col-5 offset-5 col-md-3 offset-md-0 order-2 order-md-0">
+            <input
+              type="date"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch2Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-3 order-md-1 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            الى
+          </p>
+        </Fragment>
       );
     }
   };
@@ -270,7 +291,7 @@ function StudentsAttendance({
         return (
           <tr key={student.id} className="font-weight-bold">
             <td className="text-white t-name">{student.name}</td>
-            {data.attendance.map((attendance) => {
+            {searchedData.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
             {/* <td>
@@ -292,7 +313,7 @@ function StudentsAttendance({
           <thead className="thead-dark">
             <tr>
               <th className="t-name">الاسم</th>
-              {data.attendance.map((attendance) => {
+              {searchedData.attendance.map((attendance) => {
                 return (
                   <th key={attendance.id} className="t-date">
                     {attendance.date}
@@ -400,7 +421,7 @@ function StudentsAttendance({
                     onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
-                    value={institute}
+                    value={searchInstitute}
                   >
                     <option value="0" defaultValue>
                       المعهد
