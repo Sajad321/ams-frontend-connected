@@ -4,77 +4,30 @@ import { toast } from "react-toastify";
 import printJS from "print-js";
 const apiUrl = process.env.API_URL;
 
-function StudentsInstallments({ edit, sideBarShow }) {
-  const [data, setData] = useState({
-    students: [],
-    installments: [],
-  });
-  const [institutes, setInstitutes] = useState([]);
+function StudentsInstallments({
+  edit,
+  sideBarShow,
+  data,
+  setData,
+  searchedData,
+  setSearchedData,
+  institutes,
+  institute,
+}) {
   const [searchType, setSearchType] = useState("0");
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
-  const [searchedData, setSearchedData] = useState({ ...data });
   useEffect(() => {
-    const getStuff = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/institute`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-
-        const responseData = await response.json();
-        setInstitutes(responseData.institutes);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getStuff();
-    const getInstallments = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/student-install`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-        const responseData = await response.json();
-        setData({
-          students: responseData.students.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          }),
-          installments: responseData.installments.sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }),
-        });
-
-        setSearchedData({
-          students: responseData.students.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          }),
-          installments: responseData.installments.sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }),
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getInstallments();
+    setSearchInstitute(institute);
+    if (institute != "0") {
+      setSearchedData({
+        students: [...data.students].filter((d) => d.institute_id == institute),
+        installments: [...data.installments].filter(
+          (d) => d.institute_id == institute
+        ),
+      });
+    }
   }, []);
   // const handleInstituteChange = (e) => {
   //   const getInstallments = async () => {
@@ -472,6 +425,7 @@ function StudentsInstallments({ edit, sideBarShow }) {
                     onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
+                    value={institute}
                   >
                     <option value="0" defaultValue>
                       المعهد

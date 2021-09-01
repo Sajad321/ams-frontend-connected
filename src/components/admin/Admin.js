@@ -52,6 +52,130 @@ function Admin(props) {
     institute_id: "",
     date: "",
   });
+
+  const [institutes, setInstitutes] = useState([]);
+  const [institute, setInstitute] = useState("0");
+  const [installmentsData, setInstallmentsData] = useState({
+    students: [],
+    installments: [],
+  });
+  const [attendanceData, setAttendanceData] = useState({
+    students: [],
+    attendance: [],
+  });
+  const [searchedInstallmentsData, setSearchedInstallmentsData] = useState({
+    ...installmentsData,
+  });
+  const [searchedAttendanceData, setSearchedAttendanceData] = useState({
+    ...attendanceData,
+  });
+
+  const getStuff = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/institute`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+
+      const responseData = await response.json();
+      setInstitutes(responseData.institutes);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const getInstallments = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/student-install`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+      const responseData = await response.json();
+      setInstallmentsData({
+        students: responseData.students.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }),
+        installments: responseData.installments.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }),
+      });
+
+      setSearchedInstallmentsData({
+        students: responseData.students.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }),
+        installments: responseData.installments.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const getAttendance = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/students-attendance`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+      const responseData = await response.json();
+      setAttendanceData({
+        students: responseData.students.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }),
+        attendance: responseData.attendance.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }),
+      });
+      setSearchedAttendanceData({
+        students: responseData.students.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }),
+        attendance: responseData.attendanceresponseData.attendance.sort(
+          (a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }
+        ),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  useEffect(() => {
+    getStuff();
+    getInstallments();
+    getAttendance();
+  }, []);
+
   const AdminHeaderFunction = (Act) => {
     return (
       <AdminHeader
@@ -75,9 +199,15 @@ function Admin(props) {
   const handleMainButton = () => {
     setPage("Main");
     setDataToChange({});
+    getStuff();
+    getInstallments();
+    getAttendance();
   };
 
   const handleInstitutesButton = () => {
+    getStuff();
+    getInstallments();
+    getAttendance();
     setPage("Institutes");
     setDataToChange({});
   };
@@ -92,12 +222,20 @@ function Admin(props) {
     setAttendanceStartData({ institute_id, date });
   };
 
-  const handleStudentsInstallmentsButton = () => {
+  const handleStudentsInstallmentsButton = (institute_id) => {
+    setInstitute(institute_id);
+    getStuff();
+    getInstallments();
+    getAttendance();
     setPage("StudentsInstallments");
     setDataToChange({});
   };
 
-  const handleStudentsAttendanceButton = () => {
+  const handleStudentsAttendanceButton = (institute_id) => {
+    setInstitute(institute_id);
+    getStuff();
+    getInstallments();
+    getAttendance();
     setPage("StudentsAttendance");
     setDataToChange({});
   };
@@ -163,6 +301,12 @@ function Admin(props) {
         <StudentsInstallments
           edit={handleEditInstallmentButton}
           sideBarShow={sideBarShow}
+          institutes={institutes}
+          institute={institute}
+          data={installmentsData}
+          setData={setInstallmentsData}
+          searchedData={searchedInstallmentsData}
+          setSearchedData={setSearchedInstallmentsData}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
@@ -204,7 +348,15 @@ function Admin(props) {
         {AdminHeaderFunction({ Students: "active" })}
         {/* End of Navbar */}
         {/* StudentsAttendance */}
-        <StudentsAttendance sideBarShow={sideBarShow} />
+        <StudentsAttendance
+          sideBarShow={sideBarShow}
+          institutes={institutes}
+          institute={institute}
+          data={attendanceData}
+          setData={setAttendanceData}
+          searchedData={searchedAttendanceData}
+          setSearchedData={setSearchedAttendanceData}
+        />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );

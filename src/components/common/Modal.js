@@ -194,7 +194,7 @@ export function StudentsModal(props) {
         <div className="">
           <Button
             onClick={() => {
-              props.StudentsAttendanceButton();
+              props.StudentsAttendanceButton("0");
               props.onHide();
             }}
             className="modal-add-nav"
@@ -205,7 +205,7 @@ export function StudentsModal(props) {
         <div className="">
           <Button
             onClick={() => {
-              props.StudentsInstallmentsButton();
+              props.StudentsInstallmentsButton("0");
               props.onHide();
             }}
             className="modal-add-nav"

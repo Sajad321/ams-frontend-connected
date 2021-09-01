@@ -4,62 +4,30 @@ import { toast } from "react-toastify";
 import printJS from "print-js";
 const apiUrl = process.env.API_URL;
 
-function StudentsAttendance({ edit, sideBarShow }) {
-  const [data, setData] = useState({
-    students: [],
-    attendance: [],
-  });
+function StudentsAttendance({
+  edit,
+  sideBarShow,
+  data,
+  setData,
+  searchedData,
+  setSearchedData,
+  institutes,
+  institute,
+}) {
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
   const [searchInstitute, setSearchInstitute] = useState("0");
-  const [searchedData, setSearchedData] = useState({ ...data });
-  const [institutes, setInstitutes] = useState([]);
   useEffect(() => {
-    const getStuff = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/institute`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-
-        const responseData = await response.json();
-        setInstitutes(responseData.institutes);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getStuff();
-    const getAttendance = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/students-attendance`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-        const responseData = await response.json();
-        setData({
-          students: responseData.students,
-          attendance: responseData.attendance.sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }),
-        });
-        setSearchedData({
-          students: responseData.students,
-          attendance: responseData.attendanceresponseData.attendance.sort(
-            (a, b) => {
-              return new Date(a.date).getTime() - new Date(b.date).getTime();
-            }
-          ),
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getAttendance();
+    setSearchInstitute(institute);
+    if (institute != "0") {
+      setSearchedData({
+        students: [...data.students].filter((d) => d.institute_id == institute),
+        attendance: [...data.attendance].filter(
+          (d) => d.institute_id == institute
+        ),
+      });
+    }
   }, []);
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
@@ -432,6 +400,7 @@ function StudentsAttendance({ edit, sideBarShow }) {
                     onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
+                    value={institute}
                   >
                     <option value="0" defaultValue>
                       المعهد
