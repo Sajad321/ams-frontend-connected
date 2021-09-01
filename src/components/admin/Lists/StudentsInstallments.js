@@ -213,7 +213,12 @@ function StudentsInstallments({
     // let divToPrint = document.getElementById("print-table");
     // PrintElem(divToPrint);
     // printJS({ printable: "print-table", type: "html", targetStyles: ["*"] });
-    window.print();
+    // window.print();
+
+    printJS({
+      printable: "print-table",
+      type: "html",
+    });
   };
 
   const render_installments = (student, installment, index) => {
@@ -285,6 +290,7 @@ function StudentsInstallments({
         <table
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
+          border="1"
         >
           <thead className="thead-dark">
             <tr>
@@ -328,6 +334,7 @@ function StudentsInstallments({
         <table
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
+          border="1"
         >
           <thead className="thead-dark">
             <tr>

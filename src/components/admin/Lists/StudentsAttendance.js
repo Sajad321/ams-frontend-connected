@@ -309,6 +309,7 @@ function StudentsAttendance({
         <table
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
+          border="1"
         >
           <thead className="thead-dark">
             <tr>

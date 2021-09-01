@@ -58,7 +58,7 @@ function Institutes({
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5" dir="rtl">
             <div className="col-12" dir="ltr">
               <div className="row mt-3">
-                <div className="col-4">
+                <div className="col-12">
                   <h2 className="text text-white">المعاهد</h2>
                 </div>
               </div>
