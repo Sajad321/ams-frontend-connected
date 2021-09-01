@@ -36,6 +36,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     if (Object.keys(dataToChange).length != 0) {
       setDataToSend(dataToChange);
     }
+    // console.log(document.getElementById("myimage").src);
   }, []);
   const handleNameChange = (e) =>
     setDataToSend({ ...dataToSend, name: e.target.value });
@@ -59,6 +60,13 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
     };
     fr.readAsDataURL(e.target.files[0]);
   };
+  if (dataToSend.photo != null) {
+    var fr = new FileReader();
+    fr.onload = function (event) {
+      document.getElementById("myimage").src = event.target.result;
+    };
+    fr.readAsDataURL(dataToSend.photo);
+  }
   const saveStudent = async () => {
     try {
       setSaving(true);
@@ -95,7 +103,20 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
           // }),
         }
       );
+      if (
+        (document.getElementById("myimage").src !=
+          "http://localhost:8080/index.html") &
+        (dataToSend.id != "")
+      ) {
+        let imgData = new FormData();
 
+        imgData.append("photo", dataToSend.photo);
+        const responseImg = await fetch(
+          `${apiUrl}/photo?student_id=${Number(dataToSend.id)}`,
+          { method: "PATCH", body: imgData }
+        );
+        const responseBlob = await responseImg.blob();
+      }
       const responseData = await response.json();
 
       toast.success("تم حفظ الطالب");

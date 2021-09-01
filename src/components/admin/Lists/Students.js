@@ -146,8 +146,8 @@ function Salesmen({ sideBarShow, edit }) {
       setSearchedStudents([...students]);
     }
   };
-  const handleEditButton = (student) => {
-    edit(student);
+  const handleEditButton = (student, photo) => {
+    edit({ ...student, photo });
   };
   const searchBar = () => {
     if (searchType == "0") {
@@ -260,6 +260,7 @@ function Salesmen({ sideBarShow, edit }) {
               student={studentsInfoModal.student}
               qr={qr}
               photo={photo}
+              handleEditButton={handleEditButton}
             />
             <div className="col-12" dir="rtl">
               <div className="row">

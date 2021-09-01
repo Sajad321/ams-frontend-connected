@@ -297,7 +297,7 @@ export function StudentsInfoModal(props) {
             <p className="mb-2">المواليد: {props.dob}</p>
           </div>
           <button
-            onClick={() => handleEditButton(props.student)}
+            onClick={() => props.handleEditButton(props.student, props.photo)}
             className="btn btn-secondary text-white mt-2"
           >
             تعديل
