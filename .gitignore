@@ -66,3 +66,5 @@ requirements.txt
 sapi.db
 
 py_dist
+qr
+images
