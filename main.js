@@ -5,6 +5,26 @@ const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 const { download } = require("electron-dl");
+let backend = path.join(process.cwd(), "py_dist/main.exe");
+var execfile = require("child_process").execFile;
+const { exec } = require("child_process");
+execfile(
+  backend,
+  {
+    windowsHide: true,
+  },
+  (err, stdout, stderr) => {
+    if (err) {
+      console.log(err);
+    }
+    if (stdout) {
+      console.log(stdout);
+    }
+    if (stderr) {
+      console.log(stderr);
+    }
+  }
+);
 // const messages = require("./messages.json");
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -28,10 +48,10 @@ if (
 
 // Temporary fix broken high-dpi scale factor on Windows (125% scaling)
 // info: https://github.com/electron/electron/issues/9691
-// if (process.platform === "win32") {
-//   app.commandLine.appendSwitch("high-dpi-support", "true");
-//   app.commandLine.appendSwitch("force-device-scale-factor", "1");
-// }
+if (process.platform === "win32") {
+  app.commandLine.appendSwitch("high-dpi-support", "true");
+  app.commandLine.appendSwitch("force-device-scale-factor", "1");
+}
 
 function createWindow() {
   // Create the browser window.
@@ -191,6 +211,14 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
     studentInfoWindow = null;
+    exec("taskkill /f /t /im main.exe", (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    });
     app.quit();
   });
   loginWindow.on("closed", function () {
@@ -199,6 +227,14 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
     studentInfoWindow = null;
+    exec("taskkill /f /t /im main.exe", (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    });
     app.quit();
   });
 }

@@ -44,7 +44,7 @@
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "prepackage": "rimraf ./build && mkdir build && rimraf ./dist && mkdir dist && rimraf ./windows_installer && mkdir windows_installer",
     "package": "npm run build",
-    "postpackage": "electron-packager ./ --out=./builds && node build_installer.js"
+    "postpackage": "electron-packager ./ --out=./build && node build_installer.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.14.8",

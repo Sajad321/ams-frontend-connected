@@ -9,7 +9,7 @@ const path = require("path");
 // appDirectory: "C:\\Users\sdkca\Desktop\OurCodeWorld-win32-x64",
 const APP_DIR = path.resolve(
   __dirname,
-  "./builds/electron-react-webpack-boilerplate-win32-x64"
+  "./build/accounts-and-attendance-managment-system-win32-x64"
 );
 // outputDirectory: "C:\\Users\sdkca\Desktop\windows_installer",
 const OUT_DIR = path.resolve(__dirname, "./windows_installer");
@@ -20,9 +20,10 @@ const msiCreator = new MSICreator({
   outputDirectory: OUT_DIR,
 
   // Configure metadata
-  description: "This is a demo application",
-  exe: "electron-react-webpack-boilerplate.exe",
-  name: "Amjad Desktop App",
+  description:
+    "System for managing the attendance and accounts for students according to QR code",
+  exe: "accounts-and-attendance-managment-system.exe",
+  name: "Accounts and Attendance Management System Desktop App",
   manufacturer: "SH Inc",
   version: "1.0.0",
 

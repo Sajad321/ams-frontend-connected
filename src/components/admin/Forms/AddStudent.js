@@ -95,7 +95,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
           // headers: {
           //   "Content-Type": "multipart/form-data",
           // },
-          body: formData,
+          body: dataToSend.photo != null ? formData : null,
           // JSON.stringify({
           //   ...dataToSend,
           //   institute_id: Number(dataToSend.institute_id),

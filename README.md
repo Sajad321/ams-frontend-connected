@@ -11,6 +11,7 @@ Electron, React, PostCSS and Webpack app.
 ### Table of contents
 
 - [Install](#install)
+- [Pre-Usage](#pre-usage)
 - [Usage](#usage)
 
 ### Install
@@ -32,6 +33,12 @@ or
 ```
 yarn
 ```
+
+### Pre-Usage
+
+#### Make Backend Ready
+
+First you need to have a backend of python ready to start the copy it to a folder named py_dist under the name main.exe
 
 ### Usage
 
