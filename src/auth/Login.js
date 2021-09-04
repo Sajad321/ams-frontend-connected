@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 const { ipcRenderer } = require("electron");
 const apiUrl = process.env.API_URL;
@@ -14,7 +15,12 @@ async function loginUser(credentials) {
       },
       // body: JSON.stringify(credentials),
     }
-  ).then((data) => data.json());
+  )
+    .then((data) => data.json())
+    .catch((error) => {
+      console.log(error);
+      toast.error("اسم المستخدم او كلمة المرور خاطئة");
+    });
 }
 export default function Login({ setToken }) {
   const [username, setUserName] = useState();
