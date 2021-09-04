@@ -24,7 +24,7 @@ const msiCreator = new MSICreator({
     "System for managing the attendance and accounts for students according to QR code",
   exe: "accounts-and-attendance-managment-system.exe",
   name: "Accounts and Attendance Management System Desktop App",
-  manufacturer: "SH Inc",
+  manufacturer: "BeSmarty Inc",
   version: "1.0.0",
 
   // Configure installer User Interface

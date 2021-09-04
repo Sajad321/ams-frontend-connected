@@ -38,7 +38,8 @@ yarn
 
 #### Make Backend Ready
 
-First you need to have a backend of python ready to start then copy it to a folder named py_dist under the name main.exe
+First you need to have a backend of python ready to start then copy it to a folder named py_dist under the name main.exe,
+Second you need to download Wix Toolset and change the environment variables of path to the bin of the Wix
 
 ### Usage
 

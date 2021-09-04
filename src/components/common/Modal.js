@@ -409,11 +409,10 @@ export function StudentInfoAttendanceModal({
     //   student.student_attendance_id,
     // ]);
     if (
-      (student.installments.filter(
-        (installment) => installment.received == "0"
-      )[0].received ==
-        0) |
-      (student.incrementally_absence >= 1)
+      (student.incrementally_absence >= 1) |
+      (student.installments.filter((installment) => installment.received == "0")
+        .length !=
+        0)
     ) {
       let box = confirm("هل انت متأكد ؟");
       if (box) {

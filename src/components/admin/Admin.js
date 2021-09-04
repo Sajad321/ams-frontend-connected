@@ -160,11 +160,9 @@ function Admin(props) {
           }
           return 0;
         }),
-        attendance: responseData.attendanceresponseData.attendance.sort(
-          (a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          }
-        ),
+        attendance: responseData.attendance.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }),
       });
     } catch (error) {
       console.log(error.message);
