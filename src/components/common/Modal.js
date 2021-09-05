@@ -243,7 +243,7 @@ export function StudentsInfoModal(props) {
       document.getElementById("student-qr").src = URL.createObjectURL(props.qr);
     }
   }
-  console.log(props.photo);
+  // console.log(props.photo);
   return (
     <Modal
       show={props.show}
@@ -376,16 +376,18 @@ export function StudentInfoAttendanceModal({
         );
 
         const responseData = await response.json();
-        setStudents([
-          ...students,
-          {
-            id: responseData.student_id,
-            student_name: responseData.student_name,
-            student_attendance_id: student.student_attendance_id,
-            institute_name: student.institute_name,
-            date,
-          },
-        ]);
+        setStudents(
+          [
+            ...students,
+            {
+              id: responseData.student_id,
+              student_name: responseData.student_name,
+              student_attendance_id: student.student_attendance_id,
+              institute_name: student.institute_name,
+              date,
+            },
+          ].filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)
+        );
       } catch (error) {
         console.log(error.message);
         // handleAttendanceToggle(index, id, attended);
@@ -433,7 +435,7 @@ export function StudentInfoAttendanceModal({
 
   if (document.getElementById("student-info-img") != null) {
     if (photo instanceof Blob) {
-      console.log(photo);
+      // console.log(photo);
       document.getElementById("student-info-img").src = URL.createObjectURL(
         photo
       );

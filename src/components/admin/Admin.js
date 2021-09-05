@@ -24,7 +24,7 @@ function Admin(props) {
     let bottomBar = document.getElementById("bottom-bar");
     let mainView = document.getElementById("main-view");
     if (!sideBarShow) {
-      console.log("showed");
+      // console.log("showed");
       for (let i = 0; i < nav.length; i++) {
         nav[i].style.display = "block";
       }
@@ -35,7 +35,7 @@ function Admin(props) {
         "width-others-wide fixed-bottom mr-auto admin-nav-bg bottom-bar";
       mainView.className = "width-others-wide mr-auto main-view";
     } else {
-      console.log("cut");
+      // console.log("cut");
       for (let i = 0; i < nav.length; i++) {
         nav[i].style.display = "none";
       }

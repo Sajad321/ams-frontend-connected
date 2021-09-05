@@ -104,7 +104,8 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     } catch (error) {
       console.log(error.message);
     }
-
+  };
+  const getPhoto = async (id) => {
     try {
       const responseBlob = await fetch(`${apiUrl}/photo?student_id=${id}`, {
         method: "GET",
@@ -125,14 +126,16 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     // d.innerText = "HI";
     // ipcRenderer.send("show-student-info", [id]);
     getStudent(id);
+    getPhoto(id);
   };
-
   let UPC = "";
   function qrCodeScanner(e) {
     if ((student.visible == false) & (page == "Attendance")) {
       const textInput = e.key || String.fromCharCode(e.keyCode);
       if (e.key != "Enter") {
-        UPC += textInput;
+        if (e.key != "Shift") {
+          UPC += textInput;
+        }
       } else {
         if (
           (UPC.length > 5) &
@@ -149,7 +152,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     }
   }
-  document.addEventListener("keypress", qrCodeScanner);
+  document.addEventListener("keydown", qrCodeScanner);
   // if (messages.accepted == true) {
   //   console.log(messages);
   //   handleStudentAttendance(messages.student_attendance_id, 1);
@@ -191,6 +194,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
               show={student.visible}
               onHide={() => setStudent({ ...student, visible: false })}
               student={student}
+              setStudent={setStudent}
               photo={photo}
               setPhoto={setPhoto}
               institute_id={institute_id}

@@ -153,7 +153,7 @@ function AddInstitute({ page, dataToChange, sideBarShow }) {
                         type="submit"
                         className="btn btn-success btn-block"
                       >
-                        حفظ المعهد
+                        حفظ القسط
                       </button>
                     ) : (
                       <button disabled className="btn btn-success btn-block">

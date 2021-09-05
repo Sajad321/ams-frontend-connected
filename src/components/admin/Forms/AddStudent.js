@@ -76,9 +76,9 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
       // }
       // formData.append("name", dataToSend.name);
       formData.append("photo", dataToSend.photo);
-      for (var key of formData.entries()) {
-        console.log(key[0] + ", " + key[1]);
-      }
+      // for (var key of formData.entries()) {
+      //   console.log(key[0] + ", " + key[1]);
+      // }
       const response = await fetch(
         `${apiUrl}/student` +
           `${
