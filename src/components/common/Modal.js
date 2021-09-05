@@ -290,7 +290,7 @@ export function StudentsInfoModal(props) {
               </div>
             </div>
           </div>
-          <div className="col-8 col-sm-9 text-right text-white font-student-info">
+          <div className="col-9 text-right text-white font-student-info">
             <p className="mb-2">الاسم: {props.name}</p>
             <p className="mb-2">المعهد: {props.institute}</p>
             <p className="mb-2">رقم الهاتف: {props.phone}</p>
@@ -432,7 +432,7 @@ export function StudentInfoAttendanceModal({
     ABORT: abortHandler,
     ACCEPT: student.institute_id != institute_id ? () => {} : acceptHandler,
   };
-
+  console.log("Hi");
   if (document.getElementById("student-info-img") != null) {
     if (photo instanceof Blob) {
       // console.log(photo);
@@ -488,19 +488,28 @@ export function StudentInfoAttendanceModal({
         <Modal.Title id="contained-modal-title-vcenter">الطالب</Modal.Title>
       </Modal.Header>
       <Modal.Body className="text-right" dir="ltr">
-        <section className="d-flex align-items-center justify-content-center">
+        <section>
           <div className="row m-0">
-            <div className="col-2 col-sm-3 p-0 text-center text-white">
+            {(student.incrementally_absence >= 1) |
+            (student.installments.filter(
+              (installment) => installment.received == "0"
+            ).length !=
+              0) ? (
+              <div className="col-1 btn-danger"></div>
+            ) : (
+              <div className="col-1 btn-success"></div>
+            )}
+            <div className="col-2 offset-1 p-0 text-center text-white">
               <div className="row">
                 <div className="col-12">
                   <img
                     id="student-info-img"
-                    className="mt-3 img-student-attendance"
+                    className="mt-2 img-student-attendance"
                   />
                 </div>
               </div>
             </div>
-            <div className="col-8 col-sm-9 text-right text-white">
+            <div className="col-7 text-right text-white font-weight-bold">
               <p className="mb-3">الاسم: {student.name}</p>
               <p className="mb-3">المعهد: {student.institute_name}</p>
               <p className="mb-3">

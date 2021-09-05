@@ -36,6 +36,8 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     };
     sendAttendance();
+
+    document.addEventListener("keydown", qrCodeScanner);
   }, []);
 
   // const RemoveStudentAttendance = async (student_attendance_id) => {
@@ -130,6 +132,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   };
   let UPC = "";
   function qrCodeScanner(e) {
+    console.log(e);
     if ((student.visible == false) & (page == "Attendance")) {
       const textInput = e.key || String.fromCharCode(e.keyCode);
       if (e.key != "Enter") {
@@ -152,7 +155,6 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     }
   }
-  document.addEventListener("keydown", qrCodeScanner);
   // if (messages.accepted == true) {
   //   console.log(messages);
   //   handleStudentAttendance(messages.student_attendance_id, 1);
@@ -194,13 +196,13 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
               show={student.visible}
               onHide={() => setStudent({ ...student, visible: false })}
               student={student}
-              setStudent={setStudent}
               photo={photo}
               setPhoto={setPhoto}
               institute_id={institute_id}
               date={date}
               students={students}
               setStudents={setStudents}
+              qrCodeScanner={qrCodeScanner}
             />
             <div className="col-12">
               <div className="table-responsive">
@@ -210,6 +212,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                 >
                   <thead className="thead-dark">
                     <tr>
+                      <th>ت</th>
                       <th>الاسم</th>
                       <th>المعهد</th>
                       <th>التاريخ</th>
@@ -223,6 +226,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                           key={student.id}
                           className="font-weight-bold text-white"
                         >
+                          <td>{index + 1}</td>
                           <td>{student.student_name}</td>
                           <td>{student.institute_name}</td>
                           <td>{student.date}</td>
