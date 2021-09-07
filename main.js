@@ -25,7 +25,6 @@ execfile(
     }
   }
 );
-// const messages = require("./messages.json");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -199,9 +198,12 @@ function createWindow() {
     });
     ipcMain.on("finished-login", () => {
       loginWindow.hide();
-      mainWindow.show();
-      mainWindow.maximize();
-      mainWindow.focus();
+      mainWindow.reload();
+      mainWindow.webContents.once("did-finish-load", () => {
+        mainWindow.show();
+        mainWindow.maximize();
+        mainWindow.focus();
+      });
     });
   });
   // Emitted when the window is closed.
@@ -258,7 +260,7 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-
+app.disableHardwareAcceleration();
 app.on("activate", () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.

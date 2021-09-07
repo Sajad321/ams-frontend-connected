@@ -1,27 +1,18 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AddModal, StudentsModal } from "../common/Modal";
+import { StudentsModal } from "../common/AttendanceOfficerModal";
 import SettingsModal from "./SettingsModal";
 
 function AdminHeader(props) {
-  const [addModalShow, setAddModalShow] = useState(false);
   const [studentsModalShow, setStudentsModalShow] = useState(false);
   const [settingsModalShow, setSettingsModalShow] = useState(false);
   return (
     <nav className="navbar navbar-dark navbar-expand-md">
-      <AddModal
-        show={addModalShow}
-        onHide={() => setAddModalShow(false)}
-        AddStudentButton={props.AddStudentButton}
-        AddInstituteButton={props.AddInstituteButton}
-        AddInstallmentButton={props.AddInstallmentButton}
-      />
       <StudentsModal
         show={studentsModalShow}
         onHide={() => setStudentsModalShow(false)}
         StudentsAttendanceButton={props.StudentsAttendanceButton}
-        StudentsInstallmentsButton={props.StudentsInstallmentsButton}
         StudentsButton={props.StudentsButton}
       />
       <SettingsModal
@@ -119,7 +110,7 @@ function AdminHeader(props) {
                   <a
                     href="#"
                     className={"nav_link " + props.Active.Add}
-                    onClick={() => setAddModalShow(true)}
+                    onClick={props.AddStudentButton}
                   >
                     {" "}
                     <FontAwesomeIcon
@@ -132,7 +123,7 @@ function AdminHeader(props) {
                       className={"nav_name " + props.Active.Add}
                       id="nav-text"
                     >
-                      اضافة
+                      اضافة طالب
                     </span>{" "}
                   </a>{" "}
                 </div>

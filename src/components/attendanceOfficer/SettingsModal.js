@@ -43,7 +43,6 @@ function SettingsModal(props) {
             <tr>
               <th>الاسم</th>
               <th>اسم المستخدم</th>
-              <th>&nbsp;</th>
               {/* <th>&nbsp;</th> */}
             </tr>
           </thead>
@@ -53,22 +52,6 @@ function SettingsModal(props) {
                 <tr key={user.id}>
                   <td>{user.name}</td>
                   <td>{user.username}</td>
-                  <td>
-                    <button
-                      onClick={() => {
-                        setUser({
-                          id: user.id,
-                          name: user.name,
-                          username: user.username,
-                          password: user.password,
-                        });
-                        setSettingsPage("AddPage");
-                      }}
-                      className="btn btn-secondary text-white"
-                    >
-                      تعديل
-                    </button>
-                  </td>
                   {/* <td>
                     <button
                       onClick={() => {}}
@@ -256,22 +239,6 @@ function SettingsModal(props) {
             className="modal-add-nav btn-danger"
           >
             تسجيل الخروج
-          </Button>
-        </div>
-        <div className="">
-          <Button
-            onClick={() => {
-              setUser({
-                id: "",
-                name: "",
-                username: "",
-                password: "",
-              });
-              setSettingsPage("AddPage");
-            }}
-            className="modal-add-nav btn-success"
-          >
-            اضافة مستخدم
           </Button>
         </div>
         <div className="">

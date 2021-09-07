@@ -1,8 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Admin from "../admin/Admin";
-import Login from "../../auth/Login";
+import AttendanceOfficer from "../attendanceOfficer/Attendanceofficer";
+
 const apiUrl = process.env.API_URL;
 var { ipcRenderer } = require("electron");
 
@@ -10,7 +9,7 @@ const HomePage = (props) => {
   const [loading, setLoading] = useState(false);
 
   const logoutWithRedirect = () => {
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
     ipcRenderer.send("login");
   };
 
@@ -33,7 +32,10 @@ const HomePage = (props) => {
       }
     };
   }, []);
-
-  return <Admin logoutWithRedirect={logoutWithRedirect} />;
+  if (JSON.parse(localStorage.getItem("token")).auth == "1") {
+    return <Admin logoutWithRedirect={logoutWithRedirect} />;
+  } else {
+    return <AttendanceOfficer logoutWithRedirect={logoutWithRedirect} />;
+  }
 };
 export default HomePage;
