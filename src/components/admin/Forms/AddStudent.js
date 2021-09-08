@@ -225,7 +225,7 @@ function AddStudent({ page, dataToChange, sideBarShow }) {
                       className="form-control text"
                       onChange={handleDateChange}
                       value={dataToSend.dob}
-                      required
+                      // required
                     ></input>
                   </div>
                   <label

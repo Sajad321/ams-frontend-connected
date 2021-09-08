@@ -295,10 +295,28 @@ export function StudentsInfoModal(props) {
             <p className="mb-2">المعهد: {props.institute}</p>
             <p className="mb-2">رقم الهاتف: {props.phone}</p>
             <p className="mb-2">المواليد: {props.dob}</p>
+            <p className="mb-2">
+              حالة الطالب: {props.banned == 1 ? "مفصول" : "مستمر"}
+            </p>
           </div>
+          {props.banned == 0 ? (
+            <button
+              onClick={() => props.handleStudentDismiss(props.index, props.id)}
+              className="btn btn-danger text-white mt-4 w-25"
+            >
+              فصل
+            </button>
+          ) : (
+            <button
+              onClick={() => props.handleStudentReturn(props.index, props.id)}
+              className="btn btn-success text-white mt-4 w-25"
+            >
+              ارجاع
+            </button>
+          )}
           <button
             onClick={() => props.handleEditButton(props.student, props.photo)}
-            className="btn btn-secondary text-white mt-2"
+            className="btn btn-secondary text-white mt-4 ml-4 w-25"
           >
             تعديل
           </button>
@@ -430,9 +448,11 @@ export function StudentInfoAttendanceModal({
   };
   const handlers = {
     ABORT: abortHandler,
-    ACCEPT: student.institute_id != institute_id ? () => {} : acceptHandler,
+    ACCEPT:
+      (student.institute_id != institute_id) | (student.banned == 1)
+        ? () => {}
+        : acceptHandler,
   };
-  console.log("Hi");
   if (document.getElementById("student-info-img") != null) {
     if (photo instanceof Blob) {
       // console.log(photo);
@@ -494,7 +514,8 @@ export function StudentInfoAttendanceModal({
             (student.installments.filter(
               (installment) => installment.received == "0"
             ).length !=
-              0) ? (
+              0) |
+            (student.banned == 1) ? (
               <div className="col-1 btn-danger"></div>
             ) : (
               <div className="col-1 btn-success"></div>
@@ -537,7 +558,7 @@ export function StudentInfoAttendanceModal({
           >
             الغاء
           </Button>
-          {student.institute_id != institute_id ? (
+          {(student.institute_id != institute_id) | (student.banned == 1) ? (
             <Button className="col-4 modal-add-nav btn-success" disabled={true}>
               تسجيل حضور
             </Button>

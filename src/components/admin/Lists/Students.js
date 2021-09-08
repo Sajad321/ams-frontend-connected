@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StudentsInfoModal } from "../../common/Modal";
+import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
 function Salesmen({ sideBarShow, edit }) {
@@ -11,6 +12,7 @@ function Salesmen({ sideBarShow, edit }) {
   const [searchedStudents, setSearchedStudents] = useState([...students]);
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [studentsInfoModal, setStudentsInfoModal] = useState({
+    index: 0,
     visible: false,
     id: "",
     name: "",
@@ -18,6 +20,7 @@ function Salesmen({ sideBarShow, edit }) {
     phone: "",
     dob: "",
     student: {},
+    banned: "",
   });
   const [qr, setQr] = useState({});
   const [photo, setPhoto] = useState({});
@@ -114,9 +117,6 @@ function Salesmen({ sideBarShow, edit }) {
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
-  const handleSearch2Change = (e) => {
-    setSearch2(e.target.value);
-  };
   const handleSearchButton = (e) => {
     e.preventDefault();
     // setLoading(true);
@@ -148,6 +148,52 @@ function Salesmen({ sideBarShow, edit }) {
   };
   const handleEditButton = (student, photo) => {
     edit({ ...student, photo });
+  };
+  const handleBanningToggle = (studentIndex, banned) => {
+    setStudentsInfoModal({ ...studentsInfoModal, banned: banned });
+    if ((searchType != "0") | (searchInstitute != "0")) {
+      let neeSerached = searchedStudents;
+      neeSerached[studentIndex].banned = banned;
+      setSearchedStudents(neeSerached);
+    } else if (searchType == "0") {
+      let nee = students;
+      nee[studentIndex].banned = banned;
+      setStudents(nee);
+    }
+  };
+  const handleStudentDismiss = async (index, id) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/banned?student_id=${Number(id)}&ban=${1}`,
+        {
+          method: "PATCH",
+        }
+      );
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.log(error.message);
+      toast.warn("حصل خطأ");
+    }
+    handleBanningToggle(index, 1);
+    toast.success("تم فصل الطالب");
+  };
+  const handleStudentReturn = async (index, id) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/banned?student_id=${Number(id)}&ban=${0}`,
+        {
+          method: "PATCH",
+        }
+      );
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.log(error.message);
+      toast.warn("حصل خطأ");
+    }
+    handleBanningToggle(index, 0);
+    toast.success("تم ارجاع الطالب");
   };
   const searchBar = () => {
     if (searchType == "0") {
@@ -252,20 +298,24 @@ function Salesmen({ sideBarShow, edit }) {
               onHide={() =>
                 setStudentsInfoModal({ ...studentsInfoModal, visible: false })
               }
+              index={studentsInfoModal.index}
               id={studentsInfoModal.id}
               name={studentsInfoModal.name}
               institute={studentsInfoModal.institute}
               phone={studentsInfoModal.phone}
               dob={studentsInfoModal.dob}
               student={studentsInfoModal.student}
+              banned={studentsInfoModal.banned}
               qr={qr}
               photo={photo}
               handleEditButton={handleEditButton}
+              handleStudentDismiss={handleStudentDismiss}
+              handleStudentReturn={handleStudentReturn}
             />
             <div className="col-12" dir="rtl">
               <div className="row">
                 {(searchType != "0") | (searchInstitute != "0")
-                  ? searchedStudents.map((student) => {
+                  ? searchedStudents.map((student, index) => {
                       return (
                         <div
                           className="col-12 p-2 m-0"
@@ -279,6 +329,7 @@ function Salesmen({ sideBarShow, edit }) {
                               getPhoto(student.id);
                               setStudentsInfoModal({
                                 ...studentsInfoModal,
+                                index: index,
                                 visible: true,
                                 id: student.id,
                                 name: student.name,
@@ -286,6 +337,7 @@ function Salesmen({ sideBarShow, edit }) {
                                 phone: student.phone,
                                 dob: student.dob,
                                 student: student,
+                                banned: student.banned,
                               });
                             }}
                           >
@@ -293,7 +345,10 @@ function Salesmen({ sideBarShow, edit }) {
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0" dir="rtl">
-                                    {index + 1} {" - "} {student.name}
+                                    {index + 1} {" - "} {student.name}{" "}
+                                    <b style={{ color: "#e30b37" }}>
+                                      {student.banned == 1 ? " (مفصول)" : ""}
+                                    </b>
                                   </p>
                                 </div>
                                 {/* <button
@@ -322,6 +377,7 @@ function Salesmen({ sideBarShow, edit }) {
                               getPhoto(student.id);
                               setStudentsInfoModal({
                                 ...studentsInfoModal,
+                                index: index,
                                 visible: true,
                                 id: student.id,
                                 name: student.name,
@@ -329,6 +385,7 @@ function Salesmen({ sideBarShow, edit }) {
                                 phone: student.phone,
                                 dob: student.dob,
                                 student: student,
+                                banned: student.banned,
                               });
                             }}
                           >
@@ -337,6 +394,9 @@ function Salesmen({ sideBarShow, edit }) {
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0" dir="rtl">
                                     {index + 1} {" - "} {student.name}
+                                    <b style={{ color: "#e30b37" }}>
+                                      {student.banned == 1 ? " (مفصول)" : ""}
+                                    </b>
                                   </p>
                                 </div>
                                 {/* <button
