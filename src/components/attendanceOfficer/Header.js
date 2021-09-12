@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StudentsModal } from "../common/AttendanceOfficerModal";
+import { AddModal } from "../common/AttendanceOfficerModal";
 import SettingsModal from "./SettingsModal";
 
 function AdminHeader(props) {
+  const [addModalShow, setAddModalShow] = useState(false);
   const [studentsModalShow, setStudentsModalShow] = useState(false);
   const [settingsModalShow, setSettingsModalShow] = useState(false);
   return (
@@ -20,7 +22,25 @@ function AdminHeader(props) {
         onHide={() => setSettingsModalShow(false)}
         logoutWithRedirect={props.logoutWithRedirect}
       />
+      <AddModal
+        show={addModalShow}
+        onHide={() => setAddModalShow(false)}
+        AddStudentButton={props.AddStudentButton}
+        AddInstituteButton={props.AddInstituteButton}
+      />
       <div className="row">
+        <div
+          className="width-others-wide fixed-top mr-auto admin-nav-bg top-navbar top-height logo"
+          id="top-bar"
+        >
+          <div className="row justify-content-center">
+            <div className="col-auto">
+              <NavLink to="/" className="logo-text">
+                نظام ادارة حسابات وحضور حسين الهاشمي
+              </NavLink>
+            </div>
+          </div>
+        </div>
         <div
           className="width-sidebar-wide sidebar rightfixed p-0"
           id="side-bar"
@@ -110,7 +130,7 @@ function AdminHeader(props) {
                   <a
                     href="#"
                     className={"nav_link " + props.Active.Add}
-                    onClick={props.AddStudentButton}
+                    onClick={() => setAddModalShow(true)}
                   >
                     {" "}
                     <FontAwesomeIcon
@@ -123,7 +143,7 @@ function AdminHeader(props) {
                       className={"nav_name " + props.Active.Add}
                       id="nav-text"
                     >
-                      اضافة طالب
+                      اضافة
                     </span>{" "}
                   </a>{" "}
                 </div>
@@ -145,18 +165,6 @@ function AdminHeader(props) {
                 </span>{" "}
               </a>
             </nav>
-          </div>
-          <div
-            className="width-others-wide fixed-top mr-auto admin-nav-bg top-navbar top-height logo"
-            id="top-bar"
-          >
-            <div className="row justify-content-center">
-              <div className="col-auto">
-                <NavLink to="/" className="logo-text">
-                  نظام ادارة حسابات وحضور حسين الهاشمي
-                </NavLink>
-              </div>
-            </div>
           </div>
         </div>
       </div>

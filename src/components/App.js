@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import HomePage from "./home/HomePage";
-import StudentInfo from "./admin/StudentInfo";
 import PageNotFound from "./PageNotFound";
 import Login from "../auth/Login";
 import { ToastContainer } from "react-toastify";
@@ -42,8 +41,6 @@ function App() {
           path="/login"
           render={(routeProps) => <Login {...routeProps} setToken={setToken} />}
         />
-        {/* <Route path="/sai/:id" component={StudentInfo} />
-        <Route path="/sai" exact component={StudentInfo} /> */}
         <Route component={PageNotFound} />
       </Switch>
       <ToastContainer autoClose={3000} position="top-left" />

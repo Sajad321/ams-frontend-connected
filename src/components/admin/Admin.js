@@ -10,6 +10,7 @@ import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
 import AddInstitute from "./Forms/AddInstitute";
 import AddInstallment from "./Forms/AddInstallment";
+import syncFetch from "sync-fetch";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -85,15 +86,15 @@ function Admin(props) {
       console.log(error.message);
     }
   };
-  const getInstallments = async () => {
+  const getInstallments = () => {
     try {
-      const response = await fetch(`${apiUrl}/student-install`, {
+      const response = syncFetch(`${apiUrl}/student-install`, {
         method: "GET",
         headers: {
           Authorization: `Bearer`,
         },
       });
-      const responseData = await response.json();
+      const responseData = response.json();
       setInstallmentsData({
         students: responseData.students.sort((a, b) => {
           if (a.name < b.name) {
@@ -127,15 +128,15 @@ function Admin(props) {
       console.log(error.message);
     }
   };
-  const getAttendance = async () => {
+  const getAttendance = () => {
     try {
-      const response = await fetch(`${apiUrl}/students-attendance`, {
+      const response = syncFetch(`${apiUrl}/students-attendance`, {
         method: "GET",
         headers: {
           Authorization: `Bearer`,
         },
       });
-      const responseData = await response.json();
+      const responseData = response.json();
       setAttendanceData({
         students: responseData.students.sort((a, b) => {
           if (a.name < b.name) {
@@ -203,9 +204,9 @@ function Admin(props) {
   };
 
   const handleInstitutesButton = () => {
-    getStuff();
-    getInstallments();
-    getAttendance();
+    // getStuff();
+    // getInstallments();
+    // getAttendance();
     setPage("Institutes");
     setDataToChange({});
   };

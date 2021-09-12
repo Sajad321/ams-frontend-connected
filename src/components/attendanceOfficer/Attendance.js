@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { StudentInfoAttendanceModal } from "../common/Modal";
 import { toast } from "react-toastify";
+import { StudentInfoModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
 // var { ipcRenderer } = require("electron");
 
@@ -16,6 +17,15 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     installments: [],
     total_absence: "",
     incrementally_absence: "",
+  });
+  const [studentsInfoModal, setStudentsInfoModal] = useState({
+    visible: false,
+    id: "",
+    name: "",
+    institute: "",
+    phone: "",
+    dob: "",
+    banned: "",
   });
   const [photo, setPhoto] = useState({});
   const { institute_id, date } = attendanceStartData;
@@ -95,13 +105,40 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         ...student,
         visible: true,
         id: id,
-        student_attendance_id: responseData.student_attendance_id,
         name: responseData.name,
+        student_attendance_id: responseData.student_attendance_id,
         institute_name: responseData.institute,
         institute_id: responseData.institute_id,
         installments: responseData.installments,
         total_absence: responseData.total_absence,
         incrementally_absence: Number(responseData.incrementally_absence),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const getStudentInfo = async (id) => {
+    try {
+      const responseJson = await fetch(
+        `${apiUrl}/student?student_id=${Number(id)}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        }
+      );
+      const responseData = await responseJson.json();
+      setStudentsInfoModal({
+        ...studentsInfoModal,
+        visible: true,
+        id: id,
+        name: responseData.name,
+        institute: responseData.institute,
+        institute_id: responseData.institute_id,
+        phone: responseData.phone,
+        dob: responseData.dob,
+        banned: responseData.banned,
       });
     } catch (error) {
       console.log(error.message);
@@ -191,6 +228,19 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                 </div>
               </div>
             </div>
+            <StudentInfoModal
+              show={studentsInfoModal.visible}
+              onHide={() =>
+                setStudentsInfoModal({ ...studentsInfoModal, visible: false })
+              }
+              id={studentsInfoModal.id}
+              name={studentsInfoModal.name}
+              institute={studentsInfoModal.institute}
+              phone={studentsInfoModal.phone}
+              dob={studentsInfoModal.dob}
+              banned={studentsInfoModal.banned}
+              photo={photo}
+            />
 
             <StudentInfoAttendanceModal
               show={student.visible}
@@ -217,6 +267,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                       <th>المعهد</th>
                       <th>التاريخ</th>
                       <th>&nbsp;</th>
+                      <th>&nbsp;</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -241,6 +292,17 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                               className="btn btn-danger text-white"
                             >
                               حذف
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => {
+                                getPhoto(student.id);
+                                getStudentInfo(student.id);
+                              }}
+                              className="btn btn-secondary text-white"
+                            >
+                              اظهار
                             </button>
                           </td>
                         </tr>

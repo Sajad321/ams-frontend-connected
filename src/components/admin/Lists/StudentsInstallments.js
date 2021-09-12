@@ -17,7 +17,6 @@ function StudentsInstallments({
   const [searchType, setSearchType] = useState("0");
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
-  console.log(searchedData);
   useEffect(() => {
     setSearchInstitute(institute);
     if (institute != "0") {

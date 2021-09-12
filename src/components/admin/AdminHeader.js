@@ -31,6 +31,18 @@ function AdminHeader(props) {
       />
       <div className="row">
         <div
+          className="width-others-wide fixed-top mr-auto admin-nav-bg top-navbar top-height logo"
+          id="top-bar"
+        >
+          <div className="row justify-content-center">
+            <div className="col-auto">
+              <NavLink to="/" className="logo-text">
+                نظام ادارة حسابات وحضور حسين الهاشمي
+              </NavLink>
+            </div>
+          </div>
+        </div>
+        <div
           className="width-sidebar-wide sidebar rightfixed p-0"
           id="side-bar"
         >
@@ -154,18 +166,6 @@ function AdminHeader(props) {
                 </span>{" "}
               </a>
             </nav>
-          </div>
-          <div
-            className="width-others-wide fixed-top mr-auto admin-nav-bg top-navbar top-height logo"
-            id="top-bar"
-          >
-            <div className="row justify-content-center">
-              <div className="col-auto">
-                <NavLink to="/" className="logo-text">
-                  نظام ادارة حسابات وحضور حسين الهاشمي
-                </NavLink>
-              </div>
-            </div>
           </div>
         </div>
       </div>

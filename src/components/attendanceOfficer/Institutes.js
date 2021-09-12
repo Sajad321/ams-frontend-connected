@@ -1,13 +1,13 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { InstitutesModal } from "../common/Modal.js";
+import { InstitutesModal } from "../common/AttendanceOfficerModal";
 const apiUrl = process.env.API_URL;
 
 function Institutes({
+  edit,
   sideBarShow,
   handleStartAttendanceButton,
   handleStudentsAttendanceButton,
-  handleStudentsInstallmentsButton,
 }) {
   const [institutes, setInstitutes] = useState([]);
   const [modal, setModal] = useState({
@@ -34,6 +34,15 @@ function Institutes({
     getInstitutes();
   }, []);
 
+  // const handleInsitute = () => {
+  //   if (confirm("هل تود البدء بتسجيل الحضور")) {
+  //     console.log("yes");
+  //   }
+  // };
+
+  const handleEditButton = (institute) => {
+    edit(institute);
+  };
   return (
     <section className="main">
       <div className="row pt-5 m-0">
@@ -89,6 +98,12 @@ function Institutes({
                         <div className="col-2 col-sm-3 p-0 text-center text-white">
                           <FontAwesomeIcon icon="users" size="3x" />
                         </div>
+                        <button
+                          onClick={() => handleEditButton(institute)}
+                          className="btn btn-secondary text-white"
+                        >
+                          تعديل
+                        </button>
                       </div>
                     </div>
                   </div>

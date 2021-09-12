@@ -7,6 +7,8 @@ import Attendance from "./Attendance";
 import Students from "./Lists/Students";
 import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
+import AddInstitute from "./Forms/AddInstitute";
+import syncFetch from "sync-fetch";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -75,15 +77,15 @@ function Admin(props) {
       console.log(error.message);
     }
   };
-  const getAttendance = async () => {
+  const getAttendance = () => {
     try {
-      const response = await fetch(`${apiUrl}/students-attendance`, {
+      const response = syncFetch(`${apiUrl}/students-attendance`, {
         method: "GET",
         headers: {
           Authorization: `Bearer`,
         },
       });
-      const responseData = await response.json();
+      const responseData = response.json();
       setAttendanceData({
         students: responseData.students.sort((a, b) => {
           if (a.name < b.name) {
@@ -131,6 +133,7 @@ function Admin(props) {
         InstitutesButton={handleInstitutesButton}
         StudentsAttendanceButton={handleStudentsAttendanceButton}
         AddStudentButton={handleAddStudentButton}
+        AddInstituteButton={handleAddInstituteButton}
         sideEvent={sideEvent}
         sideBarShow={sideBarShow}
         setSideBarShow={setSideBarShow}
@@ -172,10 +175,18 @@ function Admin(props) {
     setPage("AddStudent");
     setDataToChange({});
   };
+  const handleAddInstituteButton = () => {
+    setPage("AddInstitute");
+    setDataToChange({});
+  };
 
   const handleEditStudentButton = (student) => {
     setDataToChange(student);
     setPage("AddStudent");
+  };
+  const handleEditInstituteButton = (Institute) => {
+    setDataToChange(Institute);
+    setPage("AddInstitute");
   };
 
   if (page == "Main") {
@@ -210,9 +221,11 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* Institutes */}
         <Institutes
+          edit={handleEditInstituteButton}
           sideBarShow={sideBarShow}
           handleStartAttendanceButton={handleStartAttendanceButton}
           handleStudentsAttendanceButton={handleStudentsAttendanceButton}
+          handleAddInstituteButton={handleAddInstituteButton}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
@@ -258,6 +271,20 @@ function Admin(props) {
         {/* AddStudent */}
         <AddStudent
           page={handleMainButton}
+          dataToChange={dataToChange}
+          sideBarShow={sideBarShow}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
+      </Fragment>
+    );
+  } else if (page == "AddInstitute") {
+    return (
+      <Fragment>
+        {AdminHeaderFunction({ Add: "active" })}
+        {/* End of Navbar */}
+        {/* AddInstitute */}
+        <AddInstitute
+          page={handleAddInstituteButton}
           dataToChange={dataToChange}
           sideBarShow={sideBarShow}
         />

@@ -146,7 +146,14 @@ function StudentsAttendance({
         const response = await fetch(
           `${apiUrl}/students-attendance?student_attendance_id=${Number(
             id
-          )}&attended=${attended == 0 ? 1 : 0}`,
+          )}&attended=${attended == 0 ? 1 : 0}&time=${new Date().toLocaleString(
+            "ar-SA",
+            {
+              hour: "numeric",
+              hour12: true,
+              minute: "numeric",
+            }
+          )}`,
           {
             method: "PATCH",
           }
@@ -237,7 +244,6 @@ function StudentsAttendance({
     const student_attendance = student.student_attendance.filter(
       (student_attendance) => student_attendance.attendance_id == attendance.id
     )[0];
-    console.log(student_attendance);
     if (student_attendance) {
       if (
         student_attendance.attended == "1" &&
@@ -258,6 +264,7 @@ function StudentsAttendance({
                 )
               }
             />
+            <span>{student_attendance.time}</span>
           </td>
         );
       } else if (
@@ -295,14 +302,6 @@ function StudentsAttendance({
             {searchedData.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
-            {/* <td>
-            <button
-              onClick={() => handleEditButton(student)}
-              className="btn btn-secondary text-white"
-            >
-              تعديل
-            </button>
-          </td> */}
           </tr>
         );
       });
@@ -341,14 +340,6 @@ function StudentsAttendance({
             {data.attendance.map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
-            {/* <td>
-              <button
-                onClick={() => handleEditButton(student)}
-                className="btn btn-secondary text-white"
-              >
-                تعديل
-              </button>
-            </td> */}
           </tr>
         );
       });

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
 export function InstitutesModal(props) {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const handleDateChange = (e) => {
     setDate(e.target.value);
   };
@@ -10,7 +10,7 @@ export function InstitutesModal(props) {
     <Modal
       show={props.show}
       onHide={() => {
-        setDate("");
+        setDate(new Date().toISOString().slice(0, 10));
         props.onHide();
       }}
       size="lg"
@@ -94,64 +94,53 @@ export function InstitutesModal(props) {
   );
 }
 
-// export function AddModal(props) {
-//   return (
-//     <Modal
-//       show={props.show}
-//       onHide={props.onHide}
-//       size="md"
-//       aria-labelledby="contained-modal-title-vcenter"
-//       centered
-//       dir="rtl"
-//       className="text-white"
-//     >
-//       <Modal.Header closeButton>
-//         <Modal.Title id="contained-modal-title-vcenter">اضافة</Modal.Title>
-//       </Modal.Header>
-//       <Modal.Body className="text-right">
-//         <h4>ماذا تريد ان تضيف ؟</h4>
-//       </Modal.Body>
-//       <Modal.Footer
-//         className="m-0 align-items-center justify-content-center"
-//         dir="ltr"
-//       >
-//         <div className="">
-//           <Button
-//             onClick={() => {
-//               props.AddInstallmentButton();
-//               props.onHide();
-//             }}
-//             className="modal-add-nav"
-//           >
-//             قسط
-//           </Button>
-//         </div>
-//         <div className="">
-//           <Button
-//             onClick={() => {
-//               props.AddStudentButton();
-//               props.onHide();
-//             }}
-//             className="modal-add-nav"
-//           >
-//             طالب
-//           </Button>
-//         </div>
-//         <div className="">
-//           <Button
-//             onClick={() => {
-//               props.AddInstituteButton();
-//               props.onHide();
-//             }}
-//             className="modal-add-nav"
-//           >
-//             معهد
-//           </Button>
-//         </div>
-//       </Modal.Footer>
-//     </Modal>
-//   );
-// }
+export function AddModal(props) {
+  return (
+    <Modal
+      show={props.show}
+      onHide={props.onHide}
+      size="md"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      dir="rtl"
+      className="text-white"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">اضافة</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="text-right">
+        <h4>ماذا تريد ان تضيف ؟</h4>
+      </Modal.Body>
+      <Modal.Footer
+        className="m-0 align-items-center justify-content-center"
+        dir="ltr"
+      >
+        <div className="">
+          <Button
+            onClick={() => {
+              props.AddStudentButton();
+              props.onHide();
+            }}
+            className="modal-add-nav"
+          >
+            طالب
+          </Button>
+        </div>
+        <div className="">
+          <Button
+            onClick={() => {
+              props.AddInstituteButton();
+              props.onHide();
+            }}
+            className="modal-add-nav"
+          >
+            معهد
+          </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
+  );
+}
 
 export function StudentsModal(props) {
   return (

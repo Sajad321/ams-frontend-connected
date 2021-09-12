@@ -8,15 +8,22 @@ import { ipcRenderer } from "electron";
 const apiUrl = process.env.API_URL;
 
 export function InstitutesModal(props) {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const handleDateChange = (e) => {
     setDate(e.target.value);
   };
+  console.log(
+    new Date().toLocaleString("ar-SA", {
+      hour: "numeric",
+      hour12: true,
+      minute: "numeric",
+    })
+  );
   return (
     <Modal
       show={props.show}
       onHide={() => {
-        setDate("");
+        setDate(new Date().toISOString().slice(0, 10));
         props.onHide();
       }}
       size="lg"
@@ -243,7 +250,6 @@ export function StudentsInfoModal(props) {
       document.getElementById("student-qr").src = URL.createObjectURL(props.qr);
     }
   }
-  // console.log(props.photo);
   return (
     <Modal
       show={props.show}
@@ -322,44 +328,57 @@ export function StudentsInfoModal(props) {
           </button>
         </div>
       </Modal.Body>
-      {/* <Modal.Footer
-        className="m-0 align-items-center justify-content-center"
-        dir="ltr"
-      >
-        <div className="">
-          <Button
-            onClick={() => {
-              props.StudentsAttendanceButton();
-              props.onHide();
-            }}
-            className="modal-add-nav"
-          >
-            حضور الطلاب
-          </Button>
+    </Modal>
+  );
+}
+
+export function StudentInfoModal(props) {
+  if (
+    document.getElementById("student-img") != null &&
+    document.getElementById("student-qr") != null
+  ) {
+    if (props.photo instanceof Blob) {
+      document.getElementById("student-img").src = URL.createObjectURL(
+        props.photo
+      );
+    }
+  }
+  return (
+    <Modal
+      show={props.show}
+      onHide={props.onHide}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      dir="rtl"
+      className="text-white"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">الطالب</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="text-right">
+        <div
+          className="row d-flex align-content-center justify-content-center"
+          dir="ltr"
+        >
+          <div className="col-2 col-sm-3 p-0 text-center text-white">
+            <div className="row">
+              <div className="col-12 mt-3">
+                <img id="student-img" className="img-student-attendance" />
+              </div>
+            </div>
+          </div>
+          <div className="col-9 text-right text-white font-student-info">
+            <p className="mb-2">الاسم: {props.name}</p>
+            <p className="mb-2">المعهد: {props.institute}</p>
+            <p className="mb-2">رقم الهاتف: {props.phone}</p>
+            <p className="mb-2">المواليد: {props.dob}</p>
+            <p className="mb-2">
+              حالة الطالب: {props.banned == 1 ? "مفصول" : "مستمر"}
+            </p>
+          </div>
         </div>
-        <div className="">
-          <Button
-            onClick={() => {
-              props.StudentsInstallmentsButton();
-              props.onHide();
-            }}
-            className="modal-add-nav"
-          >
-            اقساط الطلاب
-          </Button>
-        </div>
-        <div className="">
-          <Button
-            onClick={() => {
-              props.StudentsButton();
-              props.onHide();
-            }}
-            className="modal-add-nav"
-          >
-            معلومات الطلاب
-          </Button>
-        </div>
-      </Modal.Footer> */}
+      </Modal.Body>
     </Modal>
   );
 }
@@ -386,7 +405,11 @@ export function StudentInfoAttendanceModal({
         const response = await fetch(
           `${apiUrl}/students-attendance?student_attendance_id=${Number(
             student.student_attendance_id
-          )}&attended=${1}`,
+          )}&attended=${1}&time=${new Date().toLocaleString("ar-SA", {
+            hour: "numeric",
+            hour12: true,
+            minute: "numeric",
+          })}`,
           {
             method: "PATCH",
             // body: JSON.stringify({ attended: attended == 0 ? 1 : 0 }),
@@ -394,6 +417,7 @@ export function StudentInfoAttendanceModal({
         );
 
         const responseData = await response.json();
+
         setStudents(
           [
             ...students,
@@ -491,6 +515,7 @@ export function StudentInfoAttendanceModal({
       );
     }
   };
+
   return (
     <Modal
       show={show}

@@ -4,7 +4,7 @@ import { StudentsInfoModal } from "../../common/Modal";
 import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
-function Salesmen({ sideBarShow, edit }) {
+function Students({ sideBarShow, edit }) {
   const [students, setStudents] = useState([]);
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
@@ -420,4 +420,4 @@ function Salesmen({ sideBarShow, edit }) {
   );
 }
 
-export default Salesmen;
+export default Students;
