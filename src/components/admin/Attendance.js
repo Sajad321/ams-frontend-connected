@@ -3,7 +3,7 @@ import { StudentInfoAttendanceModal } from "../common/Modal";
 import { toast } from "react-toastify";
 import { StudentInfoModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
-// var { ipcRenderer } = require("electron");
+var dialog = require("electron").remote.dialog;
 
 function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   const [students, setStudents] = useState([]);
@@ -29,26 +29,9 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   });
   const [photo, setPhoto] = useState({});
   const { institute_id, date } = attendanceStartData;
-  useEffect(() => {
-    const sendAttendance = async () => {
-      try {
-        const response = await fetch(
-          `${apiUrl}/attendance?institute_id=${institute_id}&date=${date}`,
-          {
-            method: "POST",
-          }
-        );
-
-        const responseData = await response.json();
-        // setStudent({ ...student, attendance_id: responseData.attendance_id });
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    sendAttendance();
-
-    document.addEventListener("keydown", qrCodeScanner);
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("keydown", qrCodeScanner);
+  // }, []);
 
   // const RemoveStudentAttendance = async (student_attendance_id) => {
   //   try {
@@ -164,8 +147,13 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     // const d = document.getElementById("ss");
     // d.innerText = "HI";
     // ipcRenderer.send("show-student-info", [id]);
-    getStudent(id);
-    getPhoto(id);
+    // console.log(students.filter((s) => s.id == id));
+    if (students.filter((s) => s.id == id).length == 0) {
+      getStudent(id);
+      getPhoto(id);
+    } else {
+      dialog.showErrorBox("طالب", "مسجل مسبقاً");
+    }
   };
   let UPC = "";
   function qrCodeScanner(e) {
@@ -179,7 +167,8 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       } else {
         if (
           (UPC.length > 5) &
-          (UPC.split("|")[1] == "besmarty") &
+          ((UPC.split("|")[1] == "besmarty") |
+            (UPC.split("|")[1] == "Unidentifiedثسةشقفغ")) &
           (UPC.split("|")[0].substring(0, 2) != "Tab")
         ) {
           console.log(UPC.split("|")[0]);
@@ -202,7 +191,12 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   //   handleStudentAttendance(args[0], 1);
   // });
   return (
-    <section className="main" id="attendance">
+    <section
+      className="main"
+      id="attendance"
+      onKeyDown={qrCodeScanner}
+      tabIndex="0"
+    >
       <div className="row m-0">
         <div
           className={
@@ -252,7 +246,6 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
               date={date}
               students={students}
               setStudents={setStudents}
-              qrCodeScanner={qrCodeScanner}
             />
             <div className="col-12">
               <div className="table-responsive">

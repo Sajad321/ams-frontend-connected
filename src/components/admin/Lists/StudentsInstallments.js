@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import printJS from "print-js";
+import ConfirmModal from "../../common/ConfirmModal";
 const apiUrl = process.env.API_URL;
 
 function StudentsInstallments({
@@ -14,6 +15,12 @@ function StudentsInstallments({
   institutes,
   institute,
 }) {
+  const [confirmModal, setConfirmModal] = useState({
+    visbile: false,
+    installment_received_id: 0,
+    received: 0,
+    index: 0,
+  });
   const [searchType, setSearchType] = useState("0");
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
@@ -79,15 +86,15 @@ function StudentsInstallments({
     }
   };
 
-  const handleEditButton = (student) => {
-    edit(student);
-  };
+  // const handleEditButton = (student) => {
+  //   edit(student);
+  // };
   const handleInstallmentsToggle = (studentIndex, id, received) => {
     if ((searchType != "0") | (searchInstitute != "0")) {
-      const installmentIndex = searchedData.students.findIndex(
-        (o) => o.id == id
-      );
-      let nee = [...searchedStudents.students];
+      const installmentIndex = searchedData.students[
+        studentIndex
+      ].installment_received.findIndex((i) => i.id == id);
+      let nee = [...searchedData.students];
       let nee1 = [...nee[studentIndex].installment_received];
       nee1[installmentIndex] = {
         ...nee1[installmentIndex],
@@ -95,8 +102,8 @@ function StudentsInstallments({
       };
       nee[studentIndex].installment_received[installmentIndex] =
         nee1[installmentIndex];
-      setSearchedStudents({
-        ...data,
+      setSearchedData({
+        ...searchedData,
         students: nee,
       });
     } else if (searchType == "0") {
@@ -136,12 +143,9 @@ function StudentsInstallments({
         toast.warn("حصل خطأ");
       }
     };
-    let box = confirm("هل انت متأكد؟");
-    if (box) {
-      toggleInstallment();
-      handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
-      toast.success("تم تغيير حالة القسط");
-    }
+    toggleInstallment();
+    handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
+    toast.success("تم تغيير حالة القسط");
   };
   // function PrintElem(elem) {
   //   var mywindow = window.open("", "PRINT", "height=400,width=600");
@@ -192,11 +196,13 @@ function StudentsInstallments({
               color="green"
               className="check-icon"
               onClick={() =>
-                handleInstallmentsToggleButton(
-                  index,
-                  installment_received.id,
-                  installment_received.received
-                )
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  installment_received_id: installment_received.id,
+                  received: installment_received.received,
+                })
               }
             />
           </td>
@@ -212,11 +218,13 @@ function StudentsInstallments({
               size="2x"
               className="times-icon"
               onClick={() =>
-                handleInstallmentsToggleButton(
-                  index,
-                  installment_received.id,
-                  installment_received.received
-                )
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  installment_received_id: installment_received.id,
+                  received: installment_received.received,
+                })
               }
             />
           </td>
@@ -406,6 +414,16 @@ function StudentsInstallments({
                 </div>
               </div>
             </div>
+            <ConfirmModal
+              show={confirmModal.visbile}
+              onHide={() =>
+                setConfirmModal({ ...confirmModal, visbile: false })
+              }
+              handleToggleButton={handleInstallmentsToggleButton}
+              index={confirmModal.index}
+              student_id={confirmModal.installment_received_id}
+              done={confirmModal.received}
+            />
             <div className="col-12" id="print-table">
               <div className="table-responsive">{render_table()}</div>
             </div>

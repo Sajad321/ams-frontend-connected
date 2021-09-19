@@ -1,7 +1,7 @@
 "use strict";
 
 // Import parts of electron to use
-const { app, BrowserWindow, Menu, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
 const { download } = require("electron-dl");
@@ -62,6 +62,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,
     },
     autoHideMenuBar: true,
   });
@@ -72,6 +73,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,
     },
     autoHideMenuBar: true,
   });
@@ -246,6 +248,36 @@ ipcMain.on("download-button", (event, info) => {
   download(win, info, { saveAs: true })
     .then((dl) => console.log("Finished Download"))
     .catch((error) => console.log(error.message));
+});
+ipcMain.on("confirm-delete-student-dialog", async (event, info) => {
+  const win = BrowserWindow.getFocusedWindow();
+  let response = await dialog.showMessageBox(win, {
+    buttons: ["لا", "نعم"],
+    message: "هل انت متأكد؟",
+  });
+  if (response.response == 1) {
+    event.sender.send("delete-student");
+  }
+});
+ipcMain.on("confirm-attendance-student-dialog", async (event, info) => {
+  const win = BrowserWindow.getFocusedWindow();
+  let response = await dialog.showMessageBox(win, {
+    buttons: ["لا", "نعم"],
+    message: "هل انت متأكد؟",
+  });
+  if (response.response == 1) {
+    event.sender.send("attend-student");
+  }
+});
+ipcMain.on("confirm-attendance-dialog", async (event, info) => {
+  const win = BrowserWindow.getFocusedWindow();
+  let response = await dialog.showMessageBox(win, {
+    buttons: ["لا", "نعم"],
+    message: "هل انت متأكد؟",
+  });
+  if (response.response == 1) {
+    event.sender.send("attendance-confirmed");
+  }
 });
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

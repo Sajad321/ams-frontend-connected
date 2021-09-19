@@ -4,26 +4,74 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import { HotKeys, GlobalHotKeys } from "react-hotkeys";
 import { ipcRenderer } from "electron";
-
+const dialog = require("electron").remote.dialog;
 const apiUrl = process.env.API_URL;
 
 export function InstitutesModal(props) {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  function pad(x, width = 2, char = "0") {
+    return String(x).padStart(width, char);
+  }
+  function toLocalISOString(dt) {
+    const offset = dt.getTimezoneOffset();
+    const absOffset = Math.abs(offset);
+    const offHours = Math.floor(absOffset / 60);
+    const offStr = pad(offHours) + ":" + pad(absOffset - offHours * 60);
+    return [
+      String(dt.getFullYear()),
+      "-",
+      pad(dt.getMonth() + 1),
+      "-",
+      pad(dt.getDate()),
+      "T",
+      pad(dt.getHours()),
+      ":",
+      pad(dt.getMinutes()),
+      ":",
+      pad(dt.getSeconds()),
+      ".",
+      dt.getMilliseconds(),
+      offset <= 0 ? "+" : "-",
+      offStr,
+    ].join("");
+  }
+  // console.log(toLocalISOString(new Date()));
+  const [date, setDate] = useState(toLocalISOString(new Date()).slice(0, 10));
   const handleDateChange = (e) => {
     setDate(e.target.value);
   };
-  console.log(
-    new Date().toLocaleString("ar-SA", {
-      hour: "numeric",
-      hour12: true,
-      minute: "numeric",
-    })
-  );
+  const startAttendance = async () => {
+    let response = await dialog.showMessageBox({
+      buttons: ["لا", "نعم"],
+      message: "هل انت متأكد؟",
+      defaultId: 1,
+    });
+    if (response.response == 1) {
+      const sendAttendance = async () => {
+        try {
+          const response = await fetch(
+            `${apiUrl}/attendance?institute_id=${props.institute_id}&date=${date}`,
+            {
+              method: "POST",
+            }
+          );
+
+          const responseData = await response.json();
+          // setStudent({ ...student, attendance_id: responseData.attendance_id });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      sendAttendance();
+      props.handleStartAttendanceButton(props.institute_id, date);
+      setDate("");
+      props.onHide();
+    }
+  };
   return (
     <Modal
       show={props.show}
       onHide={() => {
-        setDate(new Date().toISOString().slice(0, 10));
+        setDate(toLocalISOString(new Date()).slice(0, 10));
         props.onHide();
       }}
       size="lg"
@@ -87,28 +135,14 @@ export function InstitutesModal(props) {
         <div className="">
           {date == "" ? (
             <Button
-              onClick={() => {
-                props.handleStartAttendanceButton(props.institute_id, date);
-                setDate("");
-                props.onHide();
-              }}
+              onClick={startAttendance}
               className="modal-add-nav"
               disabled={true}
             >
               بدء تسجيل الحضور
             </Button>
           ) : (
-            <Button
-              onClick={() => {
-                let box = confirm("هل انت متأكد؟");
-                if (box) {
-                  props.handleStartAttendanceButton(props.institute_id, date);
-                  setDate("");
-                  props.onHide();
-                }
-              }}
-              className="modal-add-nav"
-            >
+            <Button onClick={startAttendance} className="modal-add-nav">
               بدء تسجيل الحضور
             </Button>
           )}
@@ -250,6 +284,16 @@ export function StudentsInfoModal(props) {
       document.getElementById("student-qr").src = URL.createObjectURL(props.qr);
     }
   }
+  const deleteFunction = async () => {
+    let response = await dialog.showMessageBox({
+      buttons: ["لا", "نعم"],
+      message: "هل انت متأكد؟",
+    });
+    if (response.response == 1) {
+      props.handleDeleteButton(props.index, props.id);
+      props.onHide();
+    }
+  };
   return (
     <Modal
       show={props.show}
@@ -305,10 +349,16 @@ export function StudentsInfoModal(props) {
               حالة الطالب: {props.banned == 1 ? "مفصول" : "مستمر"}
             </p>
           </div>
+          <button
+            onClick={deleteFunction}
+            className="btn btn-danger text-white mt-4 mr-4 w-25"
+          >
+            حذف
+          </button>
           {props.banned == 0 ? (
             <button
               onClick={() => props.handleStudentDismiss(props.index, props.id)}
-              className="btn btn-danger text-white mt-4 w-25"
+              className="btn btn-info text-white mt-4 w-25"
             >
               فصل
             </button>
@@ -446,20 +496,19 @@ export function StudentInfoAttendanceModal({
     onHide();
     setPhoto({});
   };
-  const acceptHandler = () => {
-    // const d = document.getElementById("ss");
-    // d.innerText = "HI";
-    // ipcRenderer.send("accept-student-attendance", [
-    //   student.student_attendance_id,
-    // ]);
+  const acceptHandler = async () => {
     if (
       (student.incrementally_absence >= 1) |
       (student.installments.filter((installment) => installment.received == "0")
         .length !=
         0)
     ) {
-      let box = confirm("هل انت متأكد ؟");
-      if (box) {
+      let response = await dialog.showMessageBox({
+        buttons: ["لا", "نعم"],
+        message: "هل انت متأكد؟",
+        defaultId: 1,
+      });
+      if (response.response == 1) {
         handleAttendanceButton();
         onHide();
         setPhoto({});
@@ -515,7 +564,6 @@ export function StudentInfoAttendanceModal({
       );
     }
   };
-
   return (
     <Modal
       show={show}

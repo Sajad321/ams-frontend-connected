@@ -86,7 +86,7 @@ function Institutes({
                       setModal({
                         visible: true,
                         institute_id: institute.id,
-                        institute_name: institute._name,
+                        institute_name: institute.name,
                       })
                     }
                   >

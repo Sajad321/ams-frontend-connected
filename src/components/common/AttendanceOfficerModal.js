@@ -1,16 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
+const dialog = require("electron").remote.dialog;
 
 export function InstitutesModal(props) {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  function pad(x, width = 2, char = "0") {
+    return String(x).padStart(width, char);
+  }
+  function toLocalISOString(dt) {
+    const offset = dt.getTimezoneOffset();
+    const absOffset = Math.abs(offset);
+    const offHours = Math.floor(absOffset / 60);
+    const offStr = pad(offHours) + ":" + pad(absOffset - offHours * 60);
+    return [
+      String(dt.getFullYear()),
+      "-",
+      pad(dt.getMonth() + 1),
+      "-",
+      pad(dt.getDate()),
+      "T",
+      pad(dt.getHours()),
+      ":",
+      pad(dt.getMinutes()),
+      ":",
+      pad(dt.getSeconds()),
+      ".",
+      dt.getMilliseconds(),
+      offset <= 0 ? "+" : "-",
+      offStr,
+    ].join("");
+  }
+  const [date, setDate] = useState(toLocalISOString(new Date()).slice(0, 10));
   const handleDateChange = (e) => {
     setDate(e.target.value);
+  };
+  const startAttendance = async () => {
+    let response = await dialog.showMessageBox({
+      buttons: ["لا", "نعم"],
+      message: "هل انت متأكد؟",
+    });
+    if (response.response == 1) {
+      const sendAttendance = async () => {
+        try {
+          const response = await fetch(
+            `${apiUrl}/attendance?institute_id=${props.institute_id}&date=${date}`,
+            {
+              method: "POST",
+            }
+          );
+
+          const responseData = await response.json();
+          // setStudent({ ...student, attendance_id: responseData.attendance_id });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      sendAttendance();
+      props.handleStartAttendanceButton(props.institute_id, date);
+      setDate("");
+      props.onHide();
+    }
   };
   return (
     <Modal
       show={props.show}
       onHide={() => {
-        setDate(new Date().toISOString().slice(0, 10));
+        setDate(toLocalISOString(new Date()).slice(0, 10));
         props.onHide();
       }}
       size="lg"
@@ -63,28 +117,14 @@ export function InstitutesModal(props) {
         <div className="">
           {date == "" ? (
             <Button
-              onClick={() => {
-                props.handleStartAttendanceButton(props.institute_id, date);
-                setDate("");
-                props.onHide();
-              }}
+              onClick={startAttendance}
               className="modal-add-nav"
               disabled={true}
             >
               بدء تسجيل الحضور
             </Button>
           ) : (
-            <Button
-              onClick={() => {
-                let box = confirm("هل انت متأكد؟");
-                if (box) {
-                  props.handleStartAttendanceButton(props.institute_id, date);
-                  setDate("");
-                  props.onHide();
-                }
-              }}
-              className="modal-add-nav"
-            >
+            <Button onClick={startAttendance} className="modal-add-nav">
               بدء تسجيل الحضور
             </Button>
           )}

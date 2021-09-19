@@ -25,7 +25,8 @@ const msiCreator = new MSICreator({
   exe: "accounts-and-attendance-managment-system.exe",
   name: "Accounts and Attendance Management System Desktop App",
   manufacturer: "BeSmarty Inc",
-  version: "1.0.0",
+  version: "1.3.0",
+  shortcutName: "AAMS",
 
   // Configure installer User Interface
   ui: {

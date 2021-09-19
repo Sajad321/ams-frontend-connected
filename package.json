@@ -1,6 +1,6 @@
 {
   "name": "accounts-and-attendance-managment-system",
-  "version": "1.15.0",
+  "version": "1.3.0",
   "description": "System for managing the attendance and accounts for students according to QR code",
   "private": false,
   "repository": {

@@ -2,7 +2,10 @@ import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import printJS from "print-js";
+import ConfirmModal from "../../common/ConfirmModal";
 const apiUrl = process.env.API_URL;
+
+// var { ipcRenderer } = require("electron");
 
 function StudentsAttendance({
   sideBarShow,
@@ -13,6 +16,12 @@ function StudentsAttendance({
   institutes,
   institute,
 }) {
+  const [confirmModal, setConfirmModal] = useState({
+    visbile: false,
+    index: 0,
+    student_attendance_id: 0,
+    attended: 0,
+  });
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
   const [search2, setSearch2] = useState("");
@@ -40,7 +49,7 @@ function StudentsAttendance({
   // const handleSearchInstituteChange = (e) => {
   //   setSearchInstitute(e);
   // };
-  console.log(searchedData);
+  // console.log(searchedData);
   const handleSearchButton = (e) => {
     e.preventDefault();
     const reg = new RegExp(search, "i");
@@ -166,12 +175,17 @@ function StudentsAttendance({
         toast.warn("حصل خطأ");
       }
     };
-    let box = confirm("هل انت متأكد؟");
-    if (box) {
-      toggleAttendance();
-      handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
-      toast.success("تم تغيير حالة الحضور");
-    }
+    // let res = dialog.showMessageBox({
+    //   buttons: ["نعم", "لا"],
+    //   message: "هل انت متأكد؟",
+    // });
+    // console.log(res);
+    // let box = confirm("هل انت متأكد؟");
+    // if (box) {
+    toggleAttendance();
+    handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
+    toast.success("تم تغيير حالة الحضور");
+    // }
   };
   const printTable = () => {
     // let divToPrint = document.getElementById("print-table");
@@ -256,13 +270,22 @@ function StudentsAttendance({
               size="2x"
               color="green"
               className="check-icon"
-              onClick={() =>
-                handleAttendanceToggleButton(
-                  index,
-                  student_attendance.student_attendance_id,
-                  student_attendance.attended
-                )
-              }
+              onClick={() => {
+                // handleAttendanceToggleButton(
+                //   index,
+                //   student_attendance.student_attendance_id,
+                //   student_attendance.attended
+                // )
+
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  student_attendance_id:
+                    student_attendance.student_attendance_id,
+                  attended: student_attendance.attended,
+                });
+              }}
             />
             <span>{student_attendance.time}</span>
           </td>
@@ -277,13 +300,21 @@ function StudentsAttendance({
               icon="times-circle"
               size="2x"
               className="times-icon"
-              onClick={() =>
-                handleAttendanceToggleButton(
-                  index,
-                  student_attendance.student_attendance_id,
-                  student_attendance.attended
-                )
-              }
+              onClick={() => {
+                // handleAttendanceToggleButton(
+                //   index,
+                //   student_attendance.student_attendance_id,
+                //   student_attendance.attended
+                // );
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  student_attendance_id:
+                    student_attendance.student_attendance_id,
+                  attended: student_attendance.attended,
+                });
+              }}
             />
           </td>
         );
@@ -438,6 +469,16 @@ function StudentsAttendance({
                 </div>
               </div>
             </div>
+            <ConfirmModal
+              show={confirmModal.visbile}
+              onHide={() =>
+                setConfirmModal({ ...confirmModal, visbile: false })
+              }
+              handleToggleButton={handleAttendanceToggleButton}
+              index={confirmModal.index}
+              student_id={confirmModal.student_attendance_id}
+              done={confirmModal.attended}
+            />
             <div className="col-12" id="print-table">
               <div className="table-responsive">{render_table()}</div>
             </div>

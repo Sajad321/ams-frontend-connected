@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StudentsInfoModal } from "../../common/Modal";
 import { toast } from "react-toastify";
+import { ipcRenderer } from "electron";
 const apiUrl = process.env.API_URL;
 
 function Students({ sideBarShow, edit }) {
@@ -148,6 +149,36 @@ function Students({ sideBarShow, edit }) {
   };
   const handleEditButton = (student, photo) => {
     edit({ ...student, photo });
+  };
+  const handleDelete = (id) => {
+    let searchedIndex = [...searchedStudents].findIndex((i) => i.id == id);
+    let neeSerached = [...searchedStudents];
+    neeSerached = neeSerached.filter((s, i) => i != searchedIndex);
+    setSearchedStudents(neeSerached);
+    let index = [...students].findIndex((i) => i.id == id);
+    let nee = [...students];
+    nee = nee.filter((s, i) => i != index);
+    setStudents(nee);
+  };
+  const handleDeleteButton = (index, id) => {
+    const handleStudentDelete = async () => {
+      try {
+        const response = await fetch(
+          `${apiUrl}/student?student_id=${Number(id)}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        const responseData = await response.json();
+      } catch (error) {
+        console.log(error.message);
+        toast.warn("حصل خطأ");
+      }
+    };
+    handleStudentDelete();
+    handleDelete(id);
+    toast.success("تم حذف الطالب");
   };
   const handleBanningToggle = (studentIndex, banned) => {
     setStudentsInfoModal({ ...studentsInfoModal, banned: banned });
@@ -296,7 +327,10 @@ function Students({ sideBarShow, edit }) {
             <StudentsInfoModal
               show={studentsInfoModal.visible}
               onHide={() =>
-                setStudentsInfoModal({ ...studentsInfoModal, visible: false })
+                setStudentsInfoModal({
+                  ...studentsInfoModal,
+                  visible: false,
+                })
               }
               index={studentsInfoModal.index}
               id={studentsInfoModal.id}
@@ -311,6 +345,7 @@ function Students({ sideBarShow, edit }) {
               handleEditButton={handleEditButton}
               handleStudentDismiss={handleStudentDismiss}
               handleStudentReturn={handleStudentReturn}
+              handleDeleteButton={handleDeleteButton}
             />
             <div className="col-12" dir="rtl">
               <div className="row">
@@ -393,7 +428,8 @@ function Students({ sideBarShow, edit }) {
                               <div className="row d-flex align-content-center justify-content-center">
                                 <div className="col-12 text-right text-white">
                                   <p className="mb-0" dir="rtl">
-                                    {index + 1} {" - "} {student.name}
+                                    {index + 1} {" - "} {student.name}{" "}
+                                    <b>{student.institute}</b>{" "}
                                     <b style={{ color: "#e30b37" }}>
                                       {student.banned == 1 ? " (مفصول)" : ""}
                                     </b>
