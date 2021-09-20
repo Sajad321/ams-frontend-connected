@@ -327,7 +327,11 @@ function StudentsAttendance({
     if ((searchType != "0") | (searchInstitute != "0")) {
       const render_data = searchedData.students.map((student, index) => {
         return (
-          <tr key={student.id} className="font-weight-bold text-white">
+          <tr
+            key={student.id}
+            className="font-weight-bold text-white"
+            className="d-flex"
+          >
             <td className="t-id">{index + 1}</td>
             <td className="t-name">{student.name}</td>
             {searchedData.attendance.map((attendance) => {
@@ -343,7 +347,7 @@ function StudentsAttendance({
           border="1"
         >
           <thead className="thead-dark">
-            <tr>
+            <tr className="d-flex">
               <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
               {searchedData.attendance.map((attendance) => {

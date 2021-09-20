@@ -32,12 +32,12 @@ function MainAdmin({ sideBarShow }) {
         <div
           className={
             sideBarShow
-              ? "width-others-wide mr-auto main-view"
-              : "width-others-narrow mr-auto main-view"
+              ? "width-others-wide mr-auto main-view mb-2"
+              : "width-others-narrow mr-auto main-view mb-2"
           }
           id="main-view"
         >
-          <div className="row pt-md-2 pr-2 pl-2 mt-md-3 mb-5">
+          <div className="row pt-md-2 pr-2 pl-2 mt-3 mb-5">
             <div className="col-sm-6 p-2">
               <div className="card card-common">
                 <div className="card-body" dir="ltr">
@@ -78,24 +78,49 @@ function MainAdmin({ sideBarShow }) {
             </div>
             {data.institutes.map((institute) => {
               return (
-                <div className="col-sm-6 p-2" key={institute.id}>
-                  <div className="card card-common">
-                    <div className="card-body" dir="ltr">
-                      <div className="d-flex justify-content-between">
-                        <FontAwesomeIcon
-                          icon="chart-line"
-                          color="white"
-                          size="3x"
-                        />
-                        <div className="text-right text-white">
-                          <h5>عدد طلاب معهد {institute.name}</h5>
-                          <h3>{institute.students_institute_count}</h3>
+                <div key={institute.id} className="col-12">
+                  <div className="row">
+                    <div className="col-sm-6 p-2">
+                      <div className="card card-common">
+                        <div className="card-body" dir="ltr">
+                          <div className="d-flex justify-content-between">
+                            <FontAwesomeIcon
+                              icon="user"
+                              color="white"
+                              size="3x"
+                            />
+                            <div className="text-right text-white">
+                              <h5>عدد طلاب معهد {institute.name}</h5>
+                              <h3>{institute.students_institute_count}</h3>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card-footer text-white">
+                          <i className="fas fa-sync mr-3"></i>
+                          <span>تم التحديث الان</span>
                         </div>
                       </div>
                     </div>
-                    <div className="card-footer text-white">
-                      <i className="fas fa-sync mr-3"></i>
-                      <span>تم التحديث الان</span>
+                    <div className="col-sm-6 p-2">
+                      <div className="card card-common">
+                        <div className="card-body" dir="ltr">
+                          <div className="d-flex justify-content-between">
+                            <FontAwesomeIcon
+                              icon="chart-line"
+                              color="white"
+                              size="3x"
+                            />
+                            <div className="text-right text-white">
+                              <h5>الحضور الاخير لمعهد {institute.name}</h5>
+                              <h3>{institute.daily_attendance}</h3>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card-footer text-white">
+                          <i className="fas fa-sync mr-3"></i>
+                          <span>تم التحديث الان</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

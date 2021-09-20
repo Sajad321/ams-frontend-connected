@@ -293,6 +293,7 @@ function Admin(props) {
         {/* StudentsInstallments */}
         <StudentsInstallments
           edit={handleEditInstallmentButton}
+          page={handleMainButton}
           sideBarShow={sideBarShow}
           institutes={institutes}
           institute={institute}

@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { StudentInfoAttendanceModal } from "../common/Modal";
 import { toast } from "react-toastify";
+import { animateScroll as scroll } from "react-scroll";
 import { StudentInfoModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
 var dialog = require("electron").remote.dialog;
@@ -29,25 +30,6 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   });
   const [photo, setPhoto] = useState({});
   const { institute_id, date } = attendanceStartData;
-  // useEffect(() => {
-  //   document.addEventListener("keydown", qrCodeScanner);
-  // }, []);
-
-  // const RemoveStudentAttendance = async (student_attendance_id) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${apiUrl}/students-attendance?student_attendance_id=${student_attendance_id}&attended=0`,
-  //       {
-  //         method: "PATCH",
-  //       }
-  //     );
-
-  //     const responseData = await response.json();
-  //     // setStudents(responseData.students);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
 
   const handleRemoveButton = async (student_attendance_id, i) => {
     try {
@@ -67,11 +49,6 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     }
   };
 
-  // const showHandler = (id) => {
-  //   // const d = document.getElementById("ss");
-  //   // d.innerText = "HI";
-  //   ipcRenderer.send("show-student-info", [id]);
-  // };
   const getStudent = async (id) => {
     try {
       const responseJson = await fetch(
@@ -98,6 +75,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       });
     } catch (error) {
       console.log(error.message);
+      toast.error("حاول مرة اخرى");
     }
   };
   const getStudentInfo = async (id) => {
@@ -144,10 +122,6 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     }
   };
   const showHandler = (id) => {
-    // const d = document.getElementById("ss");
-    // d.innerText = "HI";
-    // ipcRenderer.send("show-student-info", [id]);
-    // console.log(students.filter((s) => s.id == id));
     if (students.filter((s) => s.id == id).length == 0) {
       getStudent(id);
       getPhoto(id);
@@ -181,15 +155,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     }
   }
-  // if (messages.accepted == true) {
-  //   console.log(messages);
-  //   handleStudentAttendance(messages.student_attendance_id, 1);
-  //   messages.accepted = false;
-  // }
-  // ipcRenderer.on("accepted", (e, args) => {
-  //   console.log(args[0]);
-  //   handleStudentAttendance(args[0], 1);
-  // });
+  scroll.scrollToBottom({ duration: 0.5 });
   return (
     <section
       className="main"
