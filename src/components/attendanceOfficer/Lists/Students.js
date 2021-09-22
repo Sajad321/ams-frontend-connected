@@ -355,43 +355,50 @@ function Students({ sideBarShow, edit }) {
                         <div
                           className="col-12 p-2 m-0"
                           key={student.id}
-                          dir="ltr"
+                          dir="rtl"
                         >
-                          <div
-                            className="card card-common card-height"
-                            onClick={() => {
-                              getQr(student.id);
-                              getPhoto(student.id);
-                              setStudentsInfoModal({
-                                ...studentsInfoModal,
-                                index: index,
-                                visible: true,
-                                id: student.id,
-                                name: student.name,
-                                institute: student.institute,
-                                phone: student.phone,
-                                dob: student.dob,
-                                student: student,
-                                banned: student.banned,
-                              });
-                            }}
-                          >
-                            <div className="card-body p-3">
-                              <div className="row d-flex align-content-center justify-content-center">
-                                <div className="col-12 text-right text-white">
-                                  <p className="mb-0" dir="rtl">
-                                    {index + 1} {" - "} {student.name}{" "}
-                                    <b style={{ color: "#e30b37" }}>
-                                      {student.banned == 1 ? " (مفصول)" : ""}
-                                    </b>
-                                  </p>
+                          <div className="row">
+                            <div
+                              className="col-3 mr-3 ml-3 card card-common card-height"
+                              onClick={() => {
+                                getQr(student.id);
+                                getPhoto(student.id);
+                                setStudentsInfoModal({
+                                  ...studentsInfoModal,
+                                  index: index,
+                                  visible: true,
+                                  id: student.id,
+                                  name: student.name,
+                                  institute: student.institute,
+                                  phone: student.phone,
+                                  dob: student.dob,
+                                  student: student,
+                                  banned: student.banned,
+                                });
+                              }}
+                            >
+                              <div className="card-body p-3">
+                                <div className="row d-flex align-content-center justify-content-center">
+                                  <div className="col-12 text-right text-white">
+                                    <p className="mb-0" dir="rtl">
+                                      {index + 1} {" - "} {student.name}{" "}
+                                      <b style={{ color: "#e30b37" }}>
+                                        {student.banned == 1 ? " (مفصول)" : ""}
+                                      </b>
+                                    </p>
+                                  </div>
                                 </div>
-                                {/* <button
-                                  onClick={() => handleEditButton(student)}
-                                  className="btn btn-secondary text-white mt-2"
-                                >
-                                  تعديل
-                                </button> */}
+                              </div>
+                            </div>
+                            <div className="col-3 card card-common card-height">
+                              <div className="card-body p-3">
+                                <div className="row d-flex align-content-center justify-content-center">
+                                  <div className="col-12 text-right text-white">
+                                    <p className="mb-0" dir="rtl">
+                                      <b>{student.institute}</b>
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -403,44 +410,50 @@ function Students({ sideBarShow, edit }) {
                         <div
                           className="col-12 p-2 m-0"
                           key={student.id}
-                          dir="ltr"
+                          dir="rtl"
                         >
-                          <div
-                            className="card card-common card-height"
-                            onClick={() => {
-                              getQr(student.id);
-                              getPhoto(student.id);
-                              setStudentsInfoModal({
-                                ...studentsInfoModal,
-                                index: index,
-                                visible: true,
-                                id: student.id,
-                                name: student.name,
-                                institute: student.institute,
-                                phone: student.phone,
-                                dob: student.dob,
-                                student: student,
-                                banned: student.banned,
-                              });
-                            }}
-                          >
-                            <div className="card-body p-3">
-                              <div className="row d-flex align-content-center justify-content-center">
-                                <div className="col-12 text-right text-white">
-                                  <p className="mb-0" dir="rtl">
-                                    {index + 1} {" - "} {student.name}{" "}
-                                    <b>{student.institute}</b>{" "}
-                                    <b style={{ color: "#e30b37" }}>
-                                      {student.banned == 1 ? " (مفصول)" : ""}
-                                    </b>
-                                  </p>
+                          <div className="row">
+                            <div
+                              className="col-3 mr-3 ml-3 card card-common card-height"
+                              onClick={() => {
+                                getQr(student.id);
+                                getPhoto(student.id);
+                                setStudentsInfoModal({
+                                  ...studentsInfoModal,
+                                  index: index,
+                                  visible: true,
+                                  id: student.id,
+                                  name: student.name,
+                                  institute: student.institute,
+                                  phone: student.phone,
+                                  dob: student.dob,
+                                  student: student,
+                                  banned: student.banned,
+                                });
+                              }}
+                            >
+                              <div className="card-body p-3">
+                                <div className="row d-flex align-content-center justify-content-center">
+                                  <div className="col-12 text-right text-white">
+                                    <p className="mb-0" dir="rtl">
+                                      {index + 1} {" - "} {student.name}{" "}
+                                      <b style={{ color: "#e30b37" }}>
+                                        {student.banned == 1 ? " (مفصول)" : ""}
+                                      </b>
+                                    </p>
+                                  </div>
                                 </div>
-                                {/* <button
-                                  onClick={() => handleEditButton(student)}
-                                  className="btn btn-secondary text-white mt-2"
-                                >
-                                  تعديل
-                                </button> */}
+                              </div>
+                            </div>
+                            <div className="col-3 card card-common card-height">
+                              <div className="card-body p-3">
+                                <div className="row d-flex align-content-center justify-content-center">
+                                  <div className="col-12 text-right text-white">
+                                    <p className="mb-0" dir="rtl">
+                                      <b>{student.institute}</b>
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
