@@ -32,9 +32,11 @@ export default function Login({ setToken }) {
       username,
       password,
     });
-    setToken(token);
-    if (token.token) {
-      ipcRenderer.send("finished-login");
+    if (token != undefined) {
+      setToken(token);
+      if (token.token) {
+        ipcRenderer.send("finished-login");
+      }
     }
   };
 

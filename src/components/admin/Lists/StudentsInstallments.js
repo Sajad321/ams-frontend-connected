@@ -3,20 +3,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import printJS from "print-js";
 import ConfirmModal from "../../common/ConfirmModal";
+import Loading from "../../common/Loading";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 const apiUrl = process.env.API_URL;
 var dialog = require("electron").remote.dialog;
 
-function StudentsInstallments({
-  edit,
-  page,
-  sideBarShow,
-  data,
-  setData,
-  searchedData,
-  setSearchedData,
-  institutes,
-  institute,
-}) {
+function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
+  const [data, setData] = useState({
+    students: [],
+    installments: [],
+    total_students: "",
+    page: 1,
+  });
+  const [searchedData, setSearchedData] = useState({
+    students: [],
+    installments: [],
+    total_students: "",
+    page: 1,
+  });
   const [confirmModal, setConfirmModal] = useState({
     visbile: false,
     installment_received_id: 0,
@@ -26,15 +31,78 @@ function StudentsInstallments({
   const [searchType, setSearchType] = useState("0");
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const getInstallments = async (page, institute_id = "0") => {
+    try {
+      let rr = ``;
+      if (institute_id != "0") {
+        rr = `${apiUrl}/student-install?page=${page}&institute_id=${institute_id}`;
+        if (searchType != "0") {
+          rr = `${apiUrl}/student-install?page=${page}&institute_id=${institute_id}&search=${search}`;
+        }
+      } else {
+        if (searchType != "0") {
+          rr = `${apiUrl}/student-install?page=${page}&search_type=${searchType}&search=${search}`;
+        }
+      }
+      const response = await fetch(`${apiUrl}/student-install?page=${page}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+      const responseData = await response.json();
+      if (searchType != "0" || institute_id != "0") {
+        if (page == 1) {
+          setSearchedData({
+            students: responseData.students,
+            installments: responseData.installments,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setSearchedData({
+            students: data.students.concat(responseData.students),
+            installments: responseData.installments,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      } else {
+        if (page == 1) {
+          setData({
+            students: responseData.students,
+            installments: responseData.installments,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+          setSearchedData({
+            students: responseData.students,
+            installments: responseData.installments,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setData({
+            students: data.students.concat(responseData.students),
+            installments: responseData.installments,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   useEffect(() => {
     setSearchInstitute(institute);
     if (institute != "0") {
-      setSearchedData({
-        students: [...data.students].filter((d) => d.institute_id == institute),
-        installments: [...data.installments].filter(
-          (d) => d.institute_id == institute
-        ),
-      });
+      getInstallments(1, institute);
+    } else {
+      getInstallments(1);
     }
   }, []);
   const handleSearchTypeChange = (e) => {
@@ -45,49 +113,19 @@ function StudentsInstallments({
   };
   const handleSearchButton = (e) => {
     e.preventDefault();
-    const reg = new RegExp(search, "i");
-
-    if (searchInstitute != "0") {
-      if (searchType == "1") {
-        setSearchedData({
-          students: [...data.students].filter(
-            (d) => d.name.match(reg) && d.institute_id == searchInstitute
-          ),
-          installments: [...data.installments].filter(
-            (d) => d.institute_id == searchInstitute
-          ),
-        });
-      }
-    } else {
-      if (searchType == "1") {
-        setSearchedData({
-          students: [...data.students].filter((d) => d.name.match(reg)),
-          installments: [...data.installments],
-        });
-      }
-    }
+    setLoading(true);
+    getInstallments(1, searchInstitute);
   };
 
   const handleInstituteChange = (e) => {
     if (e.target.value != "0") {
       setSearchInstitute(e.target.value);
-      setSearchedData({
-        students: [...data.students].filter(
-          (d) => d.institute_id == e.target.value
-        ),
-        installments: [...data.installments].filter(
-          (d) => d.institute_id == e.target.value
-        ),
-      });
+      getInstallments(1, e.target.value);
     } else {
       setSearchInstitute("0");
-      setSearchedData({
-        students: [...data.students],
-        installments: [...data.installments],
-      });
     }
   };
-
+  console.log(loading);
   // const handleEditButton = (student) => {
   //   edit(student);
   // };
@@ -171,31 +209,8 @@ function StudentsInstallments({
     handleInstallmentsToggle(index, id, received == 0 ? 1 : 0);
     toast.success("تم تغيير حالة القسط");
   };
-  // function PrintElem(elem) {
-  //   var mywindow = window.open("", "PRINT", "height=400,width=600");
 
-  //   mywindow.document.write(
-  //     "<html><head><title>" + document.title + "</title>"
-  //   );
-  //   mywindow.document.write("</head><body >");
-  //   mywindow.document.write("<h1>" + document.title + "</h1>");
-  //   mywindow.document.write(document.getElementById(elem).innerHTML);
-  //   mywindow.document.write("</body></html>");
-
-  //   mywindow.document.close(); // necessary for IE >= 10
-  //   mywindow.focus(); // necessary for IE >= 10*/
-
-  //   mywindow.print();
-  //   mywindow.close();
-
-  //   return true;
-  // }
   const printTable = () => {
-    // let divToPrint = document.getElementById("print-table");
-    // PrintElem(divToPrint);
-    // printJS({ printable: "print-table", type: "html", targetStyles: ["*"] });
-    // window.print();
-
     printJS({
       printable: "print-table",
       type: "html",
@@ -277,6 +292,7 @@ function StudentsInstallments({
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
           border="1"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr className="d-flex">
@@ -341,6 +357,7 @@ function StudentsInstallments({
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
           border="1"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr className="d-flex">
@@ -447,9 +464,14 @@ function StudentsInstallments({
                   </form>
                 </div>
                 <div className="col-1 pt-1">
-                  <button onClick={printTable} className="btn btn-light">
-                    طباعة
-                  </button>
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-light"
+                    table="print-table"
+                    filename="الاقساط"
+                    sheet="الاقساط"
+                    buttonText="طباعة"
+                  />
                 </div>
                 <div className="col-1 pt-1">
                   <select
@@ -484,8 +506,56 @@ function StudentsInstallments({
               student_id={confirmModal.installment_received_id}
               done={confirmModal.received}
             />
-            <div className="col-12" id="print-table">
-              <div className="table-responsive">{render_table()}</div>
+            <div className="col-12">
+              {loading ? (
+                <Loading />
+              ) : (
+                <InfiniteScroll
+                  dataLength={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.page * 100
+                      : data.page * 100
+                  } //This is important field to render the next data
+                  next={() =>
+                    getInstallments(
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchedData.page + 1
+                        : data.page + 1,
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchInstitute
+                        : "0"
+                    )
+                  }
+                  hasMore={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.total_students !=
+                        searchedData.students.length
+                      : data.total_students != data.students.length
+                  }
+                  loader={<Loading />}
+                  endMessage={
+                    <p className="pb-3 pt-3 text-center text-white">
+                      <b>هذه جميع النتائج</b>
+                    </p>
+                  }
+                  // below props only if you need pull down functionality
+                  // refreshFunction={this.refresh}
+                  // pullDownToRefresh
+                  // pullDownToRefreshThreshold={50}
+                  // pullDownToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8595; Pull down to refresh
+                  //   </h3>
+                  // }
+                  // releaseToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8593; Release to refresh
+                  //   </h3>
+                  // }
+                >
+                  <div className="table-responsive">{render_table()}</div>
+                </InfiniteScroll>
+              )}
             </div>
           </div>
         </div>

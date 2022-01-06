@@ -529,9 +529,8 @@ export function StudentInfoAttendanceModal({
   if (document.getElementById("student-info-img") != null) {
     if (photo instanceof Blob) {
       // console.log(photo);
-      document.getElementById("student-info-img").src = URL.createObjectURL(
-        photo
-      );
+      document.getElementById("student-info-img").src =
+        URL.createObjectURL(photo);
     }
   }
   const render_installment = (installment) => {
@@ -588,7 +587,8 @@ export function StudentInfoAttendanceModal({
               (installment) => installment.received == "0"
             ).length !=
               0) |
-            (student.banned == 1) ? (
+            (student.banned == 1) |
+            (student.institute_id != institute_id) ? (
               <div className="col-1 btn-danger"></div>
             ) : (
               <div className="col-1 btn-success"></div>

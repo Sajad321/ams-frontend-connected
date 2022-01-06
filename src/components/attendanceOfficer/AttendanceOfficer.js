@@ -8,7 +8,6 @@ import Students from "./Lists/Students";
 import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
 import AddInstitute from "./Forms/AddInstitute";
-import syncFetch from "sync-fetch";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -54,13 +53,6 @@ function Admin(props) {
 
   const [institutes, setInstitutes] = useState([]);
   const [institute, setInstitute] = useState("0");
-  const [attendanceData, setAttendanceData] = useState({
-    students: [],
-    attendance: [],
-  });
-  const [searchedAttendanceData, setSearchedAttendanceData] = useState({
-    ...attendanceData,
-  });
 
   const getStuff = async () => {
     try {
@@ -77,50 +69,8 @@ function Admin(props) {
       console.log(error.message);
     }
   };
-  const getAttendance = () => {
-    try {
-      const response = syncFetch(`${apiUrl}/students-attendance`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer`,
-        },
-      });
-      const responseData = response.json();
-      setAttendanceData({
-        students: responseData.students.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        }),
-        attendance: responseData.attendance.sort((a, b) => {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        }),
-      });
-      setSearchedAttendanceData({
-        students: responseData.students.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        }),
-        attendance: responseData.attendance.sort((a, b) => {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        }),
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
   useEffect(() => {
     getStuff();
-    getAttendance();
   }, []);
 
   const AdminHeaderFunction = (Act) => {
@@ -145,12 +95,9 @@ function Admin(props) {
     setPage("Main");
     setDataToChange({});
     getStuff();
-    getAttendance();
   };
 
   const handleInstitutesButton = () => {
-    getStuff();
-    getAttendance();
     setPage("Institutes");
     setDataToChange({});
   };
@@ -255,10 +202,6 @@ function Admin(props) {
           sideBarShow={sideBarShow}
           institutes={institutes}
           institute={institute}
-          data={attendanceData}
-          setData={setAttendanceData}
-          searchedData={searchedAttendanceData}
-          setSearchedData={setSearchedAttendanceData}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>

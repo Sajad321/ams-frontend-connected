@@ -13,25 +13,6 @@ const HomePage = (props) => {
     ipcRenderer.send("login");
   };
 
-  useEffect(() => {
-    const callSecureApi = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/users/` + user_id, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-
-        const responseData = await response.json();
-
-        setLoading(false);
-      } catch (error) {
-        console.log(error.message);
-        setLoading(false);
-      }
-    };
-  }, []);
   if (JSON.parse(localStorage.getItem("token")).auth == "1") {
     return <Admin logoutWithRedirect={logoutWithRedirect} />;
   } else {

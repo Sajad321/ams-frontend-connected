@@ -3,19 +3,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "react-toastify";
 import printJS from "print-js";
 import ConfirmModal from "../../common/ConfirmModal";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Loading from "../../common/Loading";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 const apiUrl = process.env.API_URL;
 
 // var { ipcRenderer } = require("electron");
 
-function StudentsAttendance({
-  sideBarShow,
-  data,
-  setData,
-  searchedData,
-  setSearchedData,
-  institutes,
-  institute,
-}) {
+function StudentsAttendance({ sideBarShow, institutes, institute }) {
+  const [data, setData] = useState({
+    students: [],
+    attendance: [],
+    total_students: "",
+    page: 1,
+  });
+  const [searchedData, setSearchedData] = useState({
+    students: [],
+    attendance: [],
+    total_students: "",
+    page: 1,
+  });
   const [confirmModal, setConfirmModal] = useState({
     visbile: false,
     index: 0,
@@ -23,97 +30,110 @@ function StudentsAttendance({
     attended: 0,
   });
   const [searchType, setSearchType] = useState("0");
-  const [search, setSearch] = useState("");
+  const [search1, setSearch1] = useState("");
   const [search2, setSearch2] = useState("");
   const [searchInstitute, setSearchInstitute] = useState("0");
+  const [loading, setLoading] = useState(true);
+
+  const getAttendance = async (page, institute_id = "0") => {
+    try {
+      let rr = ``;
+      if (institute_id != "0") {
+        rr = `${apiUrl}/students-attendance?page=${page}&institute_id=${institute_id}`;
+        if (searchType != "0") {
+          rr = `${apiUrl}/students-attendance?page=${page}&institute_id=${institute_id}&search_type=${searchType}&search1=${search1}&search2=${search2}`;
+        }
+      } else {
+        if (searchType != "0") {
+          rr = `${apiUrl}/students-attendance?page=${page}&search_type=${searchType}&search1=${search1}&search2=${search2}`;
+        }
+      }
+      const response = await fetch(
+        rr != `` ? rr : `${apiUrl}/students-attendance?page=${page}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        }
+      );
+      const responseData = await response.json();
+      if (searchType != "0" || institute_id != "0") {
+        if (page == 1) {
+          setSearchedData({
+            students: responseData.students,
+            attendance: responseData.attendance,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setSearchedData({
+            students: data.students.concat(responseData.students),
+            attendance: responseData.attendance,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      } else {
+        if (page == 1) {
+          setData({
+            students: responseData.students,
+            attendance: responseData.attendance,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+          setSearchedData({
+            students: responseData.students,
+            attendance: responseData.attendance,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setData({
+            students: data.students.concat(responseData.students),
+            attendance: responseData.attendance,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   useEffect(() => {
     setSearchInstitute(institute);
     if (institute != "0") {
-      setSearchedData({
-        students: [...data.students].filter((d) => d.institute_id == institute),
-        attendance: [...data.attendance].filter(
-          (d) => d.institute_id == institute
-        ),
-      });
+      getAttendance(1, institute);
+    } else {
+      getAttendance(1);
     }
   }, []);
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+  const handleSearch1Change = (e) => {
+    setSearch1(e.target.value);
   };
   const handleSearch2Change = (e) => {
     setSearch2(e.target.value);
   };
-  // const handleSearchInstituteChange = (e) => {
-  //   setSearchInstitute(e);
-  // };
-  // console.log(searchedData);
-  const handleSearchButton = (e) => {
-    e.preventDefault();
-    const reg = new RegExp(search, "i");
-    if (searchInstitute != "0") {
-      if (searchType == "1") {
-        setSearchedData({
-          students: [...data.students].filter(
-            (d) => d.name.match(reg) && d.institute_id == searchInstitute
-          ),
-          attendance: [...data.attendance].filter(
-            (d) => d.institute_id == searchInstitute
-          ),
-        });
-      } else if (searchType == "2") {
-        setSearchedData({
-          students: [...data.students].filter(
-            (d) => d.institute_id == searchInstitute
-          ),
-          attendance: [...data.attendance].filter(
-            (d) =>
-              d.date <= search2 &&
-              d.date >= search &&
-              d.institute_id == searchInstitute
-          ),
-        });
-      }
-    } else {
-      if (searchType == "1") {
-        setSearchedData({
-          students: [...data.students].filter((d) => d.name.match(reg)),
-          attendance: [...data.attendance],
-        });
-      } else if (searchType == "2") {
-        setSearchedData({
-          attendance: [...data.attendance].filter(
-            (d) => d.date <= search2 && d.date >= search
-          ),
-          students: [...data.students],
-        });
-      }
-    }
-  };
   const handleInstituteChange = (e) => {
     if (e.target.value != "0") {
       setSearchInstitute(e.target.value);
-      setSearchedData({
-        students: [...data.students].filter(
-          (d) => d.institute_id == e.target.value
-        ),
-        attendance: [...data.attendance].filter(
-          (d) => d.institute_id == e.target.value
-        ),
-      });
+      getAttendance(1, e.target.value);
     } else {
       setSearchInstitute("0");
-      setSearchedData({
-        students: [...data.students],
-        attendance: [...data.attendance],
-      });
     }
   };
-  // const handleEditButton = (student) => {
-  //   edit(student);
-  // };
+
+  const handleSearchButton = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    getAttendance(1, searchInstitute);
+  };
+
   const handleAttendanceToggle = (studentIndex, id, attended) => {
     if ((searchType != "0") | (searchInstitute != "0")) {
       const attendanceIndex = searchedData.students[
@@ -214,7 +234,7 @@ function StudentsAttendance({
             type="text"
             className="form-control text"
             id="searchStudent"
-            onChange={handleSearchChange}
+            onChange={handleSearch1Change}
             placeholder="ابحث"
           ></input>
         </div>
@@ -227,7 +247,7 @@ function StudentsAttendance({
               type="date"
               className="form-control text"
               id="searchDate"
-              onChange={handleSearchChange}
+              onChange={handleSearch1Change}
             ></input>
           </div>
           <p
@@ -239,6 +259,39 @@ function StudentsAttendance({
           <div className="col-5 offset-5 col-md-3 offset-md-0 order-2 order-md-0">
             <input
               type="date"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch2Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-3 order-md-1 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            الى
+          </p>
+        </Fragment>
+      );
+    } else if (searchType == "3") {
+      return (
+        <Fragment>
+          <div className="col-5 offset-2 col-md-3 offset-md-0 order-0 order-md-2">
+            <input
+              type="time"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch1Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-1 order-md-3 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            من
+          </p>
+          <div className="col-5 offset-5 col-md-3 offset-md-0 order-2 order-md-0">
+            <input
+              type="time"
               className="form-control text"
               id="searchDate"
               onChange={handleSearch2Change}
@@ -320,11 +373,11 @@ function StudentsAttendance({
         );
       }
     } else {
-      return <td key={attendance.id} className="t-date"></td>;
+      return <td className="t-date"></td>;
     }
   };
   const render_table = () => {
-    if ((searchType != "0") | (searchInstitute != "0")) {
+    if (searchType != "0" || searchInstitute != "0") {
       const render_data = searchedData.students.map((student, index) => {
         return (
           <tr
@@ -345,6 +398,7 @@ function StudentsAttendance({
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
           border="1"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr className="d-flex">
@@ -362,7 +416,7 @@ function StudentsAttendance({
           <tbody>{render_data}</tbody>
         </table>
       );
-    } else if (searchType == "0") {
+    } else {
       const render_data = data.students.map((student, index) => {
         return (
           <tr
@@ -383,6 +437,7 @@ function StudentsAttendance({
           className="table table-dark table-striped table-bordered table-hover text"
           dir="rtl"
           border="1"
+          id="print-table"
         >
           <thead className="thead-dark">
             <tr className="d-flex">
@@ -439,6 +494,7 @@ function StudentsAttendance({
                           </option>
                           <option value="1">الاسم</option>
                           <option value="2">التاريخ</option>
+                          <option value="3">الوقت</option>
                         </select>
                       </div>
                       {searchBar()}
@@ -446,9 +502,14 @@ function StudentsAttendance({
                   </form>
                 </div>
                 <div className="col-1 pt-1">
-                  <button onClick={printTable} className="btn btn-light">
-                    طباعة
-                  </button>
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-light"
+                    table="print-table"
+                    filename="الحضور"
+                    sheet="الحضور"
+                    buttonText="طباعة"
+                  />
                 </div>
                 <div className="col-1 pt-1">
                   <select
@@ -483,8 +544,56 @@ function StudentsAttendance({
               student_id={confirmModal.student_attendance_id}
               done={confirmModal.attended}
             />
-            <div className="col-12" id="print-table">
-              <div className="table-responsive">{render_table()}</div>
+            <div className="col-12">
+              {loading ? (
+                <Loading />
+              ) : (
+                <InfiniteScroll
+                  dataLength={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.page * 100
+                      : data.page * 100
+                  } //This is important field to render the next data
+                  next={() =>
+                    getAttendance(
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchedData.page + 1
+                        : data.page + 1,
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchInstitute
+                        : "0"
+                    )
+                  }
+                  hasMore={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.total_students !=
+                        searchedData.students.length
+                      : data.total_students != data.students.length
+                  }
+                  loader={<Loading />}
+                  endMessage={
+                    <p className="pb-3 pt-3 text-center text-white">
+                      <b>هذه جميع النتائج</b>
+                    </p>
+                  }
+                  // below props only if you need pull down functionality
+                  // refreshFunction={this.refresh}
+                  // pullDownToRefresh
+                  // pullDownToRefreshThreshold={50}
+                  // pullDownToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8595; Pull down to refresh
+                  //   </h3>
+                  // }
+                  // releaseToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8593; Release to refresh
+                  //   </h3>
+                  // }
+                >
+                  <div className="table-responsive">{render_table()}</div>
+                </InfiniteScroll>
+              )}
             </div>
           </div>
         </div>

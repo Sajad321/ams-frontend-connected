@@ -5,9 +5,11 @@ const { app, BrowserWindow, Menu, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
 const { download } = require("electron-dl");
+const { get } = require("axios");
+const apiUrl = process.env.API_URL;
+
 let backend = path.join(process.cwd(), "py_dist/main.exe");
 var execfile = require("child_process").execFile;
-const { exec } = require("child_process");
 execfile(
   backend,
   {
@@ -215,15 +217,7 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
     studentInfoWindow = null;
-    exec("taskkill /f /t /im main.exe", (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-    });
-    app.quit();
+    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
   });
   loginWindow.on("closed", function () {
     // Dereference the window object, usually you would store windows
@@ -231,15 +225,7 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
     studentInfoWindow = null;
-    exec("taskkill /f /t /im main.exe", (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-    });
-    app.quit();
+    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
   });
 }
 
@@ -289,7 +275,7 @@ app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== "darwin") {
-    app.quit();
+    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
   }
 });
 app.disableHardwareAcceleration();

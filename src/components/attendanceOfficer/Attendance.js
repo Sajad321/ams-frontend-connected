@@ -8,6 +8,7 @@ var dialog = require("electron").remote.dialog;
 
 function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   const [students, setStudents] = useState([]);
+  const [searchedStudents, setSearchedStudents] = useState([]);
   const [student, setStudent] = useState({
     visible: false,
     id: "",
@@ -29,8 +30,13 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
     banned: "",
   });
   const [photo, setPhoto] = useState({});
+  const [search, setSearch] = useState("");
+
   const { institute_id, date } = attendanceStartData;
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
   const handleRemoveButton = async (student_attendance_id, i) => {
     try {
       const response = await fetch(
@@ -61,6 +67,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         }
       );
       const responseData = await responseJson.json();
+
       setStudent({
         ...student,
         visible: true,
@@ -73,6 +80,9 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         total_absence: responseData.total_absence,
         incrementally_absence: Number(responseData.incrementally_absence),
       });
+      if (responseData.institute_id != institute_id) {
+        dialog.showErrorBox("طالب", `الطالب ${responseData.name} من معهد اخر`);
+      }
     } catch (error) {
       console.log(error.message);
       toast.error("حاول مرة اخرى");
@@ -155,6 +165,11 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     }
   }
+  const handleSearchButton = (e) => {
+    e.preventDefault();
+    const reg = new RegExp(search, "i");
+    setSearchedStudents([...students].filter((d) => d.student_name.match(reg)));
+  };
   scroll.scrollToBottom({ duration: 0.5 });
   return (
     <section
@@ -183,7 +198,29 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                     انهاء عملية تسجيل الحضور
                   </button>
                 </div>
-                <div className="col-10">
+                <form onSubmit={handleSearchButton} className="col-5">
+                  <div className="form-group row mt-1">
+                    <div className="col-2 text">
+                      <button
+                        type="submit"
+                        className="btn btn-secondary btn-sm mt-1"
+                      >
+                        ابحث
+                      </button>
+                    </div>
+
+                    <div className="col-7">
+                      <input
+                        type="text"
+                        className="form-control text"
+                        id="searchStudent"
+                        onChange={handleSearchChange}
+                        placeholder="ابحث"
+                      ></input>
+                    </div>
+                  </div>
+                </form>
+                <div className="col-5">
                   <h2 className="text-right text-white">الحضور</h2>
                 </div>
               </div>
@@ -230,43 +267,81 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student, index) => {
-                      return (
-                        <tr
-                          key={student.id}
-                          className="font-weight-bold text-white"
-                        >
-                          <td>{index + 1}</td>
-                          <td>{student.student_name}</td>
-                          <td>{student.institute_name}</td>
-                          <td>{student.date}</td>
-                          <td>
-                            <button
-                              onClick={() =>
-                                handleRemoveButton(
-                                  student.student_attendance_id,
-                                  index
-                                )
-                              }
-                              className="btn btn-danger text-white"
+                    {search != ""
+                      ? searchedStudents.map((student, index) => {
+                          return (
+                            <tr
+                              key={student.id}
+                              className="font-weight-bold text-white"
                             >
-                              حذف
-                            </button>
-                          </td>
-                          <td>
-                            <button
-                              onClick={() => {
-                                getPhoto(student.id);
-                                getStudentInfo(student.id);
-                              }}
-                              className="btn btn-secondary text-white"
+                              <td>{index + 1}</td>
+                              <td>{student.student_name}</td>
+                              <td>{student.institute_name}</td>
+                              <td>{student.date}</td>
+                              <td>
+                                <button
+                                  onClick={() =>
+                                    handleRemoveButton(
+                                      student.student_attendance_id,
+                                      index
+                                    )
+                                  }
+                                  className="btn btn-danger text-white"
+                                >
+                                  حذف
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={() => {
+                                    getPhoto(student.id);
+                                    getStudentInfo(student.id);
+                                  }}
+                                  className="btn btn-secondary text-white"
+                                >
+                                  اظهار
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      : students.map((student, index) => {
+                          return (
+                            <tr
+                              key={student.id}
+                              className="font-weight-bold text-white"
                             >
-                              اظهار
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                              <td>{index + 1}</td>
+                              <td>{student.student_name}</td>
+                              <td>{student.institute_name}</td>
+                              <td>{student.date}</td>
+                              <td>
+                                <button
+                                  onClick={() =>
+                                    handleRemoveButton(
+                                      student.student_attendance_id,
+                                      index
+                                    )
+                                  }
+                                  className="btn btn-danger text-white"
+                                >
+                                  حذف
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={() => {
+                                    getPhoto(student.id);
+                                    getStudentInfo(student.id);
+                                  }}
+                                  className="btn btn-secondary text-white"
+                                >
+                                  اظهار
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                   </tbody>
                 </table>
               </div>

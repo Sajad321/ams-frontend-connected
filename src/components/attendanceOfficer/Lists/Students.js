@@ -2,15 +2,25 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StudentsInfoModal } from "../../common/Modal";
 import { toast } from "react-toastify";
-import { ipcRenderer } from "electron";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Loading from "../../common/Loading";
 const apiUrl = process.env.API_URL;
 
 function Students({ sideBarShow, edit }) {
-  const [students, setStudents] = useState([]);
+  const [data, setData] = useState({
+    students: [],
+    total_students: "",
+    page: "",
+  });
+  const [searchedData, setSearchedData] = useState({
+    students: [],
+    total_students: "",
+    page: "",
+  });
   const [institutes, setInstitutes] = useState([]);
   const [searchType, setSearchType] = useState("0");
   const [search, setSearch] = useState("");
-  const [searchedStudents, setSearchedStudents] = useState([...students]);
+  const [loading, setLoading] = useState(true);
   const [searchInstitute, setSearchInstitute] = useState("0");
   const [studentsInfoModal, setStudentsInfoModal] = useState({
     index: 0,
@@ -56,6 +66,70 @@ function Students({ sideBarShow, edit }) {
     }
   };
 
+  const getStudents = async (page, institute_id = "0") => {
+    try {
+      let rr = ``;
+      if (institute_id != "0") {
+        rr = `${apiUrl}/students?page=${page}&institute_id=${institute_id}`;
+        if (searchType != "0") {
+          rr = `${apiUrl}/students?page=${page}&institute_id=${institute_id}&search=${search}`;
+        }
+      } else {
+        if (searchType != "0") {
+          rr = `${apiUrl}/students?page=${page}&search=${search}`;
+        }
+      }
+      const response = await fetch(
+        rr != `` ? rr : `${apiUrl}/students?page=${page}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer`,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+      if (searchType != "0" || institute_id != "0") {
+        if (page == 1) {
+          setSearchedData({
+            students: responseData.students,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setSearchedData({
+            students: data.students.concat(responseData.students),
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      } else {
+        if (page == 1) {
+          setData({
+            students: responseData.students,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+          setSearchedData({
+            students: responseData.students,
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        } else {
+          setData({
+            students: data.students.concat(responseData.students),
+            total_students: responseData.total_students,
+            page: responseData.page,
+          });
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   useEffect(() => {
     const getStuff = async () => {
       try {
@@ -73,43 +147,7 @@ function Students({ sideBarShow, edit }) {
       }
     };
     getStuff();
-    const getStudents = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/students`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-
-        const responseData = await response.json();
-        setStudents(
-          responseData.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-        setSearchedStudents(
-          responseData.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            }
-            if (a.name > b.name) {
-              return 1;
-            }
-            return 0;
-          })
-        );
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getStudents();
+    getStudents(1);
   }, []);
 
   const handleSearchTypeChange = (e) => {
@@ -120,31 +158,15 @@ function Students({ sideBarShow, edit }) {
   };
   const handleSearchButton = (e) => {
     e.preventDefault();
-    // setLoading(true);
-    const reg = new RegExp(search, "i");
-    if (searchInstitute != "0") {
-      if (searchType == "1") {
-        setSearchedStudents(
-          [...students].filter(
-            (d) => d.name.match(reg) && d.institute_id == searchInstitute
-          )
-        );
-      }
-    } else {
-      if (searchType == "1") {
-        setSearchedStudents([...students].filter((d) => d.name.match(reg)));
-      }
-    }
+    setLoading(true);
+    getStudents(1, searchInstitute);
   };
   const handleInstituteChange = (e) => {
     if (e.target.value != "0") {
       setSearchInstitute(e.target.value);
-      setSearchedStudents(
-        [...students].filter((d) => d.institute_id == e.target.value)
-      );
+      getStudents(1, e.target.value);
     } else {
       setSearchInstitute("0");
-      setSearchedStudents([...students]);
     }
   };
   const handleEditButton = (student, photo) => {
@@ -154,11 +176,11 @@ function Students({ sideBarShow, edit }) {
     let searchedIndex = [...searchedStudents].findIndex((i) => i.id == id);
     let neeSerached = [...searchedStudents];
     neeSerached = neeSerached.filter((s, i) => i != searchedIndex);
-    setSearchedStudents(neeSerached);
+    setSearchedData({ ...searchedData, students: neeSerached });
     let index = [...students].findIndex((i) => i.id == id);
     let nee = [...students];
     nee = nee.filter((s, i) => i != index);
-    setStudents(nee);
+    setData({ ...data, students: nee });
   };
   const handleDeleteButton = (index, id) => {
     const handleStudentDelete = async () => {
@@ -183,13 +205,13 @@ function Students({ sideBarShow, edit }) {
   const handleBanningToggle = (studentIndex, banned) => {
     setStudentsInfoModal({ ...studentsInfoModal, banned: banned });
     if ((searchType != "0") | (searchInstitute != "0")) {
-      let neeSerached = searchedStudents;
+      let neeSerached = searchedData.students;
       neeSerached[studentIndex].banned = banned;
-      setSearchedStudents(neeSerached);
+      setSearchedData({ ...searchedData, students: neeSerached });
     } else if (searchType == "0") {
-      let nee = students;
+      let nee = data.students;
       nee[studentIndex].banned = banned;
-      setStudents(nee);
+      setData({ ...data, students: nee });
     }
   };
   const handleStudentDismiss = async (index, id) => {
@@ -349,117 +371,169 @@ function Students({ sideBarShow, edit }) {
             />
             <div className="col-12" dir="rtl">
               <div className="row">
-                {(searchType != "0") | (searchInstitute != "0")
-                  ? searchedStudents.map((student, index) => {
-                      return (
-                        <div
-                          className="col-12 p-2 m-0"
-                          key={student.id}
-                          dir="rtl"
-                        >
-                          <div className="row">
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <InfiniteScroll
+                    dataLength={
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchedData.page * 100
+                        : data.page * 100
+                    } //This is important field to render the next data
+                    next={() =>
+                      getStudents(
+                        searchType != "0" || searchInstitute != "0"
+                          ? searchedData.page + 1
+                          : data.page + 1,
+                        searchType != "0" || searchInstitute != "0"
+                          ? searchInstitute
+                          : "0"
+                      )
+                    }
+                    hasMore={
+                      searchType != "0" || searchInstitute != "0"
+                        ? searchedData.total_students !=
+                          searchedData.students.length
+                        : data.total_students != data.students.length
+                    }
+                    loader={<Loading />}
+                    endMessage={
+                      <p className="pb-3 pt-3 text-center text-white">
+                        <b>هذه جميع النتائج</b>
+                      </p>
+                    }
+                    // below props only if you need pull down functionality
+                    // refreshFunction={this.refresh}
+                    // pullDownToRefresh
+                    // pullDownToRefreshThreshold={50}
+                    // pullDownToRefreshContent={
+                    //   <h3 style={{ textAlign: "center" }}>
+                    //     &#8595; Pull down to refresh
+                    //   </h3>
+                    // }
+                    // releaseToRefreshContent={
+                    //   <h3 style={{ textAlign: "center" }}>
+                    //     &#8593; Release to refresh
+                    //   </h3>
+                    // }
+                  >
+                    {(searchType != "0") | (searchInstitute != "0")
+                      ? searchedData.students.map((student, index) => {
+                          return (
                             <div
-                              className="col-3 mr-3 ml-3 card card-common card-height"
-                              onClick={() => {
-                                getQr(student.id);
-                                getPhoto(student.id);
-                                setStudentsInfoModal({
-                                  ...studentsInfoModal,
-                                  index: index,
-                                  visible: true,
-                                  id: student.id,
-                                  name: student.name,
-                                  institute: student.institute,
-                                  phone: student.phone,
-                                  dob: student.dob,
-                                  student: student,
-                                  banned: student.banned,
-                                });
-                              }}
+                              className="col-12 p-2 m-0"
+                              key={student.id}
+                              dir="rtl"
                             >
-                              <div className="card-body p-3">
-                                <div className="row d-flex align-content-center justify-content-center">
-                                  <div className="col-12 text-right text-white">
-                                    <p className="mb-0" dir="rtl">
-                                      {index + 1} {" - "} {student.name}{" "}
-                                      <b style={{ color: "#e30b37" }}>
-                                        {student.banned == 1 ? " (مفصول)" : ""}
-                                      </b>
-                                    </p>
+                              <div className="row m-0">
+                                <div
+                                  className="col-4 mr-3 ml-3 card card-common card-height"
+                                  onClick={() => {
+                                    getQr(student.id);
+                                    getPhoto(student.id);
+                                    setStudentsInfoModal({
+                                      ...studentsInfoModal,
+                                      index: index,
+                                      visible: true,
+                                      id: student.id,
+                                      name: student.name,
+                                      institute: student.institute,
+                                      phone: student.phone,
+                                      dob: student.dob,
+                                      student: student,
+                                      banned: student.banned,
+                                    });
+                                  }}
+                                >
+                                  <div className="card-body p-3">
+                                    <div className="row d-flex align-content-center justify-content-center">
+                                      <div className="col-12 text-right text-white">
+                                        <p className="mb-0" dir="rtl">
+                                          {index + 1} {" - "} {student.name}{" "}
+                                          <b style={{ color: "#e30b37" }}>
+                                            {student.banned == 1
+                                              ? " (مفصول)"
+                                              : ""}
+                                          </b>
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-4 card card-common card-height">
+                                  <div className="card-body p-3">
+                                    <div className="row d-flex align-content-center justify-content-center">
+                                      <div className="col-12 text-right text-white">
+                                        <p className="mb-0" dir="rtl">
+                                          <b>{student.institute}</b>
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="col-3 card card-common card-height">
-                              <div className="card-body p-3">
-                                <div className="row d-flex align-content-center justify-content-center">
-                                  <div className="col-12 text-right text-white">
-                                    <p className="mb-0" dir="rtl">
-                                      <b>{student.institute}</b>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  : students.map((student, index) => {
-                      return (
-                        <div
-                          className="col-12 p-2 m-0"
-                          key={student.id}
-                          dir="rtl"
-                        >
-                          <div className="row">
+                          );
+                        })
+                      : data.students.map((student, index) => {
+                          return (
                             <div
-                              className="col-3 mr-3 ml-3 card card-common card-height"
-                              onClick={() => {
-                                getQr(student.id);
-                                getPhoto(student.id);
-                                setStudentsInfoModal({
-                                  ...studentsInfoModal,
-                                  index: index,
-                                  visible: true,
-                                  id: student.id,
-                                  name: student.name,
-                                  institute: student.institute,
-                                  phone: student.phone,
-                                  dob: student.dob,
-                                  student: student,
-                                  banned: student.banned,
-                                });
-                              }}
+                              className="col-12 p-2 m-0"
+                              key={student.id}
+                              dir="rtl"
                             >
-                              <div className="card-body p-3">
-                                <div className="row d-flex align-content-center justify-content-center">
-                                  <div className="col-12 text-right text-white">
-                                    <p className="mb-0" dir="rtl">
-                                      {index + 1} {" - "} {student.name}{" "}
-                                      <b style={{ color: "#e30b37" }}>
-                                        {student.banned == 1 ? " (مفصول)" : ""}
-                                      </b>
-                                    </p>
+                              <div className="row m-0">
+                                <div
+                                  className="col-4 mr-3 ml-3 card card-common card-height"
+                                  onClick={() => {
+                                    getQr(student.id);
+                                    getPhoto(student.id);
+                                    setStudentsInfoModal({
+                                      ...studentsInfoModal,
+                                      index: index,
+                                      visible: true,
+                                      id: student.id,
+                                      name: student.name,
+                                      institute: student.institute,
+                                      phone: student.phone,
+                                      dob: student.dob,
+                                      student: student,
+                                      banned: student.banned,
+                                    });
+                                  }}
+                                >
+                                  <div className="card-body p-3">
+                                    <div className="row d-flex align-content-center justify-content-center">
+                                      <div className="col-12 text-right text-white">
+                                        <p className="mb-0" dir="rtl">
+                                          {index + 1} {" - "} {student.name}{" "}
+                                          <b style={{ color: "#e30b37" }}>
+                                            {student.banned == 1
+                                              ? " (مفصول)"
+                                              : ""}
+                                          </b>
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-4 card card-common card-height">
+                                  <div className="card-body p-3">
+                                    <div className="row d-flex align-content-center justify-content-center">
+                                      <div className="col-12 text-right text-white">
+                                        <p className="mb-0" dir="rtl">
+                                          <b>{student.institute}</b>
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="col-3 card card-common card-height">
-                              <div className="card-body p-3">
-                                <div className="row d-flex align-content-center justify-content-center">
-                                  <div className="col-12 text-right text-white">
-                                    <p className="mb-0" dir="rtl">
-                                      <b>{student.institute}</b>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                          );
+                        })}
+                  </InfiniteScroll>
+                )}
               </div>
             </div>
           </div>
