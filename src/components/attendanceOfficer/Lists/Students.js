@@ -99,7 +99,7 @@ function Students({ sideBarShow, edit }) {
           });
         } else {
           setSearchedData({
-            students: data.students.concat(responseData.students),
+            students: searchedData.students.concat(responseData.students),
             total_students: responseData.total_students,
             page: responseData.page,
           });

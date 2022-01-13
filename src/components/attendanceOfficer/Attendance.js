@@ -51,7 +51,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       toast.success("تم حذف حضور الطالب");
     } catch (error) {
       console.log(error.message);
-      toast.success("حصل خطأ");
+      toast.error("حصل خطأ");
     }
   };
 
@@ -85,7 +85,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       }
     } catch (error) {
       console.log(error.message);
-      toast.error("حاول مرة اخرى");
+      toast.warn("حاول مرة اخرى");
     }
   };
   const getStudentInfo = async (id) => {

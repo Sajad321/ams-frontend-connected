@@ -63,7 +63,7 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
           });
         } else {
           setSearchedData({
-            students: data.students.concat(responseData.students),
+            students: searchedData.students.concat(responseData.students),
             installments: responseData.installments,
             total_students: responseData.total_students,
             page: responseData.page,

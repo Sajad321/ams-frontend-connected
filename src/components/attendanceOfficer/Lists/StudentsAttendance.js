@@ -68,7 +68,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
           });
         } else {
           setSearchedData({
-            students: data.students.concat(responseData.students),
+            students: searchedData.students.concat(responseData.students),
             attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,

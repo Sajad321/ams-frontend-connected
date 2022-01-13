@@ -6,7 +6,8 @@ const path = require("path");
 const url = require("url");
 const { download } = require("electron-dl");
 const { get } = require("axios");
-const apiUrl = process.env.API_URL;
+const appEnv = require("./env.json");
+const apiUrl = appEnv.API_URL;
 
 let backend = path.join(process.cwd(), "py_dist/main.exe");
 var execfile = require("child_process").execFile;
@@ -216,16 +217,32 @@ function createWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    studentInfoWindow = null;
-    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
+    loginWindow = null;
+    get(`${apiUrl}/shutdown`)
+      .then(() => {
+        console.log("ended");
+        app.quit();
+      })
+      .catch((e) => {
+        console.log(e);
+        app.quit();
+      });
   });
   loginWindow.on("closed", function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    loginWindow = null;
     mainWindow = null;
-    studentInfoWindow = null;
-    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
+    get(`${apiUrl}/shutdown`)
+      .then(() => {
+        console.log("ended");
+        app.quit();
+      })
+      .catch((e) => {
+        console.log(e);
+        app.quit();
+      });
   });
 }
 
@@ -275,7 +292,15 @@ app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== "darwin") {
-    get(`${apiUrl}/shutdown`).then(app.quit()).catch(app.quit());
+    get(`${apiUrl}/shutdown`)
+      .then(() => {
+        console.log("ended");
+        app.quit();
+      })
+      .catch((e) => {
+        console.log(e);
+        app.quit();
+      });
   }
 });
 app.disableHardwareAcceleration();

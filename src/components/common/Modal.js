@@ -483,7 +483,7 @@ export function StudentInfoAttendanceModal({
       } catch (error) {
         console.log(error.message);
         // handleAttendanceToggle(index, id, attended);
-        toast.warn("حصل خطأ");
+        toast.error("حصل خطأ");
       }
     };
     toggleAttendance();

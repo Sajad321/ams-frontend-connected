@@ -14,7 +14,7 @@ function AdminFooter({ sideBarShow }) {
         <div className="row justify-content-center mt-3">
           <div className="col-auto">
             <p className="text-white text-center">
-              Copyright &copy; 2021 by BeSmarty inc.
+              Copyright &copy; 2022 by BeSmarty inc.
             </p>
           </div>
         </div>
