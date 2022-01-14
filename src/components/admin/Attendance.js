@@ -66,8 +66,10 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
           },
         }
       );
+      if (responseJson.status == 401) {
+        throw new Error(responseJson.status);
+      }
       const responseData = await responseJson.json();
-
       setStudent({
         ...student,
         visible: true,
@@ -84,8 +86,12 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         dialog.showErrorBox("طالب", `الطالب ${responseData.name} من معهد اخر`);
       }
     } catch (error) {
-      console.log(error.message);
-      toast.warn("حاول مرة اخرى");
+      if (error.message == 401) {
+        dialog.showErrorBox("طالب", `الطالب تم تسجيله مسبقاً`);
+      } else {
+        console.log(error.message);
+        toast.warn("حاول مرة اخرى");
+      }
     }
   };
   const getStudentInfo = async (id) => {
