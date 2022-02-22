@@ -19,6 +19,7 @@ import {
   faSchool,
   faCheckCircle,
   faTimesCircle,
+  faBan,
 } from "@fortawesome/free-solid-svg-icons";
 
 function initFontAwesome() {
@@ -41,6 +42,7 @@ function initFontAwesome() {
   library.add(faSchool);
   library.add(faCheckCircle);
   library.add(faTimesCircle);
+  library.add(faBan);
 }
 
 export default initFontAwesome;

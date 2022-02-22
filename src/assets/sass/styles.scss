@@ -344,8 +344,9 @@ thead .button.descending::after {
 
 .nav_logo-name {
   color: white;
-  grid-column: 3/4;
-  justify-self: center;
+  padding-right: 20px;
+  // grid-column: 3/4;
+  // justify-self: center;
   // font-weight: 700;
 }
 
@@ -376,8 +377,9 @@ thead .button.descending::after {
   font-size: 1.25rem;
 }
 .nav_name {
-  grid-column: 3/4;
-  justify-self: center;
+  padding-right: 20px;
+  // grid-column: 3/4;
+  // justify-self: center;
 }
 // .show {
 //   display: none;

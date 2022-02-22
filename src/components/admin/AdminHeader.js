@@ -130,6 +130,25 @@ function AdminHeader(props) {
                   </a>{" "}
                   <a
                     href="#"
+                    className={"nav_link " + props.Active.BannedStudents}
+                    onClick={props.BannedStudentsButton}
+                  >
+                    {" "}
+                    <FontAwesomeIcon
+                      icon="ban"
+                      className={"nav_logo-icon " + props.Active.BannedStudents}
+                      color="white"
+                      size="2x"
+                    />
+                    <span
+                      className={"nav_name " + props.Active.BannedStudents}
+                      id="nav-text"
+                    >
+                      المفصولين
+                    </span>{" "}
+                  </a>{" "}
+                  <a
+                    href="#"
                     className={"nav_link " + props.Active.Add}
                     onClick={() => setAddModalShow(true)}
                   >

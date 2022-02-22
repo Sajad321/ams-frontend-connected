@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const apiUrl = process.env.API_URL;
 
-function MainAdmin({ sideBarShow }) {
+function MainAdmin({ sideBarShow, BannedStudentsButton }) {
   const [data, setData] = useState({
     students_count: "",
     institutes_count: "",
@@ -67,6 +67,23 @@ function MainAdmin({ sideBarShow }) {
                     <div className="text-right text-white">
                       <h5>عدد المعاهد</h5>
                       <h3>{data.institutes_count}</h3>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-footer text-white">
+                  <i className="fas fa-sync mr-3"></i>
+                  <span>تم التحديث الان</span>
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-6 p-2">
+              <div className="card card-common" onClick={BannedStudentsButton}>
+                <div className="card-body" dir="ltr">
+                  <div className="d-flex justify-content-between">
+                    <FontAwesomeIcon icon="users" color="white" size="3x" />
+                    <div className="text-right text-white">
+                      <h5>عدد المفصولين</h5>
+                      <h3>{data.banned_count}</h3>
                     </div>
                   </div>
                 </div>

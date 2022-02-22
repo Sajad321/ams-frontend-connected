@@ -33,6 +33,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
   const [search1, setSearch1] = useState("");
   const [search2, setSearch2] = useState("");
   const [searchInstitute, setSearchInstitute] = useState("0");
+  const [slicing, setSlice] = useState(5);
   const [loading, setLoading] = useState(true);
 
   const getAttendance = async (page, institute_id = "0") => {
@@ -127,6 +128,17 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
       setSearchInstitute("0");
     }
   };
+  const handleAllAttendanceButton = () => {
+    if (slicing == 5) {
+      if ((searchType != "0") | (searchInstitute != "0")) {
+        setSlice(searchedData.attendance.length);
+      } else {
+        setSlice(data.attendance.length);
+      }
+    } else {
+      setSlice(5);
+    }
+  };
 
   const handleSearchButton = (e) => {
     e.preventDefault();
@@ -206,18 +218,6 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
     handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
     toast.success("تم تغيير حالة الحضور");
     // }
-  };
-  const printTable = () => {
-    // let divToPrint = document.getElementById("print-table");
-    // newWin = window.open("");
-    // newWin.document.write(divToPrint.outerHTML);
-    // newWin.print();
-    // newWin.close();
-    printJS({
-      printable: "print-table",
-      type: "html",
-    });
-    // window.print();
   };
 
   const searchBar = () => {
@@ -376,6 +376,51 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
       return <td className="t-date"></td>;
     }
   };
+  const handleBanningToggle = (studentIndex, banned) => {
+    if ((searchType != "0") | (searchInstitute != "0")) {
+      let neeSerached = searchedData.students;
+      neeSerached[studentIndex].banned = banned;
+      setSearchedData({ ...searchedData, students: neeSerached });
+    } else if (searchType == "0") {
+      let nee = data.students;
+      nee[studentIndex].banned = banned;
+      setData({ ...data, students: nee });
+    }
+  };
+  const handleStudentDismiss = async (index, id) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/banned?student_id=${Number(id)}&ban=${1}`,
+        {
+          method: "PATCH",
+        }
+      );
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.log(error.message);
+      toast.warn("حصل خطأ");
+    }
+    handleBanningToggle(index, 1);
+    toast.success("تم فصل الطالب");
+  };
+  const handleStudentReturn = async (index, id) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/banned?student_id=${Number(id)}&ban=${0}`,
+        {
+          method: "PATCH",
+        }
+      );
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.log(error.message);
+      toast.warn("حصل خطأ");
+    }
+    handleBanningToggle(index, 0);
+    toast.success("تم ارجاع الطالب");
+  };
   const render_table = () => {
     if (searchType != "0" || searchInstitute != "0") {
       const render_data = searchedData.students.map((student, index) => {
@@ -386,10 +431,29 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             className="d-flex"
           >
             <td className="t-id">{index + 1}</td>
-            <td className="t-name">{student.name}</td>
-            {searchedData.attendance.map((attendance) => {
+            <td className={`t-name ${student.banned == 1 ? `bg-danger` : ``}`}>
+              {student.name}
+            </td>
+            {searchedData.attendance.slice(0, slicing).map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
+            <td className="">
+              {student.banned == 1 ? (
+                <button
+                  onClick={() => handleStudentReturn(index, student.id)}
+                  className="btn btn-success text-white"
+                >
+                  ارجاع
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleStudentDismiss(index, student.id)}
+                  className="btn btn-info text-white"
+                >
+                  فصل
+                </button>
+              )}
+            </td>
           </tr>
         );
       });
@@ -404,13 +468,14 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             <tr className="d-flex">
               <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
-              {searchedData.attendance.map((attendance) => {
+              {searchedData.attendance.slice(0, slicing).map((attendance) => {
                 return (
                   <th key={attendance.id} className="t-date">
                     {attendance.date}
                   </th>
                 );
               })}
+              <th className="">&nbsp;</th>
             </tr>
           </thead>
           <tbody>{render_data}</tbody>
@@ -425,10 +490,29 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             className="d-flex"
           >
             <td className="t-id">{index + 1}</td>
-            <td className="t-name">{student.name}</td>
-            {data.attendance.map((attendance) => {
+            <td className={`t-name ${student.banned == 1 ? `bg-danger` : ``}`}>
+              {student.name}
+            </td>
+            {data.attendance.slice(0, slicing).map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
+            <td className="">
+              {student.banned == 1 ? (
+                <button
+                  onClick={() => handleStudentReturn(index, student.id)}
+                  className="btn btn-success text-white"
+                >
+                  ارجاع
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleStudentDismiss(index, student.id)}
+                  className="btn btn-info text-white"
+                >
+                  فصل
+                </button>
+              )}
+            </td>
           </tr>
         );
       });
@@ -443,13 +527,14 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             <tr className="d-flex">
               <th className="t-id">ت</th>
               <th className="t-name">الاسم</th>
-              {data.attendance.map((attendance) => {
+              {data.attendance.slice(0, slicing).map((attendance) => {
                 return (
                   <th key={attendance.id} className="t-date">
                     {attendance.date}
                   </th>
                 );
               })}
+              <th className="">&nbsp;</th>
             </tr>
           </thead>
           <tbody>{render_data}</tbody>
@@ -471,7 +556,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
           <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
             <div className="col-12">
               <div className="row mt-3">
-                <div className="col-8">
+                <div className="col-7">
                   <form onSubmit={handleSearchButton}>
                     <div className="form-group row mt-1">
                       <div className="col-2 text">
@@ -510,6 +595,14 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
                     sheet="الحضور"
                     buttonText="طباعة"
                   />
+                </div>
+                <div className="col-1 pt-1">
+                  <button
+                    onClick={handleAllAttendanceButton}
+                    className="btn btn-secondary"
+                  >
+                    كل الايام
+                  </button>
                 </div>
                 <div className="col-1 pt-1">
                   <select

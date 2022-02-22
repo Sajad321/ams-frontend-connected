@@ -10,6 +10,7 @@ import StudentsAttendance from "./Lists/StudentsAttendance";
 import AddStudent from "./Forms/AddStudent";
 import AddInstitute from "./Forms/AddInstitute";
 import AddInstallment from "./Forms/AddInstallment";
+import BannedStudents from "./Lists/BannedStudents";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {
@@ -85,6 +86,7 @@ function Admin(props) {
         StudentsInstallmentsButton={handleStudentsInstallmentsButton}
         InstitutesButton={handleInstitutesButton}
         StudentsAttendanceButton={handleStudentsAttendanceButton}
+        BannedStudentsButton={handleBannedStudentsButton}
         AddStudentButton={handleAddStudentButton}
         AddInstituteButton={handleAddInstituteButton}
         AddInstallmentButton={handleAddInstallmentButton}
@@ -108,6 +110,11 @@ function Admin(props) {
 
   const handleStudentsButton = () => {
     setPage("Students");
+    setDataToChange({});
+  };
+
+  const handleBannedStudentsButton = () => {
+    setPage("BannedStudents");
     setDataToChange({});
   };
 
@@ -162,7 +169,11 @@ function Admin(props) {
         {/* End of Navbar */}
 
         {/* Main */}
-        <MainAdmin sideEvent={sideEvent} sideBarShow={sideBarShow} />
+        <MainAdmin
+          sideEvent={sideEvent}
+          sideBarShow={sideBarShow}
+          BannedStudentsButton={handleBannedStudentsButton}
+        />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
@@ -237,6 +248,20 @@ function Admin(props) {
           sideBarShow={sideBarShow}
           institutes={institutes}
           institute={institute}
+        />
+        <AdminFooter sideBarShow={sideBarShow} />
+      </Fragment>
+    );
+  } else if (page == "BannedStudents") {
+    return (
+      <Fragment>
+        {AdminHeaderFunction({ BannedStudents: "active" })}
+        {/* End of Navbar */}
+        {/* Students */}
+        <BannedStudents
+          sideEvent={sideEvent}
+          sideBarShow={sideBarShow}
+          edit={handleEditStudentButton}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
