@@ -1,86 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { StudentsInfoModal } from "../../common/Modal";
 import { toast } from "react-toastify";
+import printJS from "print-js";
+import ConfirmModal from "../../common/ConfirmModal";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loading from "../../common/Loading";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 const apiUrl = process.env.API_URL;
 
-function BannedStudents({ sideBarShow, edit }) {
+// var { ipcRenderer } = require("electron");
+
+function StudentsAttendance({ sideBarShow, institutes, institute }) {
   const [data, setData] = useState({
     students: [],
+    attendance: [],
     total_students: "",
-    page: "",
+    page: 1,
   });
   const [searchedData, setSearchedData] = useState({
     students: [],
+    attendance: [],
     total_students: "",
-    page: "",
+    page: 1,
   });
-  const [institutes, setInstitutes] = useState([]);
-  const [searchType, setSearchType] = useState("0");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [searchInstitute, setSearchInstitute] = useState("0");
-  const [studentsInfoModal, setStudentsInfoModal] = useState({
+  const [confirmModal, setConfirmModal] = useState({
+    visbile: false,
     index: 0,
-    visible: false,
-    id: "",
-    name: "",
-    institute: "",
-    phone: "",
-    dob: "",
-    student: {},
-    banned: "",
+    student_attendance_id: 0,
+    attended: 0,
   });
-  const [qr, setQr] = useState({});
-  const [photo, setPhoto] = useState({});
-  const getQr = async (student_id) => {
-    try {
-      const response = await fetch(`${apiUrl}/qr?student_id=${student_id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer`,
-        },
-      });
+  const [searchType, setSearchType] = useState("0");
+  const [search1, setSearch1] = useState("");
+  const [search2, setSearch2] = useState("");
+  const [searchInstitute, setSearchInstitute] = useState("0");
+  const [slicing, setSlice] = useState(5);
+  const [loading, setLoading] = useState(true);
 
-      const responseQr = await response.blob();
-      setQr(new Blob([responseQr], { type: "image/png" }));
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-  const getPhoto = async (student_id) => {
-    try {
-      const response = await fetch(`${apiUrl}/photo?student_id=${student_id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer`,
-        },
-      });
-
-      const responsePhoto = await response.blob();
-      setPhoto(new Blob([responsePhoto], { type: "image/jpeg" }));
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const getStudents = async (page, institute_id = "0") => {
+  const getAttendance = async (page, institute_id = "0") => {
     try {
       let rr = ``;
       if (institute_id != "0") {
-        rr = `${apiUrl}/banned-students?page=${page}&institute_id=${institute_id}`;
+        rr = `${apiUrl}/banned-students-attendance?page=${page}&institute_id=${institute_id}`;
         if (searchType != "0") {
-          rr = `${apiUrl}/banned-students?page=${page}&institute_id=${institute_id}&search=${search}`;
+          rr = `${apiUrl}/banned-students-attendance?page=${page}&institute_id=${institute_id}&search_type=${searchType}&search1=${search1}&search2=${search2}`;
         }
       } else {
         if (searchType != "0") {
-          rr = `${apiUrl}/banned-students?page=${page}&search=${search}`;
+          rr = `${apiUrl}/banned-students-attendance?page=${page}&search_type=${searchType}&search1=${search1}&search2=${search2}`;
         }
       }
       const response = await fetch(
-        rr != `` ? rr : `${apiUrl}/banned-students?page=${page}`,
+        rr != `` ? rr : `${apiUrl}/banned-students-attendance?page=${page}`,
         {
           method: "GET",
           headers: {
@@ -88,18 +58,19 @@ function BannedStudents({ sideBarShow, edit }) {
           },
         }
       );
-
       const responseData = await response.json();
       if (searchType != "0" || institute_id != "0") {
         if (page == 1) {
           setSearchedData({
             students: responseData.students,
+            attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,
           });
         } else {
           setSearchedData({
             students: searchedData.students.concat(responseData.students),
+            attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,
           });
@@ -108,17 +79,20 @@ function BannedStudents({ sideBarShow, edit }) {
         if (page == 1) {
           setData({
             students: responseData.students,
+            attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,
           });
           setSearchedData({
             students: responseData.students,
+            attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,
           });
         } else {
           setData({
             students: data.students.concat(responseData.students),
+            attendance: responseData.attendance,
             total_students: responseData.total_students,
             page: responseData.page,
           });
@@ -129,81 +103,280 @@ function BannedStudents({ sideBarShow, edit }) {
       console.log(error.message);
     }
   };
-
   useEffect(() => {
-    const getStuff = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/institute`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer`,
-          },
-        });
-
-        const responseData = await response.json();
-        setInstitutes(responseData.institutes);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getStuff();
-    getStudents(1);
+    setSearchInstitute(institute);
+    if (institute != "0") {
+      getAttendance(1, institute);
+    } else {
+      getAttendance(1);
+    }
   }, []);
-
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+  const handleSearch1Change = (e) => {
+    setSearch1(e.target.value);
   };
-  const handleSearchButton = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    getStudents(1, searchInstitute);
+  const handleSearch2Change = (e) => {
+    setSearch2(e.target.value);
   };
   const handleInstituteChange = (e) => {
     if (e.target.value != "0") {
       setSearchInstitute(e.target.value);
-      getStudents(1, e.target.value);
+      getAttendance(1, e.target.value);
     } else {
       setSearchInstitute("0");
     }
   };
-  const handleEditButton = (student, photo) => {
-    edit({ ...student, photo });
+  const handleAllAttendanceButton = () => {
+    if (slicing == 5) {
+      if ((searchType != "0") | (searchInstitute != "0")) {
+        setSlice(searchedData.attendance.length);
+      } else {
+        setSlice(data.attendance.length);
+      }
+    } else {
+      setSlice(5);
+    }
   };
-  const handleDelete = (id) => {
-    let searchedIndex = [...searchedStudents].findIndex((i) => i.id == id);
-    let neeSerached = [...searchedStudents];
-    neeSerached = neeSerached.filter((s, i) => i != searchedIndex);
-    setSearchedData({ ...searchedData, students: neeSerached });
-    let index = [...students].findIndex((i) => i.id == id);
-    let nee = [...students];
-    nee = nee.filter((s, i) => i != index);
-    setData({ ...data, students: nee });
+
+  const handleSearchButton = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    getAttendance(1, searchInstitute);
   };
-  const handleDeleteButton = (index, id) => {
-    const handleStudentDelete = async () => {
+
+  const handleAttendanceToggle = (studentIndex, id, attended) => {
+    if ((searchType != "0") | (searchInstitute != "0")) {
+      const attendanceIndex = searchedData.students[
+        studentIndex
+      ].student_attendance.findIndex((i) => i.student_attendance_id == id);
+      let nee = [...searchedData.students];
+      let nee1 = [...nee[studentIndex].student_attendance];
+      nee1[attendanceIndex] = {
+        ...nee1[attendanceIndex],
+        attended: attended,
+      };
+      nee[studentIndex].student_attendance[attendanceIndex] =
+        nee1[attendanceIndex];
+      setSearchedData({
+        ...searchedData,
+        students: nee,
+      });
+    } else if (searchType == "0") {
+      const attendanceIndex = data.students[
+        studentIndex
+      ].student_attendance.findIndex((i) => i.student_attendance_id == id);
+      let nee = [...data.students];
+      let nee1 = [...nee[studentIndex].student_attendance];
+      nee1[attendanceIndex] = {
+        ...nee1[attendanceIndex],
+        attended: attended,
+      };
+      nee[studentIndex].student_attendance[attendanceIndex] =
+        nee1[attendanceIndex];
+      setData({
+        ...data,
+        students: nee,
+      });
+    }
+  };
+  const handleAttendanceToggleButton = (index, id, attended) => {
+    const toggleAttendance = async () => {
       try {
         const response = await fetch(
-          `${apiUrl}/student?student_id=${Number(id)}`,
+          `${apiUrl}/students-attendance?student_attendance_id=${Number(
+            id
+          )}&attended=${attended == 0 ? 1 : 0}&time=${new Date().toLocaleString(
+            "ar-SA",
+            {
+              hour: "numeric",
+              hour12: true,
+              minute: "numeric",
+            }
+          )}`,
           {
-            method: "DELETE",
+            method: "PATCH",
           }
         );
 
         const responseData = await response.json();
       } catch (error) {
         console.log(error.message);
+        handleAttendanceToggle(index, id, attended);
         toast.warn("حصل خطأ");
       }
     };
-    handleStudentDelete();
-    handleDelete(id);
-    toast.success("تم حذف الطالب");
+    // let res = dialog.showMessageBox({
+    //   buttons: ["نعم", "لا"],
+    //   message: "هل انت متأكد؟",
+    // });
+    // console.log(res);
+    // let box = confirm("هل انت متأكد؟");
+    // if (box) {
+    toggleAttendance();
+    handleAttendanceToggle(index, id, attended == 0 ? 1 : 0);
+    toast.success("تم تغيير حالة الحضور");
+    // }
+  };
+
+  const searchBar = () => {
+    if (searchType == "0") {
+      return (
+        <div className="col-7">
+          <p className="form-control text">بحث حسب </p>
+        </div>
+      );
+    } else if (searchType == "1") {
+      return (
+        <div className="col-7">
+          <input
+            type="text"
+            className="form-control text"
+            id="searchStudent"
+            onChange={handleSearch1Change}
+            placeholder="ابحث"
+          ></input>
+        </div>
+      );
+    } else if (searchType == "2") {
+      return (
+        <Fragment>
+          <div className="col-5 offset-2 col-md-3 offset-md-0 order-0 order-md-2">
+            <input
+              type="date"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch1Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-1 order-md-3 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            من
+          </p>
+          <div className="col-5 offset-5 col-md-3 offset-md-0 order-2 order-md-0">
+            <input
+              type="date"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch2Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-3 order-md-1 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            الى
+          </p>
+        </Fragment>
+      );
+    } else if (searchType == "3") {
+      return (
+        <Fragment>
+          <div className="col-5 offset-2 col-md-3 offset-md-0 order-0 order-md-2">
+            <input
+              type="time"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch1Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-1 order-md-3 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            من
+          </p>
+          <div className="col-5 offset-5 col-md-3 offset-md-0 order-2 order-md-0">
+            <input
+              type="time"
+              className="form-control text"
+              id="searchDate"
+              onChange={handleSearch2Change}
+            ></input>
+          </div>
+          <p
+            className="col-2 col-md-1 order-3 order-md-1 text-white"
+            style={{ fontSize: "20px" }}
+          >
+            الى
+          </p>
+        </Fragment>
+      );
+    }
+  };
+  const renderAttendance = (student, attendance, index) => {
+    const student_attendance = student.student_attendance.filter(
+      (student_attendance) => student_attendance.attendance_id == attendance.id
+    )[0];
+    if (student_attendance) {
+      if (
+        student_attendance.attended == "1" &&
+        attendance.id == student_attendance.attendance_id
+      ) {
+        return (
+          <td className="t-date" key={student_attendance.student_attendance_id}>
+            <FontAwesomeIcon
+              icon="check-circle"
+              size="2x"
+              color="green"
+              className="check-icon"
+              onClick={() => {
+                // handleAttendanceToggleButton(
+                //   index,
+                //   student_attendance.student_attendance_id,
+                //   student_attendance.attended
+                // )
+
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  student_attendance_id:
+                    student_attendance.student_attendance_id,
+                  attended: student_attendance.attended,
+                });
+              }}
+            />
+            <span>{student_attendance.time}</span>
+          </td>
+        );
+      } else if (
+        student_attendance.attended == "0" &&
+        attendance.id == student_attendance.attendance_id
+      ) {
+        return (
+          <td className="t-date" key={student_attendance.student_attendance_id}>
+            <FontAwesomeIcon
+              icon="times-circle"
+              size="2x"
+              className="times-icon"
+              onClick={() => {
+                // handleAttendanceToggleButton(
+                //   index,
+                //   student_attendance.student_attendance_id,
+                //   student_attendance.attended
+                // );
+                setConfirmModal({
+                  ...confirmModal,
+                  visbile: true,
+                  index: index,
+                  student_attendance_id:
+                    student_attendance.student_attendance_id,
+                  attended: student_attendance.attended,
+                });
+              }}
+            />
+          </td>
+        );
+      }
+    } else {
+      return <td className="t-date"></td>;
+    }
   };
   const handleBanningToggle = (studentIndex, banned) => {
-    setStudentsInfoModal({ ...studentsInfoModal, banned: banned });
     if ((searchType != "0") | (searchInstitute != "0")) {
       let neeSerached = searchedData.students;
       neeSerached[studentIndex].banned = banned;
@@ -248,36 +421,116 @@ function BannedStudents({ sideBarShow, edit }) {
     handleBanningToggle(index, 0);
     toast.success("تم ارجاع الطالب");
   };
-  const searchBar = () => {
-    if (searchType == "0") {
+  const render_table = () => {
+    if (searchType != "0" || searchInstitute != "0") {
+      const render_data = searchedData.students.map((student, index) => {
+        return (
+          <tr key={student.id} className="font-weight-bold text-white d-flex">
+            <td className="t-id">{index + 1}</td>
+            <td className={`t-name ${student.banned == 1 ? `bg-danger` : ``}`}>
+              {student.name}
+            </td>
+            {searchedData.attendance.slice(0, slicing).map((attendance) => {
+              return renderAttendance(student, attendance, index);
+            })}
+            <td className="">
+              {student.banned == 1 ? (
+                <button
+                  onClick={() => handleStudentReturn(index, student.id)}
+                  className="btn btn-success text-white"
+                >
+                  ارجاع
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleStudentDismiss(index, student.id)}
+                  className="btn btn-info text-white"
+                >
+                  فصل
+                </button>
+              )}
+            </td>
+          </tr>
+        );
+      });
       return (
-        <div className="col-7">
-          <p className="form-control text">بحث حسب </p>
-        </div>
+        <table
+          className="table table-dark table-striped table-bordered table-hover text"
+          dir="rtl"
+          border="1"
+          id="print-table"
+        >
+          <thead className="thead-dark">
+            <tr className="d-flex">
+              <th className="t-id">ت</th>
+              <th className="t-name">الاسم</th>
+              {searchedData.attendance.slice(0, slicing).map((attendance) => {
+                return (
+                  <th key={attendance.id} className="t-date">
+                    {attendance.date}
+                  </th>
+                );
+              })}
+              <th className="">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>{render_data}</tbody>
+        </table>
       );
-    } else if (searchType == "1") {
+    } else {
+      const render_data = data.students.map((student, index) => {
+        return (
+          <tr key={student.id} className="font-weight-bold text-white d-flex">
+            <td className="t-id">{index + 1}</td>
+            <td className={`t-name ${student.banned == 1 ? `bg-danger` : ``}`}>
+              {student.name}
+            </td>
+            {data.attendance.slice(0, slicing).map((attendance) => {
+              return renderAttendance(student, attendance, index);
+            })}
+            <td className="">
+              {student.banned == 1 ? (
+                <button
+                  onClick={() => handleStudentReturn(index, student.id)}
+                  className="btn btn-success text-white"
+                >
+                  ارجاع
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleStudentDismiss(index, student.id)}
+                  className="btn btn-info text-white"
+                >
+                  فصل
+                </button>
+              )}
+            </td>
+          </tr>
+        );
+      });
       return (
-        <div className="col-7">
-          <input
-            type="text"
-            className="form-control text"
-            id="searchStudent"
-            onChange={handleSearchChange}
-            placeholder="ابحث"
-          ></input>
-        </div>
-      );
-    } else if (searchType == "2") {
-      return (
-        <div className="col-7">
-          <input
-            type="text"
-            className="form-control text"
-            id="searchInstitute"
-            onChange={handleSearchChange}
-            placeholder="ابحث"
-          ></input>
-        </div>
+        <table
+          className="table table-dark table-striped table-bordered table-hover text"
+          dir="rtl"
+          border="1"
+          id="print-table"
+        >
+          <thead className="thead-dark">
+            <tr className="d-flex">
+              <th className="t-id">ت</th>
+              <th className="t-name">الاسم</th>
+              {data.attendance.slice(0, slicing).map((attendance) => {
+                return (
+                  <th key={attendance.id} className="t-date">
+                    {attendance.date}
+                  </th>
+                );
+              })}
+              <th className="">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>{render_data}</tbody>
+        </table>
       );
     }
   };
@@ -292,10 +545,10 @@ function BannedStudents({ sideBarShow, edit }) {
           }
           id="main-view"
         >
-          <div className="row pt-md-2 pr-2 pl-2 mt-md-3 mb-5">
+          <div className="row pt-md-3 pr-2 pl-2 mt-md-3 mb-5">
             <div className="col-12">
               <div className="row mt-3">
-                <div className="col-8">
+                <div className="col-7">
                   <form onSubmit={handleSearchButton}>
                     <div className="form-group row mt-1">
                       <div className="col-2 text">
@@ -317,18 +570,39 @@ function BannedStudents({ sideBarShow, edit }) {
                             الكل
                           </option>
                           <option value="1">الاسم</option>
+                          <option value="2">التاريخ</option>
+                          <option value="3">الوقت</option>
                         </select>
                       </div>
                       {searchBar()}
                     </div>
                   </form>
                 </div>
-                <div className="col-1 offset-1 pt-1">
+                <div className="col-1 pt-1">
+                  <ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-light"
+                    table="print-table"
+                    filename="الحضور"
+                    sheet="الحضور"
+                    buttonText="طباعة"
+                  />
+                </div>
+                <div className="col-1 pt-1">
+                  <button
+                    onClick={handleAllAttendanceButton}
+                    className="btn btn-secondary"
+                  >
+                    كل الايام
+                  </button>
+                </div>
+                <div className="col-1 pt-1">
                   <select
-                    id="searchType"
+                    id="institute"
                     onChange={handleInstituteChange}
                     className="form-control"
                     dir="rtl"
+                    value={searchInstitute}
                   >
                     <option value="0" defaultValue>
                       المعهد
@@ -341,200 +615,70 @@ function BannedStudents({ sideBarShow, edit }) {
                   </select>
                 </div>
                 <div className="col-2">
-                  <h2 className="text text-white">المفصولين</h2>
+                  <h2 className="text text-white">حضور الطلاب</h2>
                 </div>
               </div>
             </div>
-
-            <StudentsInfoModal
-              show={studentsInfoModal.visible}
+            <ConfirmModal
+              show={confirmModal.visbile}
               onHide={() =>
-                setStudentsInfoModal({
-                  ...studentsInfoModal,
-                  visible: false,
-                })
+                setConfirmModal({ ...confirmModal, visbile: false })
               }
-              index={studentsInfoModal.index}
-              id={studentsInfoModal.id}
-              name={studentsInfoModal.name}
-              institute={studentsInfoModal.institute}
-              phone={studentsInfoModal.phone}
-              dob={studentsInfoModal.dob}
-              student={studentsInfoModal.student}
-              banned={studentsInfoModal.banned}
-              qr={qr}
-              photo={photo}
-              handleEditButton={handleEditButton}
-              handleStudentDismiss={handleStudentDismiss}
-              handleStudentReturn={handleStudentReturn}
-              handleDeleteButton={handleDeleteButton}
+              handleToggleButton={handleAttendanceToggleButton}
+              index={confirmModal.index}
+              student_id={confirmModal.student_attendance_id}
+              done={confirmModal.attended}
             />
-            <div className="col-12" dir="rtl">
-              <div className="row">
-                {loading ? (
-                  <Loading />
-                ) : (
-                  <InfiniteScroll
-                    dataLength={
+            <div className="col-12">
+              {loading ? (
+                <Loading />
+              ) : (
+                <InfiniteScroll
+                  dataLength={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.page * 100
+                      : data.page * 100
+                  } //This is important field to render the next data
+                  next={() =>
+                    getAttendance(
                       searchType != "0" || searchInstitute != "0"
-                        ? searchedData.page * 100
-                        : data.page * 100
-                    } //This is important field to render the next data
-                    next={() =>
-                      getStudents(
-                        searchType != "0" || searchInstitute != "0"
-                          ? searchedData.page + 1
-                          : data.page + 1,
-                        searchType != "0" || searchInstitute != "0"
-                          ? searchInstitute
-                          : "0"
-                      )
-                    }
-                    hasMore={
+                        ? searchedData.page + 1
+                        : data.page + 1,
                       searchType != "0" || searchInstitute != "0"
-                        ? searchedData.total_students !=
-                          searchedData.students.length
-                        : data.total_students != data.students.length
-                    }
-                    loader={<Loading />}
-                    endMessage={
-                      <p className="pb-3 pt-3 text-center text-white">
-                        <b>هذه جميع النتائج</b>
-                      </p>
-                    }
-                    // below props only if you need pull down functionality
-                    // refreshFunction={this.refresh}
-                    // pullDownToRefresh
-                    // pullDownToRefreshThreshold={50}
-                    // pullDownToRefreshContent={
-                    //   <h3 style={{ textAlign: "center" }}>
-                    //     &#8595; Pull down to refresh
-                    //   </h3>
-                    // }
-                    // releaseToRefreshContent={
-                    //   <h3 style={{ textAlign: "center" }}>
-                    //     &#8593; Release to refresh
-                    //   </h3>
-                    // }
-                  >
-                    {(searchType != "0") | (searchInstitute != "0")
-                      ? searchedData.students.map((student, index) => {
-                          return (
-                            <div
-                              className="col-12 p-2 m-0"
-                              key={student.id}
-                              dir="rtl"
-                            >
-                              <div className="row m-0">
-                                <div
-                                  className="col-4 mr-3 ml-3 card card-common card-height"
-                                  onClick={() => {
-                                    getQr(student.id);
-                                    getPhoto(student.id);
-                                    setStudentsInfoModal({
-                                      ...studentsInfoModal,
-                                      index: index,
-                                      visible: true,
-                                      id: student.id,
-                                      name: student.name,
-                                      institute: student.institute,
-                                      phone: student.phone,
-                                      dob: student.dob,
-                                      student: student,
-                                      banned: student.banned,
-                                    });
-                                  }}
-                                >
-                                  <div className="card-body p-3">
-                                    <div className="row d-flex align-content-center justify-content-center">
-                                      <div className="col-12 text-right text-white">
-                                        <p className="mb-0" dir="rtl">
-                                          {index + 1} {" - "} {student.name}{" "}
-                                          <b style={{ color: "#e30b37" }}>
-                                            {student.banned == 1
-                                              ? " (مفصول)"
-                                              : ""}
-                                          </b>
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-4 card card-common card-height">
-                                  <div className="card-body p-3">
-                                    <div className="row d-flex align-content-center justify-content-center">
-                                      <div className="col-12 text-right text-white">
-                                        <p className="mb-0" dir="rtl">
-                                          <b>{student.institute}</b>
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })
-                      : data.students.map((student, index) => {
-                          return (
-                            <div
-                              className="col-12 p-2 m-0"
-                              key={student.id}
-                              dir="rtl"
-                            >
-                              <div className="row m-0">
-                                <div
-                                  className="col-4 mr-3 ml-3 card card-common card-height"
-                                  onClick={() => {
-                                    getQr(student.id);
-                                    getPhoto(student.id);
-                                    setStudentsInfoModal({
-                                      ...studentsInfoModal,
-                                      index: index,
-                                      visible: true,
-                                      id: student.id,
-                                      name: student.name,
-                                      institute: student.institute,
-                                      phone: student.phone,
-                                      dob: student.dob,
-                                      student: student,
-                                      banned: student.banned,
-                                    });
-                                  }}
-                                >
-                                  <div className="card-body p-3">
-                                    <div className="row d-flex align-content-center justify-content-center">
-                                      <div className="col-12 text-right text-white">
-                                        <p className="mb-0" dir="rtl">
-                                          {index + 1} {" - "} {student.name}{" "}
-                                          <b style={{ color: "#e30b37" }}>
-                                            {student.banned == 1
-                                              ? " (مفصول)"
-                                              : ""}
-                                          </b>
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-4 card card-common card-height">
-                                  <div className="card-body p-3">
-                                    <div className="row d-flex align-content-center justify-content-center">
-                                      <div className="col-12 text-right text-white">
-                                        <p className="mb-0" dir="rtl">
-                                          <b>{student.institute}</b>
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                  </InfiniteScroll>
-                )}
-              </div>
+                        ? searchInstitute
+                        : "0"
+                    )
+                  }
+                  hasMore={
+                    searchType != "0" || searchInstitute != "0"
+                      ? searchedData.total_students !=
+                        searchedData.students.length
+                      : data.total_students != data.students.length
+                  }
+                  loader={<Loading />}
+                  endMessage={
+                    <p className="pb-3 pt-3 text-center text-white">
+                      <b>هذه جميع النتائج</b>
+                    </p>
+                  }
+                  // below props only if you need pull down functionality
+                  // refreshFunction={this.refresh}
+                  // pullDownToRefresh
+                  // pullDownToRefreshThreshold={50}
+                  // pullDownToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8595; Pull down to refresh
+                  //   </h3>
+                  // }
+                  // releaseToRefreshContent={
+                  //   <h3 style={{ textAlign: "center" }}>
+                  //     &#8593; Release to refresh
+                  //   </h3>
+                  // }
+                >
+                  <div className="table-responsive">{render_table()}</div>
+                </InfiniteScroll>
+              )}
             </div>
           </div>
         </div>
@@ -543,4 +687,4 @@ function BannedStudents({ sideBarShow, edit }) {
   );
 }
 
-export default BannedStudents;
+export default StudentsAttendance;

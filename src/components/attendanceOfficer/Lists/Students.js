@@ -437,10 +437,15 @@ function Students({ sideBarShow, edit }) {
                                       visible: true,
                                       id: student.id,
                                       name: student.name,
-                                      institute: student.institute,
+                                      institute: student.institute.name,
+                                      institute_id: student.institute.id,
                                       phone: student.phone,
                                       dob: student.dob,
-                                      student: student,
+                                      student: {
+                                        ...student,
+                                        institute: student.institute.name,
+                                        institute_id: student.institute.id,
+                                      },
                                       banned: student.banned,
                                     });
                                   }}
@@ -465,7 +470,7 @@ function Students({ sideBarShow, edit }) {
                                     <div className="row d-flex align-content-center justify-content-center">
                                       <div className="col-12 text-right text-white">
                                         <p className="mb-0" dir="rtl">
-                                          <b>{student.institute}</b>
+                                          <b>{student.institute.name}</b>
                                         </p>
                                       </div>
                                     </div>
@@ -494,10 +499,15 @@ function Students({ sideBarShow, edit }) {
                                       visible: true,
                                       id: student.id,
                                       name: student.name,
-                                      institute: student.institute,
+                                      institute: student.institute.name,
+                                      institute_id: student.institute.id,
                                       phone: student.phone,
                                       dob: student.dob,
-                                      student: student,
+                                      student: {
+                                        ...student,
+                                        institute: student.institute.name,
+                                        institute_id: student.institute.id,
+                                      },
                                       banned: student.banned,
                                     });
                                   }}
@@ -522,7 +532,7 @@ function Students({ sideBarShow, edit }) {
                                     <div className="row d-flex align-content-center justify-content-center">
                                       <div className="col-12 text-right text-white">
                                         <p className="mb-0" dir="rtl">
-                                          <b>{student.institute}</b>
+                                          <b>{student.institute.name}</b>
                                         </p>
                                       </div>
                                     </div>

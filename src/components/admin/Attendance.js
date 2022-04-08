@@ -76,13 +76,15 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         id: id,
         name: responseData.name,
         student_attendance_id: responseData.student_attendance_id,
-        institute_name: responseData.institute,
-        institute_id: responseData.institute_id,
+        institute_name: responseData.institute.name,
+        institute_id: responseData.institute.id,
+
+        banned: responseData.banned,
         installments: responseData.installments,
         total_absence: responseData.total_absence,
         incrementally_absence: Number(responseData.incrementally_absence),
       });
-      if (responseData.institute_id != institute_id) {
+      if (responseData.institute.id != institute_id) {
         dialog.showErrorBox("طالب", `الطالب ${responseData.name} من معهد اخر`);
       }
     } catch (error) {
@@ -111,8 +113,8 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
         visible: true,
         id: id,
         name: responseData.name,
-        institute: responseData.institute,
-        institute_id: responseData.institute_id,
+        institute: responseData.institute.name,
+        institute_id: responseData.institute.id,
         phone: responseData.phone,
         dob: responseData.dob,
         banned: responseData.banned,

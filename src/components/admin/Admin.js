@@ -261,7 +261,8 @@ function Admin(props) {
         <BannedStudents
           sideEvent={sideEvent}
           sideBarShow={sideBarShow}
-          edit={handleEditStudentButton}
+          institutes={institutes}
+          institute={institute}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>

@@ -522,7 +522,7 @@ export function StudentInfoAttendanceModal({
   const handlers = {
     ABORT: abortHandler,
     ACCEPT:
-      (student.institute_id != institute_id) | (student.banned == 1)
+      student.institute_id != institute_id || student.banned == 1
         ? () => {}
         : acceptHandler,
   };
@@ -583,12 +583,11 @@ export function StudentInfoAttendanceModal({
         <section>
           <div className="row m-0">
             {(student.incrementally_absence >= 1) |
-            (student.installments.filter(
-              (installment) => installment.received == "0"
-            ).length !=
-              0) |
-            (student.banned == 1) |
-            (student.institute_id != institute_id) ? (
+              (student.installments.filter(
+                (installment) => installment.received == "0"
+              ).length !=
+                0) |
+              (student.banned == 1) || student.institute_id != institute_id ? (
               <div className="col-1 btn-danger"></div>
             ) : (
               <div className="col-1 btn-success"></div>
@@ -631,7 +630,7 @@ export function StudentInfoAttendanceModal({
           >
             الغاء
           </Button>
-          {(student.institute_id != institute_id) | (student.banned == 1) ? (
+          {student.institute_id != institute_id || student.banned == 1 ? (
             <Button className="col-4 modal-add-nav btn-success" disabled={true}>
               تسجيل حضور
             </Button>

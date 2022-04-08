@@ -380,11 +380,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
     if (searchType != "0" || searchInstitute != "0") {
       const render_data = searchedData.students.map((student, index) => {
         return (
-          <tr
-            key={student.id}
-            className="font-weight-bold text-white"
-            className="d-flex"
-          >
+          <tr key={student.id} className="font-weight-bold text-white d-flex">
             <td className="t-id">{index + 1}</td>
             <td className="t-name">{student.name}</td>
             {searchedData.attendance.map((attendance) => {
@@ -419,11 +415,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
     } else {
       const render_data = data.students.map((student, index) => {
         return (
-          <tr
-            key={student.id}
-            className="font-weight-bold text-white"
-            className="d-flex"
-          >
+          <tr key={student.id} className="font-weight-bold text-white d-flex">
             <td className="t-id">{index + 1}</td>
             <td className="t-name">{student.name}</td>
             {data.attendance.map((attendance) => {

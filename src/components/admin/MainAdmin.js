@@ -93,6 +93,23 @@ function MainAdmin({ sideBarShow, BannedStudentsButton }) {
                 </div>
               </div>
             </div>
+            <div className="col-sm-6 p-2">
+              <div className="card card-common">
+                <div className="card-body" dir="ltr">
+                  <div className="d-flex justify-content-between">
+                    <FontAwesomeIcon icon="users" color="white" size="3x" />
+                    <div className="text-right text-white">
+                      <h5>عدد الغير مفصولين</h5>
+                      <h3>{data.unbanned_count}</h3>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-footer text-white">
+                  <i className="fas fa-sync mr-3"></i>
+                  <span>تم التحديث الان</span>
+                </div>
+              </div>
+            </div>
             {data.institutes.map((institute) => {
               return (
                 <div key={institute.id} className="col-12">
