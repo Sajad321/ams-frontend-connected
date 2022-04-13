@@ -173,12 +173,12 @@ function Students({ sideBarShow, edit }) {
     edit({ ...student, photo });
   };
   const handleDelete = (id) => {
-    let searchedIndex = [...searchedStudents].findIndex((i) => i.id == id);
-    let neeSerached = [...searchedStudents];
+    let searchedIndex = [...searchedData.students].findIndex((i) => i.id == id);
+    let neeSerached = [...searchedData.students];
     neeSerached = neeSerached.filter((s, i) => i != searchedIndex);
     setSearchedData({ ...searchedData, students: neeSerached });
-    let index = [...students].findIndex((i) => i.id == id);
-    let nee = [...students];
+    let index = [...data.students].findIndex((i) => i.id == id);
+    let nee = [...data.students];
     nee = nee.filter((s, i) => i != index);
     setData({ ...data, students: nee });
   };
@@ -193,6 +193,7 @@ function Students({ sideBarShow, edit }) {
         );
 
         const responseData = await response.json();
+        console.log(responseData);
       } catch (error) {
         console.log(error.message);
         toast.warn("حصل خطأ");
