@@ -6,6 +6,8 @@ import { StudentInfoModal } from "../common/Modal";
 const apiUrl = process.env.API_URL;
 var dialog = require("electron").remote.dialog;
 
+let intervalId;
+
 function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   const [students, setStudents] = useState([]);
   const [searchedStudents, setSearchedStudents] = useState([]);
@@ -34,6 +36,54 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
 
   const { institute_id, date } = attendanceStartData;
 
+  const getFingerprint = async () => {
+    try {
+      const responseJson = await fetch(`${apiUrl}/biotime`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+      const responseData = await responseJson.json();
+      if (responseData.status_code == 401) {
+        throw new Error(responseJson.status);
+      }
+      if (responseData.status_code != 404) {
+        clearInterval(intervalId);
+        setStudent({
+          ...student,
+          visible: true,
+          id: responseData.id,
+          name: responseData.name,
+          student_attendance_id: responseData.student_attendance_id,
+          institute_name: responseData.institute.name,
+          institute_id: responseData.institute.id,
+
+          banned: responseData.banned,
+          installments: responseData.installments,
+          total_absence: responseData.total_absence,
+          incrementally_absence: Number(responseData.incrementally_absence),
+        });
+        console.log(responseData);
+        if (responseData.institute.id != institute_id) {
+          dialog.showErrorBox(
+            "طالب",
+            `الطالب ${responseData.name} من معهد اخر`
+          );
+        }
+      }
+    } catch (error) {
+      if (error.message == 401) {
+        dialog.showErrorBox("طالب", `الطالب تم تسجيله مسبقاً`);
+      } else {
+        console.log(error.message);
+      }
+    }
+  };
+  useEffect(() => {
+    intervalId = setInterval(getFingerprint, 500);
+  }, []);
+
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
@@ -57,6 +107,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
 
   const getStudent = async (id) => {
     try {
+      clearInterval(intervalId);
       const responseJson = await fetch(
         `${apiUrl}/attendance-start?student_id=${Number(id)}`,
         {
@@ -257,6 +308,8 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
               date={date}
               students={students}
               setStudents={setStudents}
+              getFingerprint={getFingerprint}
+              intervalId={intervalId}
             />
             <div className="col-12">
               <div className="table-responsive">

@@ -349,7 +349,7 @@ export function StudentsInfoModal(props) {
               حالة الطالب: {props.banned == 1 ? "مفصول" : "مستمر"}
             </p>
           </div>
-          <button
+          {/* <button
             onClick={deleteFunction}
             className="btn btn-danger text-white mt-4 mr-4 w-25"
           >
@@ -375,7 +375,7 @@ export function StudentsInfoModal(props) {
             className="btn btn-secondary text-white mt-4 ml-4 w-25"
           >
             تعديل
-          </button>
+          </button> */}
         </div>
       </Modal.Body>
     </Modal>
@@ -448,6 +448,8 @@ export function StudentInfoAttendanceModal({
   institute_id,
   students,
   setStudents,
+  getFingerprint,
+  intervalId,
 }) {
   const handleAttendanceButton = () => {
     const toggleAttendance = async () => {
@@ -493,6 +495,7 @@ export function StudentInfoAttendanceModal({
     // const d = document.getElementById("ss");
     // d.innerText = "HI";
     // ipcRenderer.send("abort-student-attendance");
+    intervalId = setInterval(getFingerprint, 500);
     onHide();
     setPhoto({});
   };
@@ -518,6 +521,7 @@ export function StudentInfoAttendanceModal({
       onHide();
       setPhoto({});
     }
+    intervalId = setInterval(getFingerprint, 500);
   };
   const handlers = {
     ABORT: abortHandler,

@@ -98,12 +98,12 @@ function Institutes({
                         <div className="col-2 col-sm-3 p-0 text-center text-white">
                           <FontAwesomeIcon icon="users" size="3x" />
                         </div>
-                        <button
+                        {/* <button
                           onClick={() => handleEditButton(institute)}
                           className="btn btn-secondary text-white"
                         >
                           تعديل
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>

@@ -82,8 +82,8 @@ function Admin(props) {
         StudentsButton={handleStudentsButton}
         InstitutesButton={handleInstitutesButton}
         StudentsAttendanceButton={handleStudentsAttendanceButton}
-        AddStudentButton={handleAddStudentButton}
-        AddInstituteButton={handleAddInstituteButton}
+        // AddStudentButton={handleAddStudentButton}
+        // AddInstituteButton={handleAddInstituteButton}
         sideEvent={sideEvent}
         sideBarShow={sideBarShow}
         setSideBarShow={setSideBarShow}
@@ -118,23 +118,23 @@ function Admin(props) {
     setDataToChange({});
   };
 
-  const handleAddStudentButton = () => {
-    setPage("AddStudent");
-    setDataToChange({});
-  };
-  const handleAddInstituteButton = () => {
-    setPage("AddInstitute");
-    setDataToChange({});
-  };
+  // const handleAddStudentButton = () => {
+  //   setPage("AddStudent");
+  //   setDataToChange({});
+  // };
+  // const handleAddInstituteButton = () => {
+  //   setPage("AddInstitute");
+  //   setDataToChange({});
+  // };
 
-  const handleEditStudentButton = (student) => {
-    setDataToChange(student);
-    setPage("AddStudent");
-  };
-  const handleEditInstituteButton = (Institute) => {
-    setDataToChange(Institute);
-    setPage("AddInstitute");
-  };
+  // const handleEditStudentButton = (student) => {
+  //   setDataToChange(student);
+  //   setPage("AddStudent");
+  // };
+  // const handleEditInstituteButton = (Institute) => {
+  //   setDataToChange(Institute);
+  //   setPage("AddInstitute");
+  // };
 
   if (page == "Main") {
     return (
@@ -172,7 +172,7 @@ function Admin(props) {
           sideBarShow={sideBarShow}
           handleStartAttendanceButton={handleStartAttendanceButton}
           handleStudentsAttendanceButton={handleStudentsAttendanceButton}
-          handleAddInstituteButton={handleAddInstituteButton}
+          // handleAddInstituteButton={handleAddInstituteButton}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
@@ -206,35 +206,36 @@ function Admin(props) {
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
-  } else if (page == "AddStudent") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Add: "active" })}
-        {/* End of Navbar */}
-        {/* AddStudent */}
-        <AddStudent
-          page={handleMainButton}
-          dataToChange={dataToChange}
-          sideBarShow={sideBarShow}
-        />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
-  } else if (page == "AddInstitute") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Add: "active" })}
-        {/* End of Navbar */}
-        {/* AddInstitute */}
-        <AddInstitute
-          page={handleAddInstituteButton}
-          dataToChange={dataToChange}
-          sideBarShow={sideBarShow}
-        />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
   }
+  //  else if (page == "AddStudent") {
+  //   return (
+  //     <Fragment>
+  //       {AdminHeaderFunction({ Add: "active" })}
+  //       {/* End of Navbar */}
+  //       {/* AddStudent */}
+  //       <AddStudent
+  //         page={handleMainButton}
+  //         dataToChange={dataToChange}
+  //         sideBarShow={sideBarShow}
+  //       />
+  //       <AdminFooter sideBarShow={sideBarShow} />
+  //     </Fragment>
+  //   );
+  // } else if (page == "AddInstitute") {
+  //   return (
+  //     <Fragment>
+  //       {AdminHeaderFunction({ Add: "active" })}
+  //       {/* End of Navbar */}
+  //       {/* AddInstitute */}
+  //       <AddInstitute
+  //         page={handleAddInstituteButton}
+  //         dataToChange={dataToChange}
+  //         sideBarShow={sideBarShow}
+  //       />
+  //       <AdminFooter sideBarShow={sideBarShow} />
+  //     </Fragment>
+  //   );
+  // }
 }
 
 export default Admin;

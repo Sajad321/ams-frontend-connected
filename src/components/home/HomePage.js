@@ -13,7 +13,7 @@ const HomePage = (props) => {
     ipcRenderer.send("login");
   };
 
-  if (JSON.parse(localStorage.getItem("token")).auth == "1") {
+  if (JSON.parse(localStorage.getItem("token")).super == "1") {
     return <Admin logoutWithRedirect={logoutWithRedirect} />;
   } else {
     return <AttendanceOfficer logoutWithRedirect={logoutWithRedirect} />;

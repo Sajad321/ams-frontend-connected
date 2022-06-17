@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 const dialog = require("electron").remote.dialog;
+const apiUrl = process.env.API_URL;
 
 export function InstitutesModal(props) {
   function pad(x, width = 2, char = "0") {

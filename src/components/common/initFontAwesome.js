@@ -20,6 +20,7 @@ import {
   faCheckCircle,
   faTimesCircle,
   faBan,
+  faSync,
 } from "@fortawesome/free-solid-svg-icons";
 
 function initFontAwesome() {
@@ -43,6 +44,7 @@ function initFontAwesome() {
   library.add(faCheckCircle);
   library.add(faTimesCircle);
   library.add(faBan);
+  library.add(faSync);
 }
 
 export default initFontAwesome;

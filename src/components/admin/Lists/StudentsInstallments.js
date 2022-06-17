@@ -234,15 +234,15 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
               size="2x"
               color="green"
               className="check-icon"
-              onClick={() =>
-                setConfirmModal({
-                  ...confirmModal,
-                  visbile: true,
-                  index: index,
-                  installment_received_id: installment_received.id,
-                  received: installment_received.received,
-                })
-              }
+              // onClick={() =>
+              //   setConfirmModal({
+              //     ...confirmModal,
+              //     visbile: true,
+              //     index: index,
+              //     installment_received_id: installment_received.id,
+              //     received: installment_received.received,
+              //   })
+              // }
             />
           </td>
         );
@@ -256,15 +256,15 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
               icon="times-circle"
               size="2x"
               className="times-icon"
-              onClick={() =>
-                setConfirmModal({
-                  ...confirmModal,
-                  visbile: true,
-                  index: index,
-                  installment_received_id: installment_received.id,
-                  received: installment_received.received,
-                })
-              }
+              // onClick={() =>
+              //   setConfirmModal({
+              //     ...confirmModal,
+              //     visbile: true,
+              //     index: index,
+              //     installment_received_id: installment_received.id,
+              //     received: installment_received.received,
+              //   })
+              // }
             />
           </td>
         );
@@ -298,7 +298,7 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
             <tr className="d-flex">
               <th className="t-id">&nbsp;</th>
               <th className="t-name">&nbsp;</th>
-              {searchedData.installments.map((installment) => {
+              {/* {searchedData.installments.map((installment) => {
                 return (
                   <th key={installment.id} className="t-date">
                     <button
@@ -311,7 +311,7 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
                     </button>
                   </th>
                 );
-              })}
+              })} */}
             </tr>
             <tr className="d-flex">
               <th className="t-id">ت</th>
@@ -363,7 +363,7 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
             <tr className="d-flex">
               <th className="t-id">&nbsp;</th>
               <th className="t-name">&nbsp;</th>
-              {data.installments.map((installment) => {
+              {/* {data.installments.map((installment) => {
                 return (
                   <th key={installment.id} className="t-date">
                     <button
@@ -376,7 +376,7 @@ function StudentsInstallments({ page, sideBarShow, institutes, institute }) {
                     </button>
                   </th>
                 );
-              })}
+              })} */}
             </tr>
             <tr className="d-flex">
               <th className="t-id">ت</th>

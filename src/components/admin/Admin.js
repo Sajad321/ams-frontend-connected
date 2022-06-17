@@ -7,9 +7,9 @@ import Attendance from "./Attendance";
 import Students from "./Lists/Students";
 import StudentsInstallments from "./Lists/StudentsInstallments";
 import StudentsAttendance from "./Lists/StudentsAttendance";
-import AddStudent from "./Forms/AddStudent";
-import AddInstitute from "./Forms/AddInstitute";
-import AddInstallment from "./Forms/AddInstallment";
+// import AddStudent from "./Forms/AddStudent";
+// import AddInstitute from "./Forms/AddInstitute";
+// import AddInstallment from "./Forms/AddInstallment";
 import BannedStudents from "./Lists/BannedStudents";
 const apiUrl = process.env.API_URL;
 
@@ -76,6 +76,26 @@ function Admin(props) {
     getStuff();
   }, []);
 
+  const [syncOp, setSyncOp] = useState({ showSync: true, syncing: false });
+  const goSync = async () => {
+    try {
+      setSyncOp({ ...syncOp, syncing: true });
+      const response = await fetch(`${apiUrl}/sync`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer`,
+        },
+      });
+
+      const responseData = await response.json();
+      toast.success("تمت المزامنة بنجاح");
+      setSyncOp({ showSync: false, syncing: false });
+    } catch (error) {
+      console.log(error.message);
+      toast.error("فشلت المزامنة");
+      setSyncOp({ showSync: true, syncing: false });
+    }
+  };
   const AdminHeaderFunction = (Act) => {
     return (
       <AdminHeader
@@ -87,9 +107,12 @@ function Admin(props) {
         InstitutesButton={handleInstitutesButton}
         StudentsAttendanceButton={handleStudentsAttendanceButton}
         BannedStudentsButton={handleBannedStudentsButton}
-        AddStudentButton={handleAddStudentButton}
-        AddInstituteButton={handleAddInstituteButton}
-        AddInstallmentButton={handleAddInstallmentButton}
+        // AddStudentButton={handleAddStudentButton}
+        // AddInstituteButton={handleAddInstituteButton}
+        // AddInstallmentButton={handleAddInstallmentButton}
+        syncOp={syncOp}
+        setSyncOp={setSyncOp}
+        goSync={goSync}
         sideEvent={sideEvent}
         sideBarShow={sideBarShow}
         setSideBarShow={setSideBarShow}
@@ -135,32 +158,32 @@ function Admin(props) {
     setDataToChange({});
   };
 
-  const handleAddStudentButton = () => {
-    setPage("AddStudent");
-    setDataToChange({});
-  };
+  // const handleAddStudentButton = () => {
+  //   setPage("AddStudent");
+  //   setDataToChange({});
+  // };
 
-  const handleAddInstituteButton = () => {
-    setPage("AddInstitute");
-    setDataToChange({});
-  };
-  const handleAddInstallmentButton = () => {
-    setPage("AddInstallment");
-    setDataToChange({});
-  };
+  // const handleAddInstituteButton = () => {
+  //   setPage("AddInstitute");
+  //   setDataToChange({});
+  // };
+  // const handleAddInstallmentButton = () => {
+  //   setPage("AddInstallment");
+  //   setDataToChange({});
+  // };
 
-  const handleEditStudentButton = (student) => {
-    setDataToChange(student);
-    setPage("AddStudent");
-  };
-  const handleEditInstituteButton = (institute) => {
-    setDataToChange(institute);
-    setPage("AddInstitute");
-  };
-  const handleEditInstallmentButton = (installment) => {
-    setDataToChange(installment);
-    setPage("AddInstallment");
-  };
+  // const handleEditStudentButton = (student) => {
+  //   setDataToChange(student);
+  //   setPage("AddStudent");
+  // };
+  // const handleEditInstituteButton = (institute) => {
+  //   setDataToChange(institute);
+  //   setPage("AddInstitute");
+  // };
+  // const handleEditInstallmentButton = (installment) => {
+  //   setDataToChange(installment);
+  //   setPage("AddInstallment");
+  // };
 
   if (page == "Main") {
     return (
@@ -186,7 +209,7 @@ function Admin(props) {
         <Students
           sideEvent={sideEvent}
           sideBarShow={sideBarShow}
-          edit={handleEditStudentButton}
+          // edit={handleEditStudentButton}
         />
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
@@ -198,7 +221,7 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* StudentsInstallments */}
         <StudentsInstallments
-          edit={handleEditInstallmentButton}
+          // edit={handleEditInstallmentButton}
           page={handleMainButton}
           sideBarShow={sideBarShow}
           institutes={institutes}
@@ -214,7 +237,7 @@ function Admin(props) {
         {/* End of Navbar */}
         {/* Institutes */}
         <Institutes
-          edit={handleEditInstituteButton}
+          // edit={handleEditInstituteButton}
           sideBarShow={sideBarShow}
           handleStartAttendanceButton={handleStartAttendanceButton}
           handleStudentsInstallmentsButton={handleStudentsInstallmentsButton}
@@ -267,49 +290,50 @@ function Admin(props) {
         <AdminFooter sideBarShow={sideBarShow} />
       </Fragment>
     );
-  } else if (page == "AddStudent") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Add: "active" })}
-        {/* End of Navbar */}
-        {/* AddStudent */}
-        <AddStudent
-          page={handleMainButton}
-          dataToChange={dataToChange}
-          sideBarShow={sideBarShow}
-        />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
-  } else if (page == "AddInstitute") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Add: "active" })}
-        {/* End of Navbar */}
-        {/* AddInstitute */}
-        <AddInstitute
-          page={handleMainButton}
-          dataToChange={dataToChange}
-          sideBarShow={sideBarShow}
-        />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
-  } else if (page == "AddInstallment") {
-    return (
-      <Fragment>
-        {AdminHeaderFunction({ Add: "active" })}
-        {/* End of Navbar */}
-        {/* AddInstitute */}
-        <AddInstallment
-          page={handleMainButton}
-          dataToChange={dataToChange}
-          sideBarShow={sideBarShow}
-        />
-        <AdminFooter sideBarShow={sideBarShow} />
-      </Fragment>
-    );
   }
+  //   else if (page == "AddStudent") {
+  //   return (
+  //     <Fragment>
+  //       {AdminHeaderFunction({ Add: "active" })}
+  //       {/* End of Navbar */}
+  //       {/* AddStudent */}
+  //       <AddStudent
+  //         page={handleMainButton}
+  //         dataToChange={dataToChange}
+  //         sideBarShow={sideBarShow}
+  //       />
+  //       <AdminFooter sideBarShow={sideBarShow} />
+  //     </Fragment>
+  //   );
+  // } else if (page == "AddInstitute") {
+  //   return (
+  //     <Fragment>
+  //       {AdminHeaderFunction({ Add: "active" })}
+  //       {/* End of Navbar */}
+  //       {/* AddInstitute */}
+  //       <AddInstitute
+  //         page={handleMainButton}
+  //         dataToChange={dataToChange}
+  //         sideBarShow={sideBarShow}
+  //       />
+  //       <AdminFooter sideBarShow={sideBarShow} />
+  //     </Fragment>
+  //   );
+  // } else if (page == "AddInstallment") {
+  //   return (
+  //     <Fragment>
+  //       {AdminHeaderFunction({ Add: "active" })}
+  //       {/* End of Navbar */}
+  //       {/* AddInstitute */}
+  //       <AddInstallment
+  //         page={handleMainButton}
+  //         dataToChange={dataToChange}
+  //         sideBarShow={sideBarShow}
+  //       />
+  //       <AdminFooter sideBarShow={sideBarShow} />
+  //     </Fragment>
+  //   );
+  // }
 }
 
 export default Admin;

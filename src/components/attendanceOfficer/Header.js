@@ -48,7 +48,6 @@ function AdminHeader(props) {
           <div className="r-navbar" id="nav-bar" dir="rtl">
             <nav className="nav">
               <div>
-                {" "}
                 <a
                   href="#"
                   className="nav_logo"
@@ -57,7 +56,6 @@ function AdminHeader(props) {
                     props.setSideBarShow(!props.sideBarShow);
                   }}
                 >
-                  {" "}
                   <FontAwesomeIcon
                     icon="bars"
                     className="nav_logo-icon"
@@ -66,16 +64,14 @@ function AdminHeader(props) {
                   />
                   <span className="nav_logo-name" id="nav-text">
                     القائمة
-                  </span>{" "}
+                  </span>
                 </a>
                 <div className="nav_list">
-                  {" "}
                   <a
                     href="#"
                     className={"nav_link " + props.Active.Main}
                     onClick={props.MainButton}
                   >
-                    {" "}
                     <FontAwesomeIcon
                       icon="home"
                       className={"nav_logo-icon " + props.Active.Main}
@@ -87,14 +83,13 @@ function AdminHeader(props) {
                       id="nav-text"
                     >
                       الرئيسية
-                    </span>{" "}
-                  </a>{" "}
+                    </span>
+                  </a>
                   <a
                     href="#"
                     className={"nav_link " + props.Active.Institutes}
                     onClick={props.InstitutesButton}
                   >
-                    {" "}
                     <FontAwesomeIcon
                       icon="school"
                       className={"nav_logo-icon " + props.Active.Institutes}
@@ -106,14 +101,13 @@ function AdminHeader(props) {
                       id="nav-text"
                     >
                       المعاهد
-                    </span>{" "}
-                  </a>{" "}
+                    </span>
+                  </a>
                   <a
                     href="#"
                     className={"nav_link " + props.Active.Students}
                     onClick={() => setStudentsModalShow(true)}
                   >
-                    {" "}
                     <FontAwesomeIcon
                       icon="user-graduate"
                       className={"nav_logo-icon " + props.Active.Students}
@@ -125,14 +119,13 @@ function AdminHeader(props) {
                       id="nav-text"
                     >
                       الطلاب
-                    </span>{" "}
-                  </a>{" "}
-                  <a
+                    </span>
+                  </a>
+                  {/* <a
                     href="#"
                     className={"nav_link " + props.Active.Add}
                     onClick={() => setAddModalShow(true)}
                   >
-                    {" "}
                     <FontAwesomeIcon
                       icon="plus-circle"
                       className={"nav_logo-icon " + props.Active.Add}
@@ -144,16 +137,15 @@ function AdminHeader(props) {
                       id="nav-text"
                     >
                       اضافة
-                    </span>{" "}
-                  </a>{" "}
+                    </span>
+                  </a> */}
                 </div>
-              </div>{" "}
+              </div>
               <a
                 href="#"
                 className="nav_link_bottom"
                 onClick={() => setSettingsModalShow(true)}
               >
-                {" "}
                 <FontAwesomeIcon
                   icon="cog"
                   className="nav_logo-icon"
@@ -162,7 +154,7 @@ function AdminHeader(props) {
                 />
                 <span className="nav_name" id="nav-text">
                   الاعدادات
-                </span>{" "}
+                </span>
               </a>
             </nav>
           </div>

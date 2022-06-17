@@ -433,7 +433,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             {searchedData.attendance.slice(0, slicing).map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
-            <td className="">
+            {/* <td className="">
               {student.banned == 1 ? (
                 <button
                   onClick={() => handleStudentReturn(index, student.id)}
@@ -449,7 +449,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
                   فصل
                 </button>
               )}
-            </td>
+            </td> */}
           </tr>
         );
       });
@@ -471,7 +471,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
                   </th>
                 );
               })}
-              <th className="">&nbsp;</th>
+              {/* <th className="">&nbsp;</th> */}
             </tr>
           </thead>
           <tbody>{render_data}</tbody>
@@ -488,7 +488,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
             {data.attendance.slice(0, slicing).map((attendance) => {
               return renderAttendance(student, attendance, index);
             })}
-            <td className="">
+            {/* <td className="">
               {student.banned == 1 ? (
                 <button
                   onClick={() => handleStudentReturn(index, student.id)}
@@ -504,7 +504,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
                   فصل
                 </button>
               )}
-            </td>
+            </td> */}
           </tr>
         );
       });
@@ -526,7 +526,7 @@ function StudentsAttendance({ sideBarShow, institutes, institute }) {
                   </th>
                 );
               })}
-              <th className="">&nbsp;</th>
+              {/* <th className="">&nbsp;</th> */}
             </tr>
           </thead>
           <tbody>{render_data}</tbody>
