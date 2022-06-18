@@ -11,6 +11,7 @@ import StudentsAttendance from "./Lists/StudentsAttendance";
 // import AddInstitute from "./Forms/AddInstitute";
 // import AddInstallment from "./Forms/AddInstallment";
 import BannedStudents from "./Lists/BannedStudents";
+import { toast } from "react-toastify";
 const apiUrl = process.env.API_URL;
 
 function Admin(props) {

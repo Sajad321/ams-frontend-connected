@@ -46,7 +46,7 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
       });
       const responseData = await responseJson.json();
       if (responseData.status_code == 401) {
-        throw new Error(responseJson.status);
+        throw new Error(responseData.status_code);
       }
       if (responseData.status_code != 404) {
         clearInterval(intervalId);
@@ -82,6 +82,9 @@ function Attendance({ sideBarShow, page, mainPage, attendanceStartData }) {
   };
   useEffect(() => {
     intervalId = setInterval(getFingerprint, 500);
+    return () => {
+      if (intervalId != null) clearInterval(intervalId);
+    };
   }, []);
 
   const handleSearchChange = (e) => {
